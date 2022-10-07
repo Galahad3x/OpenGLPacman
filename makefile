@@ -1,20 +1,9 @@
-OBJS = $(patsubst %.cpp, %.o,$(wildcard *.cpp))
-
-all: pacman
+OBJS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 pacman: $(OBJS)
 	g++ $(OBJS) -o $@
 
-%.o : %.cpp %.h
+%.o: %.cpp %.h
 
 clean:
-	rm *.o
-
-
-
-
-
-
-
-
-
+	rm *.c
