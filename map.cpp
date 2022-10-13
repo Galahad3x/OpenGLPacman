@@ -1,5 +1,4 @@
 #include"map.h"
-
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
@@ -83,8 +82,8 @@ void Map::init_map() {
 }
 
 pair<int, int> Map::insert_base() {
-    int base_width = 15;
-    int base_height = 3;
+    int base_width = 12;
+    int base_height = 4;
 
     int x_mid = n_cols /2;
     int y_mid = n_rows /2;
@@ -94,12 +93,16 @@ pair<int, int> Map::insert_base() {
 
     int y_end = y_mid + base_height / 2 + 1;
     for (int i = y_start; i <= y_end; i++) {
+        // put a wall in the first position to build a wall column base
         mesh[i][x_start] = WALL_CELL;
+
+        // fill the base positions
         int fill_value = (i == y_start || i == y_end) ? WALL_CELL : CELL_VISITED;
         for(int j = x_start + 1; j < x_mid; j++)
             mesh[i][j] = fill_value;
         mesh[i][x_mid] = fill_value;
     }
+    // mark the base exit position as visited
     mesh[y_start][x_mid] = CELL_VISITED;
     return make_pair(x_mid, y_start);
 }

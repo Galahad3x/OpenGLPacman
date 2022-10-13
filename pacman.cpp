@@ -1,6 +1,11 @@
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
 #include<stdio.h>
 #include<stdlib.h>
-#include <GL/glut.h>
 #include"map.h"
 
 int ROWS;
@@ -33,7 +38,7 @@ int main(int argc, char *argv[]) {
         printf("Usage: ./pacman <rows> <half_of_columns>\n");
         exit(-1);
     }
-    
+
     ROWS = atoi(argv[1]);
     COLS = atoi(argv[2])*2+1;
     map.generate(ROWS,COLS);
