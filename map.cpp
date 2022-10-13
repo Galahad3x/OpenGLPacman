@@ -39,14 +39,7 @@ Implementation of the constructor and methods of the Map class
 */
 // Map:: to indicate that you goint to implement the x map function or constructor
 Map::Map(int n_rows, int n_cols) {
-    // @anotation: this i like java but in this case it is a pointer for this reason to access to its fields its using -> operator
-    this->n_rows = n_rows;
-    this->n_cols = n_cols;
-
-    this->x_limit = n_cols / 2;  //(update limit when generates simetric map)
-    this->y_limit = n_rows - 1;  //(update limit when generates simetric map)
-
-    generate_mesh();
+   generate(n_rows, n_cols); 
 }
 
 Map::Map(){}
@@ -55,8 +48,8 @@ void Map::generate(int n_rows, int n_cols){
     this->n_rows = n_rows;
     this->n_cols = n_cols;
 
-    this->x_limit = n_cols / 2;  //(update limit when generates simetric map)
-    this->y_limit = n_rows - 1;  //(update limit when generates simetric map)
+    this->x_limit = n_cols / 2 + 1; //(update limit when generates simetric map)
+    this->y_limit = n_rows - 1; //(update limit when generates simetric map)
 
     generate_mesh();
 }
@@ -83,7 +76,7 @@ void Map::init_map() {
 
 pair<int, int> Map::insert_base() {
     int base_width = 8;
-    int base_height = 4;
+    int base_height = 6;
 
     int x_mid = n_cols /2;
     int y_mid = n_rows /2;
