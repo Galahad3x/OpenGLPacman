@@ -11,8 +11,11 @@
 int ROWS;
 int COLS;
 
-int WIDTH = 800;
-int HEIGHT = 600;
+int MAX_WIDTH = 1000;
+int MAX_HEIGHT = 600;
+
+int WIDTH;
+int HEIGHT;
 
 int sq_size;
 
@@ -20,18 +23,21 @@ void display();
 
 Map map;
 
-void draw_square(int x, int y, int size){
+void draw_rectangle(int x, int y, int width, int height){
     glColor3f(0.8,0.8,0);
     glBegin(GL_QUADS);
 
     glVertex2i(x,y);
-    glVertex2i(x,y+size);
-    glVertex2i(x+size, y+size);
-    glVertex2i(x+size, y);
+    glVertex2i(x,y+height);
+    glVertex2i(x+width, y+height);
+    glVertex2i(x+width, y);
 
     glEnd();
 }
 
+void draw_square(int x, int y, int size){
+    draw_rectangle(x, y, size, size);
+}
 
 int main(int argc, char *argv[]) {
     if (argc < 3){
@@ -48,12 +54,18 @@ int main(int argc, char *argv[]) {
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowPosition(150, 50);
+    glutInitWindowPosition(50,50);
 
+    /*
     sq_size = HEIGHT / ROWS;
     while ((sq_size * COLS) > WIDTH){
         sq_size--;
     }
+    */
+    sq_size = min(MAX_WIDTH / COLS, MAX_HEIGHT / ROWS);
+
+    WIDTH = sq_size * COLS;
+    HEIGHT = sq_size * ROWS;
 
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Pac-Man");
