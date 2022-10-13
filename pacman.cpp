@@ -4,6 +4,6 @@
 
 
 int main(int argc, char *argv[]) {
-    Map map(10,10); // Create a map instance map
+    Map map(11,11); // Create a map instance map
     map.print_map();
 }
