@@ -25,9 +25,9 @@ void draw_square(int x, int y, int size){
     glBegin(GL_QUADS);
 
     glVertex2i(x,y);
-    glVertex2i(x+size,y);
+    glVertex2i(x,y+size);
     glVertex2i(x+size, y+size);
-    glVertex2i(x, y+size);
+    glVertex2i(x+size, y);
 
     glEnd();
 }
@@ -46,14 +46,14 @@ int main(int argc, char *argv[]) {
     while ((sq_size * COLS) > WIDTH){
         sq_size--;
     }
-    
+
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Pac-Man");
 
     glutDisplayFunc(display);
 
     glMatrixMode(GL_PROJECTION);
-    gluOrtho2D(0,WIDTH-1,0,HEIGHT-1);
+    gluOrtho2D(0,WIDTH-1,HEIGHT-1,0);
 
     glutMainLoop();
     return 0;
@@ -65,10 +65,10 @@ void display(){
     glClearColor(0.2,0.2,0.2,0.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    for(i=0;i<ROWS;i++){
-        for(j=0;j<COLS;j++){
+    for(i = 0; i < ROWS; i++){
+        for(j = 0; j < COLS; j++){
             if(map.mesh[i][j] == CELL_VISITED){
-                draw_square(i*sq_size, j*sq_size, sq_size);
+                draw_square(j*sq_size, i*sq_size, sq_size);
             }
         }
   	}
