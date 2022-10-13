@@ -14,6 +14,8 @@ class Map {
     int n_rows, n_cols;
     int **mesh;
     Map(int n_rows, int n_cols); // Constructor definition
+    Map();
+    void generate(int n_rows, int n_cols);
     void print_map();
 
     private:
@@ -24,9 +26,5 @@ class Map {
         pair<int, int> insert_base();
         bool is_valid(pair<int, int> position);
         vector<pair<int,int> > get_valids_neigbours(pair<int, int> position);
-        
+
 };
-
-
-
-

@@ -8,8 +8,8 @@
 #include<stdlib.h>
 #include"map.h"
 
-int ROWS = 15;
-int COLS = 51;
+int ROWS;
+int COLS;
 
 int WIDTH = 800;
 int HEIGHT = 600;
@@ -18,7 +18,7 @@ int sq_size;
 
 void display();
 
-Map map(ROWS, COLS);
+Map map;
 
 void draw_square(int x, int y, int size){
     glColor3f(0.8,0.8,0);
@@ -34,6 +34,14 @@ void draw_square(int x, int y, int size){
 
 
 int main(int argc, char *argv[]) {
+    if (argc < 3){
+        printf("Usage: ./pacman <rows> <half_of_columns>\n");
+        exit(-1);
+    }
+
+    ROWS = atoi(argv[1]);
+    COLS = atoi(argv[2])*2+1;
+    map.generate(ROWS,COLS);
      // Create a map instance map
     map.print_map();
     // CELL_VISITED constant mark road
