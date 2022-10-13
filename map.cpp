@@ -11,11 +11,6 @@
 
 using namespace std;
 
-#define WALL_CELL 3
-#define CELL_POSIBLE_BLOCK 2
-#define CELL_VISITED 1
-
-
 
 void apply_moviment(pair<int, int> src_position, pair<int, int> dst_position, int **mesh) {
     int x_src = src_position.first;
