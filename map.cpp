@@ -50,13 +50,25 @@ Map::Map(int n_rows, int n_cols) {
     generate_mesh();
 }
 
+Map::Map(){}
+
+void Map::generate(int n_rows, int n_cols){
+    this->n_rows = n_rows;
+    this->n_cols = n_cols;
+
+    this->x_limit = n_cols / 2;  //(update limit when generates simetric map)
+    this->y_limit = n_rows - 1;  //(update limit when generates simetric map)
+
+    generate_mesh();
+}
+
 void Map::print_map() {
     for (int i = 0; i < this->n_rows; i++) {
         for (int j = 0; j < this->n_cols; j++) {
-            if (this->mesh[i][j] == CELL_VISITED) 
+            if (this->mesh[i][j] == CELL_VISITED)
                 printf("-");
-            else 
-                printf("0"); 
+            else
+                printf("0");
         }
         printf("\n");
     }
@@ -76,7 +88,7 @@ pair<int, int> Map::insert_base() {
 
     int x_mid = n_cols /2;
     int y_mid = n_rows /2;
-    
+
     int x_start = x_mid - (base_width) / 2 - 1;
     int y_start = y_mid - (base_height) / 2 - 1;
 
@@ -94,7 +106,7 @@ pair<int, int> Map::insert_base() {
 
 void Map::generate_mesh() {
     init_map();
-    
+
     pair<int, int> start_position = insert_base();
     dfs_generator(start_position.first, start_position.second-1);
     duplicate(n_cols, n_rows, mesh);
@@ -108,7 +120,7 @@ void Map::dfs_generator(int x_start, int y_start) {
     pair<int, int> start_position = make_pair(x_start, y_start);
     mesh[start_position.second][start_position.first] = CELL_VISITED;
     stack.push(start_position);
-    
+
     // apply dfs while the stack is no empty
     pair<int, int> current_position;
     while (!stack.empty()) {
@@ -128,12 +140,12 @@ void Map::dfs_generator(int x_start, int y_start) {
 bool Map::is_valid(pair<int, int> position) {
     int x = position.first;
     int y = position.second;
-    
+
     // check cords of the position
-    if (x <= 0 || x >= x_limit) 
+    if (x <= 0 || x >= x_limit)
         return false;
 
-    if (y <= 0 || y >= y_limit) 
+    if (y <= 0 || y >= y_limit)
         return false;
 
     return mesh[y][x] != CELL_VISITED && mesh[y][x] != WALL_CELL;
@@ -152,15 +164,15 @@ vector<pair<int,int> > Map::get_valids_neigbours(pair<int, int> position) {
     vector< pair<int,int> > valids_neigbours;
     if (is_valid(right))
         valids_neigbours.push_back(right);
-    
+
     if (is_valid(left))
         valids_neigbours.push_back(left);
-    
-    
+
+
     if (is_valid(top))
         valids_neigbours.push_back(top);
-    
-    
+
+
     if (is_valid(botton))
         valids_neigbours.push_back(botton);
 
