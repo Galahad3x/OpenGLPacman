@@ -40,7 +40,8 @@ int main(int argc, char *argv[]) {
     }
 
     ROWS = atoi(argv[1]);
-    COLS = atoi(argv[2])*2+1;
+    COLS = atoi(argv[2]);
+    COLS = (COLS % 2 == 0 ? COLS + 1 : COLS) *2+1;
     map.generate(ROWS,COLS);
      // Create a map instance map
     map.print_map();

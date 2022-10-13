@@ -82,7 +82,7 @@ void Map::init_map() {
 }
 
 pair<int, int> Map::insert_base() {
-    int base_width = 12;
+    int base_width = 8;
     int base_height = 4;
 
     int x_mid = n_cols /2;
