@@ -26,6 +26,15 @@ void apply_moviment(pair<int, int> src_position, pair<int, int> dst_position, in
 }
 
 
+void duplicate(int width, int height, int **mesh) {
+    int x_end = width / 2;
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < x_end; j++) {
+            mesh[i][width - 1 - j] = mesh[i][j];
+        }
+    }
+}
+
 /*
 Implementation of the constructor and methods of the Map class
 */
@@ -35,7 +44,7 @@ Map::Map(int n_rows, int n_cols) {
     this->n_rows = n_rows;
     this->n_cols = n_cols;
 
-    this->x_limit = n_cols;  //(update limit when generates simetric map)
+    this->x_limit = n_cols / 2;  //(update limit when generates simetric map)
     this->y_limit = n_rows - 1;  //(update limit when generates simetric map)
 
     generate_mesh();
@@ -47,7 +56,7 @@ void Map::print_map() {
             if (this->mesh[i][j] == CELL_VISITED) 
                 printf("-");
             else 
-                printf("0");
+                printf("0"); 
         }
         printf("\n");
     }
@@ -61,13 +70,42 @@ void Map::init_map() {
     }
 }
 
+pair<int, int> Map::insert_base() {
+    int base_width = 15;
+    int base_height = 3;
+
+    int x_mid = n_cols /2;
+    int y_mid = n_rows /2;
+    
+    int x_start = x_mid - (base_width) / 2 - 1;
+    int y_start = y_mid - (base_height) / 2 - 1;
+
+    int y_end = y_mid + base_height / 2 + 1;
+    for (int i = y_start; i <= y_end; i++) {
+        mesh[i][x_start] = WALL_CELL;
+        int fill_value = (i == y_start || i == y_end) ? WALL_CELL : CELL_VISITED;
+        for(int j = x_start + 1; j < x_mid; j++)
+            mesh[i][j] = fill_value;
+        mesh[i][x_mid] = fill_value;
+    }
+    mesh[y_start][x_mid] = CELL_VISITED;
+    return make_pair(x_mid, y_start);
+}
+
 void Map::generate_mesh() {
     init_map();
+    
+    pair<int, int> start_position = insert_base();
+    dfs_generator(start_position.first, start_position.second-1);
+    duplicate(n_cols, n_rows, mesh);
+}
+
+void Map::dfs_generator(int x_start, int y_start) {
     srand(clock());
     stack< pair<int,int> > stack;
-    
+
     // Set start position
-    pair<int, int> start_position = make_pair(x_limit-1, y_limit-1);
+    pair<int, int> start_position = make_pair(x_start, y_start);
     mesh[start_position.second][start_position.first] = CELL_VISITED;
     stack.push(start_position);
     

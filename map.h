@@ -1,5 +1,6 @@
 #include <utility>
 #include<list>
+#include<vector>
 
 using namespace std;
 
@@ -18,9 +19,12 @@ class Map {
     private:
         int x_limit, y_limit;
         void generate_mesh();
+        void dfs_generator(int x_start, int y_start);
         void init_map();
+        pair<int, int> insert_base();
         bool is_valid(pair<int, int> position);
         vector<pair<int,int> > get_valids_neigbours(pair<int, int> position);
+        
 };
 
 
