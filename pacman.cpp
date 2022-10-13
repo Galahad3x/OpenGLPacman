@@ -1,6 +1,11 @@
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
 #include<stdio.h>
 #include<stdlib.h>
-#include <GL/glut.h>
 #include"map.h"
 
 int ROWS = 15;
