@@ -40,6 +40,7 @@ int main(int argc, char *argv[]) {
     }
 
     ROWS = atoi(argv[1]);
+    ROWS = (ROWS % 2 == 0 ? ROWS + 1 : ROWS) *2+1;
     COLS = atoi(argv[2]);
     COLS = (COLS % 2 == 0 ? COLS + 1 : COLS) *2+1;
     map.generate(ROWS,COLS);

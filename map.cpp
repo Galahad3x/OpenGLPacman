@@ -82,9 +82,11 @@ pair<int, int> Map::insert_base() {
     int y_mid = n_rows /2;
 
     int x_start = x_mid - (base_width) / 2 - 1;
-    int y_start = y_mid - (base_height) / 2 - 1;
+   // int y_start = y_mid - (base_height) / 2 - 1;
+    int y_start = y_mid - (base_height) / 2;
 
-    int y_end = y_mid + base_height / 2 + 1;
+    //int y_end = y_mid + base_height / 2 + 1;
+    int y_end = y_mid + base_height / 2;
     for (int i = y_start; i <= y_end; i++) {
         // put a wall in the first position to build a wall column base
         mesh[i][x_start] = WALL_CELL;
