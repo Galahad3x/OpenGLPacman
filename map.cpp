@@ -147,6 +147,7 @@ void Map::dfs_generator(int x_start, int y_start) {
 
     // apply dfs while the stack is no empty
     pair<int, int> current_position;
+    pair<int, int> last_position;
     while (!stack.empty()) {    
         current_position = stack.top();
         int x = current_position.first;
@@ -154,12 +155,12 @@ void Map::dfs_generator(int x_start, int y_start) {
         vector<pair<int, int> > neighbours = get_valids_neigbours(current_position);
         if (mesh[y][x] == CELL_POSIBLE_WALL) {
             vector<pair<int, int> > positions_to_jump = get_positions_to_jump(current_position);
+            vector<pair<int, int> >::iterator it = find(positions_to_jump.begin(), positions_to_jump.end(), last_position);
+            positions_to_jump.erase(it);
             if(positions_to_jump.size()!=0) {
                 pair<int, int> next_position = positions_to_jump[rand() % positions_to_jump.size()]; // select a random neighbour
                 apply_moviment(current_position, next_position, mesh);
                 mesh[current_position.second][current_position.first] = CELL_VISITED;
-                print_map();
-                cin.get();
             } else {
                mesh[current_position.second][current_position.first] = 0; 
                stack.pop();
@@ -173,7 +174,7 @@ void Map::dfs_generator(int x_start, int y_start) {
                 if (next_neighbours.size() == 0) {
                     mesh[next_position.second][next_position.first] = CELL_POSIBLE_WALL;
                 }
-                
+                last_position = current_position;
                 stack.push(next_position);
         } else {
             stack.pop();
