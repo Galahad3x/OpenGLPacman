@@ -10,6 +10,9 @@
 
 using namespace std;
 
+#define BLOCKED_STATUS 1
+#define BLOCKED_STATUS_BACKTRAKING 2
+
 
 void apply_moviment(pair<int, int> src_position, pair<int, int> dst_position, int **mesh) {
     int x_src = src_position.first;
@@ -33,6 +36,25 @@ void duplicate(int width, int height, int **mesh) {
         }
     }
 }
+
+bool is_blocked(int **mesh, pair<int, int> current_position) {
+    int x = current_position.first;
+    int y = current_position.second;
+    int counter = 0;
+
+    if (mesh[y][x-1] == CELL_VISITED)
+        counter += 1;
+    if (mesh[y][x+1] == CELL_VISITED)
+        counter += 1;
+
+    if (mesh[y-1][x] == CELL_VISITED)
+        counter += 1;
+    if (mesh[y+1][x] == CELL_VISITED)
+        counter += 1;
+
+    return counter < 2;
+}
+
 
 /*
 Implementation of the constructor and methods of the Map class
@@ -106,7 +128,11 @@ void Map::generate_mesh() {
     init_map();
 
     pair<int, int> start_position = insert_base();
-    dfs_generator(start_position.first, start_position.second-1);
+    try {
+        dfs_generator(start_position.first, start_position.second-1);
+    } catch (std::exception& e){
+       print_map();
+    }
     duplicate(n_cols, n_rows, mesh);
 }
 
@@ -121,14 +147,34 @@ void Map::dfs_generator(int x_start, int y_start) {
 
     // apply dfs while the stack is no empty
     pair<int, int> current_position;
-    while (!stack.empty()) {
+    while (!stack.empty()) {    
         current_position = stack.top();
+        int x = current_position.first;
+        int y = current_position.second;
         vector<pair<int, int> > neighbours = get_valids_neigbours(current_position);
-        if(!neighbours.empty()) {
-            pair<int, int> next_position = neighbours[rand() % neighbours.size()]; // select a random neighbour
-            apply_moviment(current_position, next_position, mesh);
-            mesh[next_position.second][next_position.first] = CELL_VISITED;
-            stack.push(next_position);
+        if (mesh[y][x] == CELL_POSIBLE_WALL) {
+            vector<pair<int, int> > positions_to_jump = get_positions_to_jump(current_position);
+            if(positions_to_jump.size()!=0) {
+                pair<int, int> next_position = positions_to_jump[rand() % positions_to_jump.size()]; // select a random neighbour
+                apply_moviment(current_position, next_position, mesh);
+                mesh[current_position.second][current_position.first] = CELL_VISITED;
+                print_map();
+                cin.get();
+            } else {
+               mesh[current_position.second][current_position.first] = 0; 
+               stack.pop();
+            }
+
+        } else if(!neighbours.empty()) {
+                pair<int, int> next_position = neighbours[rand() % neighbours.size()]; // select a random neighbour
+                apply_moviment(current_position, next_position, mesh);
+                vector<pair<int, int> > next_neighbours = get_valids_neigbours(next_position);
+                mesh[next_position.second][next_position.first] = CELL_VISITED;
+                if (next_neighbours.size() == 0) {
+                    mesh[next_position.second][next_position.first] = CELL_POSIBLE_WALL;
+                }
+                
+                stack.push(next_position);
         } else {
             stack.pop();
         }
@@ -172,6 +218,50 @@ vector<pair<int,int> > Map::get_valids_neigbours(pair<int, int> position) {
 
 
     if (is_valid(botton))
+        valids_neigbours.push_back(botton);
+
+    return valids_neigbours;
+}
+
+
+bool Map::is_valid_to_jump(pair<int, int> current_position) {
+    int x = current_position.first;
+    int y = current_position.second;
+
+
+    // check cords of the position
+    if (x <= 0 || x > x_limit) //
+        return false;
+
+    if (y <= 0 || y > y_limit) // 
+        return false;
+
+    return mesh[y][x] != WALL_CELL;
+    
+}
+
+vector<pair<int, int> > Map::get_positions_to_jump(pair<int, int> current_position) {
+    int x = current_position.first;
+    int y = current_position.second;
+
+    pair<int, int> right = make_pair(x - 2, y);
+    pair<int, int> left = make_pair(x + 2, y);
+    pair<int, int> top = make_pair(x, y - 2);
+    pair<int, int> botton = make_pair(x, y + 2);
+    // get valids neigbours
+    vector< pair<int,int> > valids_neigbours;
+    if (is_valid_to_jump(right))
+        valids_neigbours.push_back(right);
+
+    if (is_valid_to_jump(left))
+        valids_neigbours.push_back(left);
+
+
+    if (is_valid_to_jump(top))
+        valids_neigbours.push_back(top);
+
+
+    if (is_valid_to_jump(botton))
         valids_neigbours.push_back(botton);
 
     return valids_neigbours;

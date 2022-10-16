@@ -5,7 +5,7 @@
 using namespace std;
 
 #define WALL_CELL 3
-#define CELL_POSIBLE_BLOCK 2
+#define CELL_POSIBLE_WALL 2
 #define CELL_VISITED 1
 
 // Map class definition (like interface)
@@ -25,6 +25,8 @@ class Map {
         void init_map();
         pair<int, int> insert_base();
         bool is_valid(pair<int, int> position);
+        bool is_valid_to_jump(pair<int, int> position);
         vector<pair<int,int> > get_valids_neigbours(pair<int, int> position);
+        vector<pair<int,int> > get_positions_to_jump(pair<int, int> position);
 
 };
