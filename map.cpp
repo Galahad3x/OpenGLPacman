@@ -1,5 +1,4 @@
 #include"map.h"
-
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
@@ -10,6 +9,9 @@
 #include<iostream>
 
 using namespace std;
+
+#define BLOCKED_STATUS 1
+#define BLOCKED_STATUS_BACKTRAKING 2
 
 
 void apply_moviment(pair<int, int> src_position, pair<int, int> dst_position, int **mesh) {
@@ -26,17 +28,50 @@ void apply_moviment(pair<int, int> src_position, pair<int, int> dst_position, in
 }
 
 
+void duplicate(int width, int height, int **mesh) {
+    int x_end = width / 2;
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < x_end; j++) {
+            mesh[i][width - 1 - j] = mesh[i][j];
+        }
+    }
+}
+
+bool is_blocked(int **mesh, pair<int, int> current_position) {
+    int x = current_position.first;
+    int y = current_position.second;
+    int counter = 0;
+
+    if (mesh[y][x-1] == CELL_VISITED)
+        counter += 1;
+    if (mesh[y][x+1] == CELL_VISITED)
+        counter += 1;
+
+    if (mesh[y-1][x] == CELL_VISITED)
+        counter += 1;
+    if (mesh[y+1][x] == CELL_VISITED)
+        counter += 1;
+
+    return counter < 2;
+}
+
+
 /*
 Implementation of the constructor and methods of the Map class
 */
 // Map:: to indicate that you goint to implement the x map function or constructor
 Map::Map(int n_rows, int n_cols) {
-    // @anotation: this i like java but in this case it is a pointer for this reason to access to its fields its using -> operator
+   generate(n_rows, n_cols); 
+}
+
+Map::Map(){}
+
+void Map::generate(int n_rows, int n_cols){
     this->n_rows = n_rows;
     this->n_cols = n_cols;
 
-    this->x_limit = n_cols;  //(update limit when generates simetric map)
-    this->y_limit = n_rows - 1;  //(update limit when generates simetric map)
+    this->x_limit = n_cols / 2 + 1; //(update limit when generates simetric map)
+    this->y_limit = n_rows - 1; //(update limit when generates simetric map)
 
     generate_mesh();
 }
@@ -44,9 +79,9 @@ Map::Map(int n_rows, int n_cols) {
 void Map::print_map() {
     for (int i = 0; i < this->n_rows; i++) {
         for (int j = 0; j < this->n_cols; j++) {
-            if (this->mesh[i][j] == CELL_VISITED) 
+            if (this->mesh[i][j] == CELL_VISITED)
                 printf("-");
-            else 
+            else
                 printf("0");
         }
         printf("\n");
@@ -61,26 +96,86 @@ void Map::init_map() {
     }
 }
 
+pair<int, int> Map::insert_base() {
+    int base_width = 8;
+    int base_height = 6;
+
+    int x_mid = n_cols /2;
+    int y_mid = n_rows /2;
+
+    int x_start = x_mid - (base_width) / 2 - 1;
+   // int y_start = y_mid - (base_height) / 2 - 1;
+    int y_start = y_mid - (base_height) / 2;
+
+    //int y_end = y_mid + base_height / 2 + 1;
+    int y_end = y_mid + base_height / 2;
+    for (int i = y_start; i <= y_end; i++) {
+        // put a wall in the first position to build a wall column base
+        mesh[i][x_start] = WALL_CELL;
+
+        // fill the base positions
+        int fill_value = (i == y_start || i == y_end) ? WALL_CELL : CELL_VISITED;
+        for(int j = x_start + 1; j < x_mid; j++)
+            mesh[i][j] = fill_value;
+        mesh[i][x_mid] = fill_value;
+    }
+    // mark the base exit position as visited
+    mesh[y_start][x_mid] = CELL_VISITED;
+    return make_pair(x_mid, y_start);
+}
+
 void Map::generate_mesh() {
     init_map();
+
+    pair<int, int> start_position = insert_base();
+    try {
+        dfs_generator(start_position.first, start_position.second-1);
+    } catch (std::exception& e){
+       print_map();
+    }
+    duplicate(n_cols, n_rows, mesh);
+}
+
+void Map::dfs_generator(int x_start, int y_start) {
     srand(clock());
     stack< pair<int,int> > stack;
-    
+
     // Set start position
-    pair<int, int> start_position = make_pair(x_limit-1, y_limit-1);
+    pair<int, int> start_position = make_pair(x_start, y_start);
     mesh[start_position.second][start_position.first] = CELL_VISITED;
     stack.push(start_position);
-    
+
     // apply dfs while the stack is no empty
     pair<int, int> current_position;
-    while (!stack.empty()) {
+    pair<int, int> last_position;
+    while (!stack.empty()) {    
         current_position = stack.top();
+        int x = current_position.first;
+        int y = current_position.second;
         vector<pair<int, int> > neighbours = get_valids_neigbours(current_position);
-        if(!neighbours.empty()) {
-            pair<int, int> next_position = neighbours[rand() % neighbours.size()]; // select a random neighbour
-            apply_moviment(current_position, next_position, mesh);
-            mesh[next_position.second][next_position.first] = CELL_VISITED;
-            stack.push(next_position);
+        if (mesh[y][x] == CELL_POSIBLE_WALL) {
+            vector<pair<int, int> > positions_to_jump = get_positions_to_jump(current_position);
+            vector<pair<int, int> >::iterator it = find(positions_to_jump.begin(), positions_to_jump.end(), last_position);
+            positions_to_jump.erase(it);
+            if(positions_to_jump.size()!=0) {
+                pair<int, int> next_position = positions_to_jump[rand() % positions_to_jump.size()]; // select a random neighbour
+                apply_moviment(current_position, next_position, mesh);
+                mesh[current_position.second][current_position.first] = CELL_VISITED;
+            } else {
+               mesh[current_position.second][current_position.first] = 0; 
+               stack.pop();
+            }
+
+        } else if(!neighbours.empty()) {
+                pair<int, int> next_position = neighbours[rand() % neighbours.size()]; // select a random neighbour
+                apply_moviment(current_position, next_position, mesh);
+                vector<pair<int, int> > next_neighbours = get_valids_neigbours(next_position);
+                mesh[next_position.second][next_position.first] = CELL_VISITED;
+                if (next_neighbours.size() == 0) {
+                    mesh[next_position.second][next_position.first] = CELL_POSIBLE_WALL;
+                }
+                last_position = current_position;
+                stack.push(next_position);
         } else {
             stack.pop();
         }
@@ -90,12 +185,12 @@ void Map::generate_mesh() {
 bool Map::is_valid(pair<int, int> position) {
     int x = position.first;
     int y = position.second;
-    
+
     // check cords of the position
-    if (x <= 0 || x >= x_limit) 
+    if (x <= 0 || x >= x_limit)
         return false;
 
-    if (y <= 0 || y >= y_limit) 
+    if (y <= 0 || y >= y_limit)
         return false;
 
     return mesh[y][x] != CELL_VISITED && mesh[y][x] != WALL_CELL;
@@ -114,16 +209,60 @@ vector<pair<int,int> > Map::get_valids_neigbours(pair<int, int> position) {
     vector< pair<int,int> > valids_neigbours;
     if (is_valid(right))
         valids_neigbours.push_back(right);
-    
+
     if (is_valid(left))
         valids_neigbours.push_back(left);
-    
-    
+
+
     if (is_valid(top))
         valids_neigbours.push_back(top);
-    
-    
+
+
     if (is_valid(botton))
+        valids_neigbours.push_back(botton);
+
+    return valids_neigbours;
+}
+
+
+bool Map::is_valid_to_jump(pair<int, int> current_position) {
+    int x = current_position.first;
+    int y = current_position.second;
+
+
+    // check cords of the position
+    if (x <= 0 || x > x_limit) //
+        return false;
+
+    if (y <= 0 || y > y_limit) // 
+        return false;
+
+    return mesh[y][x] != WALL_CELL;
+    
+}
+
+vector<pair<int, int> > Map::get_positions_to_jump(pair<int, int> current_position) {
+    int x = current_position.first;
+    int y = current_position.second;
+
+    pair<int, int> right = make_pair(x - 2, y);
+    pair<int, int> left = make_pair(x + 2, y);
+    pair<int, int> top = make_pair(x, y - 2);
+    pair<int, int> botton = make_pair(x, y + 2);
+    // get valids neigbours
+    vector< pair<int,int> > valids_neigbours;
+    if (is_valid_to_jump(right))
+        valids_neigbours.push_back(right);
+
+    if (is_valid_to_jump(left))
+        valids_neigbours.push_back(left);
+
+
+    if (is_valid_to_jump(top))
+        valids_neigbours.push_back(top);
+
+
+    if (is_valid_to_jump(botton))
         valids_neigbours.push_back(botton);
 
     return valids_neigbours;
