@@ -40,7 +40,7 @@ void duplicate(int width, int height, int **mesh) {
     }
 }
 
-void remove_neighbour(vector<pair<int ,int> > from,  pair<int ,int> neighbour) {
+void remove_neighbour(vector<pair<int ,int> > &from,  pair<int ,int> neighbour) {
     vector<pair<int, int> >::iterator it = find(from.begin(), from.end(), neighbour);
     from.erase(it);
 }
@@ -140,7 +140,9 @@ void Map::dfs_generator(int x_start, int y_start) {
         if (mesh[y][x] == CELL_POSSIBLE_WALL) {
             vector<pair<int, int> > positions_to_jump = get_positions_to_jump(current_position);
             // remove the previus position of the list of valid position to jump
+            printf("size=%lu,", positions_to_jump.size());
             remove_neighbour(positions_to_jump, last_position);
+            printf("size=%lu\n,", positions_to_jump.size());
 
             // check if has valid positions to jump
             if(positions_to_jump.size()!=0) {
