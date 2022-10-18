@@ -56,6 +56,12 @@ bool is_blocked(int **mesh, pair<int, int> current_position) {
 }
 
 
+void remove_neighbour(vector<pair<int ,int> > from,  pair<int ,int> neighbour) {
+    vector<pair<int, int> >::iterator it = find(from.begin(), from.end(), neighbour);
+    from.erase(it);
+}
+
+
 /*
 Implementation of the constructor and methods of the Map class
 */
@@ -152,11 +158,9 @@ void Map::dfs_generator(int x_start, int y_start) {
         current_position = stack.top();
         int x = current_position.first;
         int y = current_position.second;
-        vector<pair<int, int> > neighbours = get_valids_neigbours(current_position);
+        
         if (mesh[y][x] == CELL_POSIBLE_WALL) {
             vector<pair<int, int> > positions_to_jump = get_positions_to_jump(current_position);
-            vector<pair<int, int> >::iterator it = find(positions_to_jump.begin(), positions_to_jump.end(), last_position);
-            positions_to_jump.erase(it);
             if(positions_to_jump.size()!=0) {
                 pair<int, int> next_position = positions_to_jump[rand() % positions_to_jump.size()]; // select a random neighbour
                 apply_moviment(current_position, next_position, mesh);
@@ -165,19 +169,13 @@ void Map::dfs_generator(int x_start, int y_start) {
                mesh[current_position.second][current_position.first] = 0; 
                stack.pop();
             }
-
-        } else if(!neighbours.empty()) {
-                pair<int, int> next_position = neighbours[rand() % neighbours.size()]; // select a random neighbour
-                apply_moviment(current_position, next_position, mesh);
-                vector<pair<int, int> > next_neighbours = get_valids_neigbours(next_position);
-                mesh[next_position.second][next_position.first] = CELL_VISITED;
-                if (next_neighbours.size() == 0) {
-                    mesh[next_position.second][next_position.first] = CELL_POSIBLE_WALL;
-                }
-                last_position = current_position;
-                stack.push(next_position);
         } else {
-            stack.pop();
+                pair<int, int> next_position = random_moviment(current_position);
+                last_position = current_position;
+                if(next_position.first==-1)
+                    stack.pop();
+                 else 
+                    stack.push(next_position);
         }
     }
 }
@@ -229,7 +227,6 @@ bool Map::is_valid_to_jump(pair<int, int> current_position) {
     int x = current_position.first;
     int y = current_position.second;
 
-
     // check cords of the position
     if (x <= 0 || x > x_limit) //
         return false;
@@ -245,11 +242,13 @@ vector<pair<int, int> > Map::get_positions_to_jump(pair<int, int> current_positi
     int x = current_position.first;
     int y = current_position.second;
 
+    // generate all neighbours 
     pair<int, int> right = make_pair(x - 2, y);
     pair<int, int> left = make_pair(x + 2, y);
     pair<int, int> top = make_pair(x, y - 2);
     pair<int, int> botton = make_pair(x, y + 2);
-    // get valids neigbours
+
+    // get valids neighbours
     vector< pair<int,int> > valids_neigbours;
     if (is_valid_to_jump(right))
         valids_neigbours.push_back(right);
@@ -266,4 +265,19 @@ vector<pair<int, int> > Map::get_positions_to_jump(pair<int, int> current_positi
         valids_neigbours.push_back(botton);
 
     return valids_neigbours;
+}
+
+pair<int, int> Map::random_moviment(pair<int, int> current_position) {
+    vector<pair<int, int> > neighbours = get_valids_neigbours(current_position);
+    if(!neighbours.empty()) {
+        pair<int, int> next_position = neighbours[rand() % neighbours.size()]; // select a random neighbour
+        apply_moviment(current_position, next_position, mesh);
+        vector<pair<int, int> > next_neighbours = get_valids_neigbours(next_position);
+        mesh[next_position.second][next_position.first] = CELL_VISITED;
+        if (next_neighbours.size() == 0)  {
+            mesh[next_position.second][next_position.first] = CELL_POSIBLE_WALL;
+        }
+        return next_position;
+    }
+    return make_pair(-1,-1); 
 }

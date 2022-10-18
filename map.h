@@ -22,6 +22,7 @@ class Map {
         int x_limit, y_limit;
         void generate_mesh();
         void dfs_generator(int x_start, int y_start);
+        pair<int, int> random_moviment(pair<int, int> current_position);
         void init_map();
         pair<int, int> insert_base();
         bool is_valid(pair<int, int> position);
