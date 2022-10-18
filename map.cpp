@@ -235,10 +235,10 @@ bool Map::is_valid_to_jump(pair<int, int> current_position) {
     int y = current_position.second;
 
     // check cords of the position
-    if (x <= 0 || x > x_limit) //
+    if (x <= 0 || x > x_limit) 
         return false;
 
-    if (y <= 0 || y > y_limit) // 
+    if (y <= 0 || y > y_limit)
         return false;
 
     return mesh[y][x] != WALL_CELL;

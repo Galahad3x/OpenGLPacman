@@ -34,11 +34,12 @@ Map map;
 
 int main(int argc, char *argv[]) {
     if (argc < 3){
-        printf("Usage: ./pacman <rows> <half_of_columns>\n");
+        printf("Usage: ./pacman <half_of_columns> <half_of_columns>\n");
         exit(-1);
     }
 
 
+    // Calculate the number of rows and cols
     ROWS = atoi(argv[1]);
     ROWS = (ROWS % 2 == 0 ? ROWS + 1 : ROWS) *2+1;
     COLS = atoi(argv[2]);
@@ -46,6 +47,7 @@ int main(int argc, char *argv[]) {
     map.generate(ROWS,COLS);
     map.print_map();
 
+    // init the windows
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowPosition(50,50);
