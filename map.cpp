@@ -137,7 +137,9 @@ void Map::dfs_generator(int x_start, int y_start) {
         int x = current_position.first;
         int y = current_position.second;
         
+    
         if (mesh[y][x] == CELL_POSSIBLE_WALL) {
+            // find the valids position to jump
             vector<pair<int, int> > positions_to_jump = get_positions_to_jump(current_position);
             // remove the previus position of the list of valid position to jump
             remove_neighbour(positions_to_jump, last_position);

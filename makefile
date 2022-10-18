@@ -2,11 +2,14 @@ OBJS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 all: pacman
 
-mac: $(OBJS)
+pacman: $(OBJS)
+ifeq ($(shell uname -s), Darwin)	
 	g++ -std=c++17 $(OBJS) -o pacman -framework GLUT -framework OpenGL
 
-pacman: $(OBJS)
+else
 	g++ -std=c++17 $(OBJS) -o $@ -lglut -lGLU -lGL -lm
+endif
+	
 
 %.o: %.cpp %.h
 
