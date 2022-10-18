@@ -10,9 +10,12 @@
 
 using namespace std;
 
-#define BLOCKED_STATUS 1
-#define BLOCKED_STATUS_BACKTRAKING 2
 
+/*
+***************************************************************
+                    AUXILIAR FUNCTIONS
+***************************************************************
+*/
 
 void apply_moviment(pair<int, int> src_position, pair<int, int> dst_position, int **mesh) {
     int x_src = src_position.first;
@@ -37,35 +40,16 @@ void duplicate(int width, int height, int **mesh) {
     }
 }
 
-bool is_blocked(int **mesh, pair<int, int> current_position) {
-    int x = current_position.first;
-    int y = current_position.second;
-    int counter = 0;
-
-    if (mesh[y][x-1] == CELL_VISITED)
-        counter += 1;
-    if (mesh[y][x+1] == CELL_VISITED)
-        counter += 1;
-
-    if (mesh[y-1][x] == CELL_VISITED)
-        counter += 1;
-    if (mesh[y+1][x] == CELL_VISITED)
-        counter += 1;
-
-    return counter < 2;
-}
-
-
 void remove_neighbour(vector<pair<int ,int> > from,  pair<int ,int> neighbour) {
     vector<pair<int, int> >::iterator it = find(from.begin(), from.end(), neighbour);
     from.erase(it);
 }
 
-
 /*
+***************************************************************
 Implementation of the constructor and methods of the Map class
+***************************************************************
 */
-// Map:: to indicate that you goint to implement the x map function or constructor
 Map::Map(int n_rows, int n_cols) {
    generate(n_rows, n_cols); 
 }
@@ -110,11 +94,9 @@ pair<int, int> Map::insert_base() {
     int y_mid = n_rows /2;
 
     int x_start = x_mid - (base_width) / 2 - 1;
-   // int y_start = y_mid - (base_height) / 2 - 1;
     int y_start = y_mid - (base_height) / 2;
-
-    //int y_end = y_mid + base_height / 2 + 1;
     int y_end = y_mid + base_height / 2;
+    
     for (int i = y_start; i <= y_end; i++) {
         // put a wall in the first position to build a wall column base
         mesh[i][x_start] = WALL_CELL;
@@ -134,11 +116,7 @@ void Map::generate_mesh() {
     init_map();
 
     pair<int, int> start_position = insert_base();
-    try {
-        dfs_generator(start_position.first, start_position.second-1);
-    } catch (std::exception& e){
-       print_map();
-    }
+    dfs_generator(start_position.first, start_position.second-1);
     duplicate(n_cols, n_rows, mesh);
 }
 
@@ -159,25 +137,52 @@ void Map::dfs_generator(int x_start, int y_start) {
         int x = current_position.first;
         int y = current_position.second;
         
-        if (mesh[y][x] == CELL_POSIBLE_WALL) {
+        if (mesh[y][x] == CELL_POSSIBLE_WALL) {
             vector<pair<int, int> > positions_to_jump = get_positions_to_jump(current_position);
+            // remove the previus position of the list of valid position to jump
+            remove_neighbour(positions_to_jump, last_position);
+
+            // check if has valid positions to jump
             if(positions_to_jump.size()!=0) {
                 pair<int, int> next_position = positions_to_jump[rand() % positions_to_jump.size()]; // select a random neighbour
                 apply_moviment(current_position, next_position, mesh);
                 mesh[current_position.second][current_position.first] = CELL_VISITED;
             } else {
-               mesh[current_position.second][current_position.first] = 0; 
-               stack.pop();
+                // backtraking if is imposible continue for this position
+                mesh[current_position.second][current_position.first] = 0; 
+                stack.pop();
             }
         } else {
                 pair<int, int> next_position = random_moviment(current_position);
                 last_position = current_position;
+                //check if have next position
                 if(next_position.first==-1)
                     stack.pop();
                  else 
                     stack.push(next_position);
         }
     }
+}
+
+
+pair<int, int> Map::random_moviment(pair<int, int> current_position) {
+    vector<pair<int, int> > neighbours = get_valids_neigbours(current_position);
+    if(!neighbours.empty()) {
+        pair<int, int> next_position = neighbours[rand() % neighbours.size()]; // select a random neighbour
+        apply_moviment(current_position, next_position, mesh);
+        vector<pair<int, int> > next_neighbours = get_valids_neigbours(next_position);
+        mesh[next_position.second][next_position.first] = CELL_VISITED;
+
+        // check if the next position have valid neighbours
+        if (next_neighbours.size() == 0)  {
+            // mark as possible wall to process the problem in the next iteration
+            mesh[next_position.second][next_position.first] = CELL_POSSIBLE_WALL;
+        }
+        return next_position;
+    }
+
+    // return invalid position the current position don't have a valid neighbour
+    return make_pair(-1,-1); 
 }
 
 bool Map::is_valid(pair<int, int> position) {
@@ -267,17 +272,3 @@ vector<pair<int, int> > Map::get_positions_to_jump(pair<int, int> current_positi
     return valids_neigbours;
 }
 
-pair<int, int> Map::random_moviment(pair<int, int> current_position) {
-    vector<pair<int, int> > neighbours = get_valids_neigbours(current_position);
-    if(!neighbours.empty()) {
-        pair<int, int> next_position = neighbours[rand() % neighbours.size()]; // select a random neighbour
-        apply_moviment(current_position, next_position, mesh);
-        vector<pair<int, int> > next_neighbours = get_valids_neigbours(next_position);
-        mesh[next_position.second][next_position.first] = CELL_VISITED;
-        if (next_neighbours.size() == 0)  {
-            mesh[next_position.second][next_position.first] = CELL_POSIBLE_WALL;
-        }
-        return next_position;
-    }
-    return make_pair(-1,-1); 
-}

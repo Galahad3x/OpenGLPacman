@@ -5,7 +5,7 @@
 using namespace std;
 
 #define WALL_CELL 3
-#define CELL_POSIBLE_WALL 2
+#define CELL_POSSIBLE_WALL 2
 #define CELL_VISITED 1
 
 // Map class definition (like interface)
