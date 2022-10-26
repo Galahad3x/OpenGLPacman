@@ -89,10 +89,10 @@ void Map::init_map() {
 pair<int, int> Map::insert_base() {
     int base_width = 8;
     int base_height = 6;
-
     int x_mid = n_cols /2;
     int y_mid = n_rows /2;
 
+    // calculate base limits
     int x_start = x_mid - (base_width) / 2 - 1;
     int y_start = y_mid - (base_height) / 2;
     int y_end = y_mid + base_height / 2;
@@ -100,11 +100,11 @@ pair<int, int> Map::insert_base() {
     for (int i = y_start; i <= y_end; i++) {
         // put a wall in the first position to build a wall column base
         mesh[i][x_start] = WALL_CELL;
-
         // fill the base positions
         int fill_value = (i == y_start || i == y_end) ? WALL_CELL : CELL_VISITED;
-        for(int j = x_start + 1; j < x_mid; j++)
+        for(int j = x_start + 1; j < x_mid; j++) {
             mesh[i][j] = fill_value;
+        }
         mesh[i][x_mid] = fill_value;
     }
     // mark the base exit position as visited
@@ -134,16 +134,14 @@ void Map::dfs_generator(int x_start, int y_start) {
     pair<int, int> last_position;
     while (!stack.empty()) {    
         current_position = stack.top();
+        
         int x = current_position.first;
         int y = current_position.second;
-        
-    
         if (mesh[y][x] == CELL_POSSIBLE_WALL) {
             // find the valids position to jump
             vector<pair<int, int> > positions_to_jump = get_positions_to_jump(current_position);
             // remove the previus position of the list of valid position to jump
             remove_neighbour(positions_to_jump, last_position);
-
             // check if has valid positions to jump
             if(positions_to_jump.size()!=0) {
                 pair<int, int> next_position = positions_to_jump[rand() % positions_to_jump.size()]; // select a random neighbour

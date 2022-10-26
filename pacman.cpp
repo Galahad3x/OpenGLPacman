@@ -9,6 +9,8 @@
 #include"graphic.h"
 #include"map.h"
 
+
+
 //-------------------------
 // OpenGL functions
 void display();
@@ -22,6 +24,9 @@ int COLS;
 int MAX_WIDTH = 1000;
 int MAX_HEIGHT = 600;
 
+// min number of cols and rows
+int MIN_ROWS_COLS = 15;
+
 // Final window size and projection size (pixels)
 int WIDTH;
 int HEIGHT;
@@ -34,16 +39,22 @@ Map map;
 
 int main(int argc, char *argv[]) {
     if (argc < 3){
-        printf("Usage: ./pacman <half_of_columns> <half_of_columns>\n");
+        printf("Usage: ./pacman <half_of_rows> <half_of_columns>\n");
         exit(-1);
     }
 
 
     // Calculate the number of rows and cols
     ROWS = atoi(argv[1]);
-    ROWS = (ROWS % 2 == 0 ? ROWS + 1 : ROWS) *2+1;
+    ROWS = (ROWS % 2 == 0 ? ROWS + 1 : ROWS) * 2+1;
     COLS = atoi(argv[2]);
-    COLS = (COLS % 2 == 0 ? COLS + 1 : COLS) *2+1;
+    COLS = (COLS % 2 == 0 ? COLS + 1 : COLS) * 2 + 1;
+    if(ROWS < MIN_ROWS_COLS || COLS <  MIN_ROWS_COLS) {
+        printf("The number of half_of_columns and half_of_rows must be greater Than or Equal to %d\n", MIN_ROWS_COLS);
+        exit(0);
+    }
+
+
     map.generate(ROWS,COLS);
     map.print_map();
 
