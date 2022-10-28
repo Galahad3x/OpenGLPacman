@@ -9,12 +9,15 @@
 #include <algorithm>
 #include"graphic.h"
 #include"map.h"
+#include"agent.h"
 
 
 
 //-------------------------
 // OpenGL functions
 void display();
+void special_input(int key, int x, int y);
+void idle();
 //-------------------------
 
 // Maze size (cells)
@@ -36,6 +39,8 @@ int HEIGHT;
 int sq_size;
 
 long last_t = glutGet(GLUT_ELAPSED_TIME);
+
+Agent some_agent;
 
 // Map object, not initialized
 Map map;
@@ -72,11 +77,14 @@ int main(int argc, char *argv[]) {
     HEIGHT = sq_size * ROWS;
 
     // Generar fantasmes aqui
+    some_agent.initialize(sq_size, sq_size-6);
 
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Pac-Man");
 
     glutDisplayFunc(display);
+    glutSpecialFunc(special_input);
+    glutIdleFunc(idle);
 
     glMatrixMode(GL_PROJECTION);
     gluOrtho2D(0,WIDTH-1,HEIGHT-1,0);
@@ -105,6 +113,7 @@ void display(){
     // Draw food
 
     // Draw agents
+    some_agent.draw();
 
     glutSwapBuffers();
 
@@ -114,8 +123,31 @@ void idle() {
     long t;
     t = glutGet(GLUT_ELAPSED_TIME);
 
-    // Integrate all entities
+    some_agent.integrate(t-last_t);
 
     last_t = t;
+    glutPostRedisplay();
+}
+
+void special_input(int key, int x, int y) {
+    switch(key) {
+        case GLUT_KEY_UP:
+            some_agent.grid_y--;
+            some_agent.set_position(some_agent.grid_x*sq_size, some_agent.grid_y*sq_size);
+            //some_agent.init_movement(some_agent.grid_x*sq_size, some_agent.grid_y*sq_size, 1000);
+            break;
+        case GLUT_KEY_DOWN:
+            some_agent.grid_y++;
+            some_agent.init_movement(some_agent.grid_x*sq_size, some_agent.grid_y*sq_size, 1000);
+            break;
+        case GLUT_KEY_LEFT:
+            some_agent.grid_x--;
+            some_agent.init_movement(some_agent.grid_x*sq_size, some_agent.grid_y*sq_size, 1000);
+            break;
+        case GLUT_KEY_RIGHT:
+            some_agent.grid_x++;
+            some_agent.init_movement(some_agent.grid_x*sq_size, some_agent.grid_y*sq_size, 1000);
+            break;
+    }
     glutPostRedisplay();
 }

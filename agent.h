@@ -16,8 +16,12 @@ class Agent {
         long time_remaining;
 
         // Constructor
+        Agent();
         Agent(int sq_size,int agent_size);
         Agent(int sq_size,int agent_size,int grid_x,int grid_y);
+
+        void initialize(int sq_size,int agent_size);
+        void initialize(int sq_size,int agent_size,int grid_x,int grid_y);
 
         // Movement functions
         void set_position(int x, int y);

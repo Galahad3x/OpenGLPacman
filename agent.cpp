@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Agent::Agent(int sq_size,int agent_size){
+void Agent::initialize(int sq_size, int agent_size){
     this->grid_x = 0;
     this->grid_y = 0;
 
@@ -15,7 +15,7 @@ Agent::Agent(int sq_size,int agent_size){
     this->agent_size = agent_size;
 }
 
-Agent::Agent(int sq_size,int agent_size,int grid_x,int grid_y){
+void Agent::initialize(int sq_size,int agent_size,int grid_x,int grid_y){
     this->grid_x = grid_x;
     this->grid_y = grid_y;
 
@@ -25,6 +25,16 @@ Agent::Agent(int sq_size,int agent_size,int grid_x,int grid_y){
     this->y = this->grid_y*sq_size + distance;
     this->sq_size = sq_size;
     this->agent_size = agent_size;
+}
+
+Agent::Agent(){}
+
+Agent::Agent(int sq_size,int agent_size){
+    this->initialize(sq_size, agent_size);
+}
+
+Agent::Agent(int sq_size,int agent_size,int grid_x,int grid_y){
+    this->initialize(sq_size, agent_size, grid_x, grid_y);
 }
 
 void Agent::set_position(int x,int y) {
