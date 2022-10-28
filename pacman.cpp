@@ -6,6 +6,7 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include <algorithm>
 #include"graphic.h"
 #include"map.h"
 
@@ -35,8 +36,6 @@ int HEIGHT;
 int sq_size;
 
 long last_t = glutGet(GLUT_ELAPSED_TIME);
-
-
 
 // Map object, not initialized
 Map map;
