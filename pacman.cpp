@@ -8,6 +8,7 @@
 #include<stdlib.h>
 #include"graphic.h"
 #include"map.h"
+#include "food.h"
 
 
 
@@ -36,6 +37,7 @@ int sq_size;
 
 // Map object, not initialized
 Map map;
+void put_food();
 
 int main(int argc, char *argv[]) {
     if (argc < 3){
@@ -95,7 +97,23 @@ void display(){
             }
         }
   	}
-
+    put_food();
     glutSwapBuffers();
 
+}
+
+void put_food() {
+    for (int y=0; y < map.n_rows; y++) {
+        for (int x=0; x < map.n_cols; x++) {
+            int cell_origin_x = x * sq_size; 
+            int cell_origin_y = y * sq_size; 
+
+            int food_x = cell_origin_x + sq_size / 2;
+            int food_y = cell_origin_y + sq_size / 2;
+
+            if(map.mesh[y][x] == CELL_VISITED){
+                Food(food_x, food_y, sq_size / 4).draw();   
+            }
+        }
+    }
 }
