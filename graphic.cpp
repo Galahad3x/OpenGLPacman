@@ -8,7 +8,6 @@
 #include"graphic.h"
 
 void draw_rectangle(int x, int y, int width, int height){
-    set_3f_color(COOL_BLUE);
     glBegin(GL_QUADS);
 
     glVertex2i(x,y);
