@@ -1,3 +1,7 @@
+#define STILL 0
+#define MOVING_BETWEEN 1
+#define REACHED 2
+
 using namespace std;
 
 class Agent {
@@ -8,12 +12,21 @@ class Agent {
 
         // Size of the agent
         int agent_size;
+        int dist;
 
         // Position and velocity inside the screen
         int x, y;
         int vx, vy;
 
+        // Ms to wait before moving 1 pixel in the direction;
+        int vut_x, vut_y;
+        int dx, dy;
+
         long time_remaining;
+
+        int state;
+
+        int speed;
 
         // Constructor
         Agent();
@@ -25,7 +38,7 @@ class Agent {
 
         // Movement functions
         void set_position(int x, int y);
-        void init_movement(int destination_x, int destination_y, int duration);
+        void init_movement();
         void integrate(long t);
         void draw();
 };

@@ -38,7 +38,7 @@ int HEIGHT;
 // Size of a corridor square (pixels)
 int sq_size;
 
-long last_t = glutGet(GLUT_ELAPSED_TIME);
+long last_t = 0;
 
 Agent some_agent;
 
@@ -132,21 +132,27 @@ void idle() {
 void special_input(int key, int x, int y) {
     switch(key) {
         case GLUT_KEY_UP:
+            printf("KEY_UP\n");
             some_agent.grid_y--;
-            some_agent.set_position(some_agent.grid_x*sq_size, some_agent.grid_y*sq_size);
-            //some_agent.init_movement(some_agent.grid_x*sq_size, some_agent.grid_y*sq_size, 1000);
+            some_agent.init_movement();
             break;
         case GLUT_KEY_DOWN:
+            printf("KEY_DOWN\n");
             some_agent.grid_y++;
-            some_agent.init_movement(some_agent.grid_x*sq_size, some_agent.grid_y*sq_size, 1000);
+            some_agent.init_movement();
             break;
         case GLUT_KEY_LEFT:
+            printf("KEY_LEFT\n");
             some_agent.grid_x--;
-            some_agent.init_movement(some_agent.grid_x*sq_size, some_agent.grid_y*sq_size, 1000);
+            some_agent.init_movement();
             break;
         case GLUT_KEY_RIGHT:
+            printf("KEY_RIGHT\n");
             some_agent.grid_x++;
-            some_agent.init_movement(some_agent.grid_x*sq_size, some_agent.grid_y*sq_size, 1000);
+            some_agent.init_movement();
+            break;
+        case GLUT_KEY_F1:
+            exit(0);
             break;
     }
     glutPostRedisplay();
