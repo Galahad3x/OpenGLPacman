@@ -7,6 +7,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include <algorithm>
+#include<time.h>
 #include"graphic.h"
 #include"map.h"
 #include"agent.h"
@@ -51,6 +52,7 @@ int main(int argc, char *argv[]) {
         exit(-1);
     }
 
+    srand(clock());
 
     // Calculate the number of rows and cols
     ROWS = atoi(argv[1]);
@@ -77,8 +79,10 @@ int main(int argc, char *argv[]) {
     HEIGHT = sq_size * ROWS;
 
     // Generar fantasmes aqui
-    // TODO Generate random valid start point
-    some_agent.initialize(sq_size, sq_size-7);
+
+    pair<int, int> start_positions = map.start_position();
+
+    some_agent.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second);
 
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Pac-Man");
@@ -101,15 +105,7 @@ void display(){
     glClearColor(0.2,0.2,0.2,0.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    set_3f_color(COOL_BLUE);
-    // Print corridor colors
-    for(i = 0; i < ROWS; i++){
-        for(j = 0; j < COLS; j++){
-            if(map.mesh[i][j] == CELL_VISITED){
-                draw_square(j*sq_size, i*sq_size, sq_size);
-            }
-        }
-  	}
+    map.draw(sq_size);
 
     // Draw food
 

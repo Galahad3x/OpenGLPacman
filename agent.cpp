@@ -6,7 +6,7 @@ using namespace std;
 
 void Agent::initialize(int sq_size, int agent_size){
     this->state = STILL;
-    this->speed = 1000.0;
+    this->speed = 400.0;
 
     this->grid_x = 0;
     this->grid_y = 0;
@@ -21,7 +21,7 @@ void Agent::initialize(int sq_size, int agent_size){
 
 void Agent::initialize(int sq_size,int agent_size,int grid_x,int grid_y){
     this->state = STILL;
-    this->speed = 1000.0;
+    this->speed = 400.0;
 
     this->grid_x = grid_x;
     this->grid_y = grid_y;

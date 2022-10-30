@@ -17,6 +17,10 @@ class Map {
     Map();
     void generate(int n_rows, int n_cols);
     void print_map();
+    void draw(int sq_size);
+
+    // Returns a random start position
+    pair<int, int> start_position();
 
     private:
         int x_limit, y_limit;
