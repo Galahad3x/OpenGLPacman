@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
     HEIGHT = sq_size * ROWS;
 
     // Generar fantasmes aqui
-    some_agent.initialize(sq_size, sq_size-6);
+    some_agent.initialize(sq_size, sq_size-7);
 
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Pac-Man");
@@ -132,22 +132,18 @@ void idle() {
 void special_input(int key, int x, int y) {
     switch(key) {
         case GLUT_KEY_UP:
-            printf("KEY_UP\n");
             some_agent.grid_y--;
             some_agent.init_movement();
             break;
         case GLUT_KEY_DOWN:
-            printf("KEY_DOWN\n");
             some_agent.grid_y++;
             some_agent.init_movement();
             break;
         case GLUT_KEY_LEFT:
-            printf("KEY_LEFT\n");
             some_agent.grid_x--;
             some_agent.init_movement();
             break;
         case GLUT_KEY_RIGHT:
-            printf("KEY_RIGHT\n");
             some_agent.grid_x++;
             some_agent.init_movement();
             break;
