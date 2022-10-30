@@ -75,12 +75,50 @@ void Agent::integrate(long t) {
             this->x = x + vx*time_remaining;
             this->y = y + vy*time_remaining;
 
-            this->state = STILL;
+            // Init new movement if possible
+            // TODO change true by valid comprovation
+            if (true){
+                this->state = STILL;
+                this->treat_input(this->key_flag);
+            }else{
+                this->state = STILL;
+                this->key_flag = -1;
+            }
         }
     }
 }
 
+void Agent::treat_input(int key_flag){
+    if (this->state == STILL){
+        this->key_flag = key_flag;
+        switch (key_flag) {
+            case GLUT_KEY_UP:
+                this->grid_y--;
+                this->init_movement();
+                break;
+            case GLUT_KEY_DOWN:
+                this->grid_y++;
+                this->init_movement();
+                break;
+            case GLUT_KEY_LEFT:
+                this->grid_x--;
+                this->init_movement();
+                break;
+            case GLUT_KEY_RIGHT:
+                this->grid_x++;
+                this->init_movement();
+                break;
+        }
+    } else if(this->state == MOVING_BETWEEN) {
+        this->key_flag = key_flag;
+    }
+}
+
 void Agent::draw() {
-    set_3f_color(DARK_GREEN);
+    set_3f_color(ORANGE);
     draw_square((int) x, (int) y, agent_size);
+}
+
+void Agent::init_new_movement(){
+
 }

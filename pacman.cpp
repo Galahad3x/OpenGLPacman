@@ -77,6 +77,7 @@ int main(int argc, char *argv[]) {
     HEIGHT = sq_size * ROWS;
 
     // Generar fantasmes aqui
+    // TODO Generate random valid start point
     some_agent.initialize(sq_size, sq_size-7);
 
     glutInitWindowSize(WIDTH, HEIGHT);
@@ -100,7 +101,7 @@ void display(){
     glClearColor(0.2,0.2,0.2,0.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    set_3f_color(ORANGE);
+    set_3f_color(COOL_BLUE);
     // Print corridor colors
     for(i = 0; i < ROWS; i++){
         for(j = 0; j < COLS; j++){
@@ -131,24 +132,11 @@ void idle() {
 
 void special_input(int key, int x, int y) {
     switch(key) {
-        case GLUT_KEY_UP:
-            some_agent.grid_y--;
-            some_agent.init_movement();
-            break;
-        case GLUT_KEY_DOWN:
-            some_agent.grid_y++;
-            some_agent.init_movement();
-            break;
-        case GLUT_KEY_LEFT:
-            some_agent.grid_x--;
-            some_agent.init_movement();
-            break;
-        case GLUT_KEY_RIGHT:
-            some_agent.grid_x++;
-            some_agent.init_movement();
-            break;
         case GLUT_KEY_F1:
             exit(0);
+            break;
+        default:
+            some_agent.treat_input(key);
             break;
     }
     glutPostRedisplay();

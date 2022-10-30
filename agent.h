@@ -30,6 +30,8 @@ class Agent {
 
         float speed;
 
+        int key_flag;
+
         // Constructor
         Agent();
         Agent(int sq_size,int agent_size);
@@ -41,6 +43,9 @@ class Agent {
         // Movement functions
         void set_position(float x, float y);
         void init_movement();
+        void init_new_movement();
         void integrate(long t);
         void draw();
+
+        void treat_input(int key_flag);
 };
