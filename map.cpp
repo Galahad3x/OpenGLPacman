@@ -100,7 +100,7 @@ pair<int, int> Map::start_position(){
         start_x = rand() % n_rows;
         start_y = rand() % n_cols;
         if (this->mesh[start_x][start_y] == CELL_VISITED){
-            return make_pair(start_x, start_y);
+            return make_pair(start_y, start_x);
         }
     }
 }

@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
 
     pair<int, int> start_positions = map.start_position();
 
-    some_agent.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second);
+    some_agent.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
 
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Pac-Man");
