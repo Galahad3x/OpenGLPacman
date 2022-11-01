@@ -32,6 +32,7 @@ class Agent {
         float speed;
 
         int key_flag;
+        int direction;
 
         Map map;
 
@@ -45,11 +46,11 @@ class Agent {
 
         // Movement functions
         void set_position(float x, float y);
-        void init_movement();
+        void init_movement(int direction);
         void integrate(long t);
         void draw();
 
         void treat_input(int key_flag);
 
-        bool next_move_valid();
+        bool next_move_valid(int key);
 };

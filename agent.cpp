@@ -54,8 +54,23 @@ void Agent::set_position(float x,float y) {
     this->y = y;
 }
 
-void Agent::init_movement() {
+void Agent::init_movement(int direction) {
     this->state = MOVING_BETWEEN;
+
+    switch (direction) {
+        case GLUT_KEY_UP:
+            this->grid_y--;
+            break;
+        case GLUT_KEY_DOWN:
+            this->grid_y++;
+            break;
+        case GLUT_KEY_LEFT:
+            this->grid_x--;
+            break;
+        case GLUT_KEY_RIGHT:
+            this->grid_x++;
+            break;
+    }
 
     int destination_x = this->grid_x*this->sq_size + this->dist;
     int destination_y = this->grid_y*this->sq_size + this->dist;
@@ -76,15 +91,14 @@ void Agent::integrate(long t) {
             this->y = y + vy*t;
             time_remaining -= t;
         } else if(t >= time_remaining) {
-
             this->x = x + vx*time_remaining;
             this->y = y + vy*time_remaining;
 
-            // Init new movement if possible
-            // TODO change true by valid comprovation
-            if (this->next_move_valid()){
-                this->state = STILL;
-                this->treat_input(this->key_flag);
+            if (this->next_move_valid(this->key_flag)){
+                this->direction = this->key_flag;
+                this->init_movement(this->key_flag);
+            }else if(this->next_move_valid(this->direction)){
+                this->init_movement(this->direction);
             }else{
                 this->state = STILL;
                 this->key_flag = -1;
@@ -95,52 +109,10 @@ void Agent::integrate(long t) {
 
 void Agent::treat_input(int key_flag){
     if (this->state == STILL){
-        int original_flag = this->key_flag;
-        this->key_flag = key_flag;
-        if (this->next_move_valid()){
-            switch (key_flag) {
-                case GLUT_KEY_UP:
-                    this->grid_y--;
-                    this->init_movement();
-                    break;
-                case GLUT_KEY_DOWN:
-                    this->grid_y++;
-                    this->init_movement();
-                    break;
-                case GLUT_KEY_LEFT:
-                    this->grid_x--;
-                    this->init_movement();
-                    break;
-                case GLUT_KEY_RIGHT:
-                    this->grid_x++;
-                    this->init_movement();
-                    break;
-            }
-        } else {
-            this->key_flag = original_flag;
-            switch (this->key_flag) {
-                case GLUT_KEY_UP:
-                    this->grid_y--;
-                    this->init_movement();
-                    break;
-                case GLUT_KEY_DOWN:
-                    this->grid_y++;
-                    this->init_movement();
-                    break;
-                case GLUT_KEY_LEFT:
-                    this->grid_x--;
-                    this->init_movement();
-                    break;
-                case GLUT_KEY_RIGHT:
-                    this->grid_x++;
-                    this->init_movement();
-                    break;
-                default:
-                    if (original_flag == this->key_flag){
-                        this->key_flag = key_flag;
-                    }
-                    break;
-            }
+        if (this->next_move_valid(key_flag)){
+            this->direction = key_flag;
+            this->key_flag = key_flag;
+            this->init_movement(key_flag);
         }
     } else if(this->state == MOVING_BETWEEN) {
         this->key_flag = key_flag;
@@ -152,8 +124,8 @@ void Agent::draw() {
     draw_square((int) x, (int) y, agent_size);
 }
 
-bool Agent::next_move_valid(){
-    switch (this->key_flag) {
+bool Agent::next_move_valid(int key){
+    switch (key) {
         case GLUT_KEY_UP:
             if (map.mesh[this->grid_y-1][this->grid_x] == CELL_VISITED){
                 return true;

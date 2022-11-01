@@ -1,3 +1,6 @@
+#ifndef MAP_H
+#define MAP_H
+
 #include<utility>
 #include<list>
 #include<vector>
@@ -35,3 +38,4 @@ class Map {
         vector<pair<int,int> > get_positions_to_jump(pair<int, int> position);
 
 };
+#endif
