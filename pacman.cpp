@@ -41,7 +41,8 @@ int sq_size;
 
 long last_t = 0;
 
-Agent some_agent;
+Agent pacman;
+Ghost ghosts[3];
 
 // Map object, not initialized
 Map map;
@@ -81,8 +82,14 @@ int main(int argc, char *argv[]) {
     // Generar fantasmes aqui
 
     pair<int, int> start_positions = map.start_position();
+    pacman.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
+    pacman.color = ORANGE;
 
-    some_agent.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
+    for(int ag = 0; ag<3;ag++){
+        pair<int, int> start_positions = map.start_position();
+        ghosts[ag].initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
+        ghosts[ag].color = RED;
+    }
 
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Pac-Man");
@@ -110,7 +117,11 @@ void display(){
     // Draw food
 
     // Draw agents
-    some_agent.draw();
+    pacman.draw();
+
+    for(int ag = 0; ag<3;ag++){
+        ghosts[ag].draw();
+    }
 
     glutSwapBuffers();
 
@@ -120,7 +131,12 @@ void idle() {
     long t;
     t = glutGet(GLUT_ELAPSED_TIME);
 
-    some_agent.integrate(t-last_t);
+    pacman.integrate(t-last_t);
+
+    for(int ag = 0; ag<3;ag++){
+        ghosts[ag].integrate(t-last_t);
+        ghosts[ag].generate_new_movement(t-last_t);
+    }
 
     last_t = t;
     glutPostRedisplay();
@@ -132,7 +148,7 @@ void special_input(int key, int x, int y) {
             exit(0);
             break;
         default:
-            some_agent.treat_input(key);
+            pacman.treat_input(key);
             break;
     }
     glutPostRedisplay();

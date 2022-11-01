@@ -26,15 +26,16 @@ class Agent {
         float vx, vy;
 
         long time_remaining;
+        float speed;
 
         int state;
-
-        float speed;
 
         int key_flag;
         int direction;
 
         Map map;
+
+        int color;
 
         // Constructor
         Agent();
@@ -53,4 +54,13 @@ class Agent {
         void treat_input(int key_flag);
 
         bool next_move_valid(int key);
+};
+
+class Ghost : public Agent{
+    public:
+        int random_timer = 3000;
+        int timer_elapsed = 0;
+
+        void generate_new_movement(long t);
+        int get_random_direction();
 };

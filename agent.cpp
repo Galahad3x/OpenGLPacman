@@ -2,6 +2,7 @@
 #include "graphic.h"
 //#include "map.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -120,7 +121,7 @@ void Agent::treat_input(int key_flag){
 }
 
 void Agent::draw() {
-    set_3f_color(ORANGE);
+    set_3f_color(this->color);
     draw_square((int) x, (int) y, agent_size);
 }
 
@@ -148,4 +149,19 @@ bool Agent::next_move_valid(int key){
             break;
     }
     return false;
+}
+
+void Ghost::generate_new_movement(long t){
+    if (t + this->timer_elapsed > this->random_timer){
+        this->timer_elapsed = 0;
+        int new_direction = this->get_random_direction();
+        this->treat_input(new_direction);
+    }else{
+        this->timer_elapsed += t;
+    }
+}
+
+int Ghost::get_random_direction(){
+    int directions[] = {GLUT_KEY_UP, GLUT_KEY_DOWN, GLUT_KEY_LEFT, GLUT_KEY_RIGHT};
+    return directions[rand() % 4];
 }
