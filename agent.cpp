@@ -95,6 +95,7 @@ void Agent::integrate(long t) {
 
 void Agent::treat_input(int key_flag){
     if (this->state == STILL){
+        int original_flag = this->key_flag;
         this->key_flag = key_flag;
         if (this->next_move_valid()){
             switch (key_flag) {
@@ -113,6 +114,31 @@ void Agent::treat_input(int key_flag){
                 case GLUT_KEY_RIGHT:
                     this->grid_x++;
                     this->init_movement();
+                    break;
+            }
+        } else {
+            this->key_flag = original_flag;
+            switch (this->key_flag) {
+                case GLUT_KEY_UP:
+                    this->grid_y--;
+                    this->init_movement();
+                    break;
+                case GLUT_KEY_DOWN:
+                    this->grid_y++;
+                    this->init_movement();
+                    break;
+                case GLUT_KEY_LEFT:
+                    this->grid_x--;
+                    this->init_movement();
+                    break;
+                case GLUT_KEY_RIGHT:
+                    this->grid_x++;
+                    this->init_movement();
+                    break;
+                default:
+                    if (original_flag == this->key_flag){
+                        this->key_flag = key_flag;
+                    }
                     break;
             }
         }
