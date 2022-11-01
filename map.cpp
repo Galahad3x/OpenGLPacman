@@ -101,7 +101,7 @@ pair<int, int> Map::insert_base() {
         // put a wall in the first position to build a wall column base
         mesh[i][x_start] = WALL_CELL;
         // fill the base positions
-        int fill_value = (i == y_start || i == y_end) ? WALL_CELL : CELL_VISITED;
+        int fill_value = (i == y_start || i == y_end) ? WALL_CELL : BASE_CELL;
         for(int j = x_start + 1; j < x_mid; j++) {
             mesh[i][j] = fill_value;
         }
@@ -196,7 +196,7 @@ bool Map::is_valid(pair<int, int> position) {
     if (y <= 0 || y >= y_limit)
         return false;
 
-    return mesh[y][x] != CELL_VISITED && mesh[y][x] != WALL_CELL;
+    return mesh[y][x] != CELL_VISITED && mesh[y][x] != WALL_CELL && mesh[y][x] != BASE_CELL;
 }
 
 vector<pair<int,int> > Map::get_valids_neigbours(pair<int, int> position) {
@@ -239,7 +239,7 @@ bool Map::is_valid_to_jump(pair<int, int> current_position) {
     if (y <= 0 || y > y_limit)
         return false;
 
-    return mesh[y][x] != WALL_CELL;
+    return mesh[y][x] != WALL_CELL && mesh[y][x] != BASE_CELL;
     
 }
 

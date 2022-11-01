@@ -1,9 +1,9 @@
 using namespace std;
 
 class Food {
-    int x,y;
-    int half_part;
+    float x,y;
+    float size;
     public:
-        Food(int x, int y, int size);
+        Food(float x, float y, float size);
         void draw();
 };

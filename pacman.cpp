@@ -92,7 +92,7 @@ void display(){
     // Print corridor colors
     for(i = 0; i < ROWS; i++){
         for(j = 0; j < COLS; j++){
-            if(map.mesh[i][j] == CELL_VISITED){
+            if(map.mesh[i][j] == CELL_VISITED || map.mesh[i][j] == BASE_CELL){
                 draw_square(j*sq_size, i*sq_size, sq_size);
             }
         }
@@ -103,16 +103,19 @@ void display(){
 }
 
 void put_food() {
+    float food_size = 11; 
     for (int y=0; y < map.n_rows; y++) {
         for (int x=0; x < map.n_cols; x++) {
-            int cell_origin_x = x * sq_size; 
-            int cell_origin_y = y * sq_size; 
+            float cell_origin_x = x * sq_size; 
+            float cell_origin_y = y * sq_size; 
 
-            int food_x = cell_origin_x + sq_size / 2;
-            int food_y = cell_origin_y + sq_size / 2;
+            float center_d = sq_size / 2;
+            float food_d = food_size /2;
 
+            float food_x = cell_origin_x + center_d - food_d;
+            float food_y = cell_origin_y + center_d - food_d;   
             if(map.mesh[y][x] == CELL_VISITED){
-                Food(food_x, food_y, sq_size / 4).draw();   
+                Food(food_x, food_y, food_size).draw();   
             }
         }
     }

@@ -4,9 +4,10 @@
 
 using namespace std;
 
-#define WALL_CELL 3
-#define CELL_POSSIBLE_WALL 2
+#define WALL_CELL 4
+#define CELL_POSSIBLE_WALL 3
 #define CELL_VISITED 1
+#define BASE_CELL 2
 
 // Map class definition (like interface)
 class Map {

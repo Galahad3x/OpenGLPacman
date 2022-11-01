@@ -6,19 +6,19 @@
 #include "food.h"
 
 
-Food::Food(int x, int y, int size) {
+Food::Food(float x, float y, float size) {
     this->x = x;
     this->y = y;
-    this->half_part = size / 2;
+    this->size = size;
 }
 
 
 void Food::draw() {
     glColor3f(0,0,0);
-    glBegin(GL_QUADS);
-        glVertex2i(x-half_part,y-half_part);
-        glVertex2i(x+half_part,y-half_part);
-        glVertex2i(x+half_part,y+half_part);
-        glVertex2i(x-half_part,y+half_part);
+    glBegin(GL_POLYGON);
+        glVertex2f(x,y);
+        glVertex2f(x, y + size);
+        glVertex2f(x+size,y + size);
+        glVertex2f(x + size, y);
     glEnd();
 }
