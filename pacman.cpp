@@ -103,7 +103,7 @@ void display(){
 }
 
 void put_food() {
-    float food_size = 11; 
+    float food_size = 7; 
     for (int y=0; y < map.n_rows; y++) {
         for (int x=0; x < map.n_cols; x++) {
             float cell_origin_x = x * sq_size; 
