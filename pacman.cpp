@@ -55,6 +55,7 @@ void draw_food();
 void check_collisions();
 void food_collision();
 bool have_collision(pair<float, float> obj1, pair<float, float> obj2);
+void move_ghosts_to_base();
 
 int main(int argc, char *argv[]) {
     if (argc < 3){
@@ -94,7 +95,7 @@ int main(int argc, char *argv[]) {
     pacman.color = ORANGE;
 
     // calculate number of ghosts
-    int n_ghosts =  3 + 1/sq_size;
+    int n_ghosts =  max(COLS, ROWS) / 5;
     for(int i = 0; i < n_ghosts; i++){
         pair<int, int> start_positions = map.base_start_position();
         Ghost ghost;
@@ -173,6 +174,14 @@ void draw_food() {
     }   
 }
 
+void move_ghosts_to_base() {
+    std::list<Ghost>::iterator ghost;
+    for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
+        pair<int, int> start_positions = map.base_start_position();
+        ghost->initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
+    }
+}
+
 void food_collision() {
     Food *food_to_remove;
     float dist = sq_size / 2;
@@ -190,20 +199,17 @@ void food_collision() {
 
 void ghost_collision() {
     std::list<Ghost>::iterator ghost;
-    std::list<Ghost>::iterator ghost2;
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
         float dx = abs(ghost->x - pacman.x);
         float dy = abs(ghost->y - pacman.y);
         pair<float, float> obj1 = make_pair(pacman.x, pacman.y);
         pair<float, float> obj2 = make_pair(ghost->x, ghost->y);
         if (have_collision(obj1, obj2)) {
-            for(ghost2 = ghosts.begin(); ghost2 != ghosts.end(); ++ghost2){
-                pair<int, int> start_positions = map.base_start_position();
-                ghost2->initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
-            }
+            move_ghosts_to_base();
         }
     }
 }
+
 
 void check_collisions() {
     food_collision();
