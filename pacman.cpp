@@ -146,7 +146,8 @@ void display(){
 
 void put_food() {
     // calculate food size
-    float food_size = sq_size / 3.7;
+    float food_size = sq_size/4;
+    food_size = ((int)food_size % 2 == 0) ? food_size +1: food_size;
     for (int y=0; y < map.n_rows; y++) {
         for (int x=0; x < map.n_cols; x++) {
             if(map.mesh[y][x] == CELL_VISITED){
@@ -155,7 +156,7 @@ void put_food() {
                 float cell_origin_y = y * sq_size;
                 // calculate cell center
                 float center_d = sq_size / 2;
-                float food_d = food_size / 2;
+                float food_d = food_size /2;
                 // Calculate food cosition
                 float food_x = cell_origin_x + center_d - food_d;
                 float food_y = cell_origin_y + center_d - food_d;
