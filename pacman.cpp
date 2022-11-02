@@ -220,7 +220,6 @@ bool have_collision(pair<float, float> obj1, pair<float, float> obj2) {
     float dist = sq_size/2;
     float dx = abs(obj1.first - obj2.first);
     float dy = abs(obj1.second - obj2.second);
-    printf("%f\n", dx  +  dy);
     return dx  +  dy <= dist;
 }
 
