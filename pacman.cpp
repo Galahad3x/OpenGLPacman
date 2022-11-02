@@ -7,8 +7,10 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include <algorithm>
+#include<time.h>
 #include"graphic.h"
 #include"map.h"
+#include"agent.h"
 #include "food.h"
 
 
@@ -16,6 +18,8 @@
 //-------------------------
 // OpenGL functions
 void display();
+void special_input(int key, int x, int y);
+void idle();
 //-------------------------
 
 // Maze size (cells)
@@ -36,7 +40,10 @@ int HEIGHT;
 // Size of a corridor square (pixels)
 int sq_size;
 
-long last_t = glutGet(GLUT_ELAPSED_TIME);
+long last_t = 0;
+
+Agent pacman;
+Ghost ghosts[3];
 
 // Map object, not initialized
 Map map;
@@ -48,6 +55,7 @@ int main(int argc, char *argv[]) {
         exit(-1);
     }
 
+    srand(clock());
 
     // Calculate the number of rows and cols
     ROWS = atoi(argv[1]);
@@ -75,10 +83,22 @@ int main(int argc, char *argv[]) {
 
     // Generar fantasmes aqui
 
+    pair<int, int> start_positions = map.start_position();
+    pacman.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
+    pacman.color = ORANGE;
+
+    for(int ag = 0; ag<3;ag++){
+        pair<int, int> start_positions = map.start_position();
+        ghosts[ag].initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
+        ghosts[ag].color = RED;
+    }
+
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Pac-Man");
 
     glutDisplayFunc(display);
+    glutSpecialFunc(special_input);
+    glutIdleFunc(idle);
 
     glMatrixMode(GL_PROJECTION);
     gluOrtho2D(0,WIDTH-1,HEIGHT-1,0);
@@ -94,6 +114,10 @@ void display(){
     glClearColor(0.2,0.2,0.2,0.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    map.draw(sq_size);
+
+    // Afegir lo que falti de baix a dins de map.draw()
+
     set_3f_color(ORANGE);
     // Print corridor colors
     for(i = 0; i < ROWS; i++){
@@ -104,21 +128,27 @@ void display(){
         }
   	}
     // Draw food
-    put_food();
+
     // Draw agents
+    pacman.draw();
+
+    for(int ag = 0; ag<3;ag++){
+        ghosts[ag].draw();
+    }
+
     glutSwapBuffers();
 
 }
 
 
 void put_food() {
-    float food_size = 7; 
+    float food_size = 7;
     for (int y=0; y < map.n_rows; y++) {
         for (int x=0; x < map.n_cols; x++) {
 
             // calculate cell  position
-            float cell_origin_x = x * sq_size; 
-            float cell_origin_y = y * sq_size; 
+            float cell_origin_x = x * sq_size;
+            float cell_origin_y = y * sq_size;
 
             // calculate cell center
             float center_d = sq_size / 2;
@@ -126,11 +156,11 @@ void put_food() {
 
             // Calculate food cosition
             float food_x = cell_origin_x + center_d - food_d;
-            float food_y = cell_origin_y + center_d - food_d; 
+            float food_y = cell_origin_y + center_d - food_d;
 
             if(map.mesh[y][x] == CELL_VISITED){
                 // put food
-                Food(food_x, food_y, food_size).draw();   
+                Food(food_x, food_y, food_size).draw();
             }
         }
     }
@@ -139,8 +169,25 @@ void idle() {
     long t;
     t = glutGet(GLUT_ELAPSED_TIME);
 
-    // Integrate all entities
+    pacman.integrate(t-last_t);
+
+    for(int ag = 0; ag<3;ag++){
+        ghosts[ag].integrate(t-last_t);
+        ghosts[ag].generate_new_movement(t-last_t);
+    }
 
     last_t = t;
+    glutPostRedisplay();
+}
+
+void special_input(int key, int x, int y) {
+    switch(key) {
+        case GLUT_KEY_F1:
+            exit(0);
+            break;
+        default:
+            pacman.treat_input(key);
+            break;
+    }
     glutPostRedisplay();
 }

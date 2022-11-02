@@ -8,6 +8,7 @@
 #include<utility>
 #include<iostream>
 #include <algorithm>
+#include"graphic.h"
 
 using namespace std;
 
@@ -79,6 +80,31 @@ void Map::print_map() {
     }
 }
 
+void Map::draw(int sq_size) {
+    set_3f_color(COOL_BLUE);
+    // Print corridor colors
+    for(int i = 0; i < n_rows; i++){
+        for(int j = 0; j < n_cols; j++){
+            if(this->mesh[i][j] == CELL_VISITED){
+                draw_square(j*sq_size, i*sq_size, sq_size);
+            }
+        }
+    }
+}
+
+pair<int, int> Map::start_position(){
+    // TODO Take into account initial room
+    int start_x = -1;
+    int start_y = -1;
+    while (true) {
+        start_x = rand() % n_rows;
+        start_y = rand() % n_cols;
+        if (this->mesh[start_x][start_y] == CELL_VISITED){
+            return make_pair(start_y, start_x);
+        }
+    }
+}
+
 void Map::init_map() {
     this->mesh = new int*[n_rows]; // similar a malloc but more easy(c++)
     for (int i=0; i < n_rows; i++) {
@@ -122,7 +148,6 @@ void Map::generate_mesh() {
 }
 
 void Map::dfs_generator(int x_start, int y_start) {
-    srand(clock());
     stack< pair<int,int> > stack;
 
     // Set start position
