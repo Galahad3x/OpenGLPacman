@@ -135,6 +135,7 @@ void put_food() {
         }
     }
 }
+
 void idle() {
     long t;
     t = glutGet(GLUT_ELAPSED_TIME);
