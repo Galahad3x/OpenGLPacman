@@ -1,3 +1,6 @@
+#ifndef MAP_H
+#define MAP_H
+
 #include<utility>
 #include<list>
 #include<vector>
@@ -18,6 +21,10 @@ class Map {
     Map();
     void generate(int n_rows, int n_cols);
     void print_map();
+    void draw(int sq_size);
+
+    // Returns a random start position
+    pair<int, int> start_position();
 
     private:
         int x_limit, y_limit;
@@ -32,3 +39,4 @@ class Map {
         vector<pair<int,int> > get_positions_to_jump(pair<int, int> position);
 
 };
+#endif
