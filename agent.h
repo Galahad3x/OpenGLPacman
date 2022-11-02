@@ -37,12 +37,12 @@ class Agent {
 
         int color;
 
+        bool is_out = true;
+
         // Constructor
         Agent();
-        Agent(int sq_size,int agent_size, Map map);
         Agent(int sq_size,int agent_size,int grid_x,int grid_y, Map map);
 
-        void initialize(int sq_size,int agent_size, Map map);
         void initialize(int sq_size,int agent_size,int grid_x,int grid_y, Map map);
 
         // Movement functions
@@ -58,7 +58,7 @@ class Agent {
 
 class Ghost : public Agent{
     public:
-        int random_timer = 1500;
+        int random_timer = 1000;
         int timer_elapsed = 0;
 
         void generate_new_movement(long t);

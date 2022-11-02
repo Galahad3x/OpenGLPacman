@@ -15,6 +15,6 @@ Food::Food(float x, float y, float size) {
 
 
 void Food::draw() {
-    glColor3f(0,0,0);
+    set_3f_color(DARK_GREEN);
     draw_squaref(x, y, size);
 }

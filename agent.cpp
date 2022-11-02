@@ -6,23 +6,6 @@
 
 using namespace std;
 
-void Agent::initialize(int sq_size, int agent_size, Map map){
-    this->state = STILL;
-    this->speed = 400.0;
-
-    this->grid_x = 0;
-    this->grid_y = 0;
-
-    this->dist = sq_size / 2 - agent_size / 2;
-
-    this->x = this->grid_x*sq_size + this->dist;
-    this->y = this->grid_y*sq_size + this->dist;
-    this->sq_size = sq_size;
-    this->agent_size = agent_size;
-
-    this->map = map;
-}
-
 void Agent::initialize(int sq_size,int agent_size,int grid_x,int grid_y, Map map){
     this->state = STILL;
     this->speed = 400.0;
@@ -42,10 +25,6 @@ void Agent::initialize(int sq_size,int agent_size,int grid_x,int grid_y, Map map
 
 Agent::Agent(){}
 
-Agent::Agent(int sq_size,int agent_size, Map map){
-    this->initialize(sq_size, agent_size, map);
-}
-
 Agent::Agent(int sq_size,int agent_size,int grid_x,int grid_y, Map map){
     this->initialize(sq_size, agent_size, grid_x, grid_y, map);
 }
@@ -53,6 +32,11 @@ Agent::Agent(int sq_size,int agent_size,int grid_x,int grid_y, Map map){
 void Agent::set_position(float x,float y) {
     this->x = x;
     this->y = y;
+}
+
+void Agent::draw() {
+    set_3f_color(this->color);
+    draw_square((int) x, (int) y, agent_size);
 }
 
 void Agent::init_movement(int direction) {
@@ -120,30 +104,37 @@ void Agent::treat_input(int key_flag){
     }
 }
 
-void Agent::draw() {
-    set_3f_color(this->color);
-    draw_square((int) x, (int) y, agent_size);
-}
-
 bool Agent::next_move_valid(int key){
     switch (key) {
         case GLUT_KEY_UP:
             if (map.mesh[this->grid_y-1][this->grid_x] == CELL_VISITED){
+                this->is_out = true;
+                return true;
+            } else if (!this->is_out && map.mesh[this->grid_y-1][this->grid_x] == BASE_CELL){
                 return true;
             }
             break;
         case GLUT_KEY_DOWN:
             if (map.mesh[this->grid_y+1][this->grid_x] == CELL_VISITED){
+                this->is_out = true;
+                return true;
+            } else if (!this->is_out && map.mesh[this->grid_y+1][this->grid_x] == BASE_CELL){
                 return true;
             }
             break;
         case GLUT_KEY_LEFT:
             if (map.mesh[this->grid_y][this->grid_x-1] == CELL_VISITED){
+                this->is_out = true;
+                return true;
+            } else if (!this->is_out && map.mesh[this->grid_y][this->grid_x-1] == BASE_CELL){
                 return true;
             }
             break;
         case GLUT_KEY_RIGHT:
             if (map.mesh[this->grid_y][this->grid_x+1] == CELL_VISITED){
+                this->is_out = true;
+                return true;
+            } else if (!this->is_out && map.mesh[this->grid_y][this->grid_x+1] == BASE_CELL){
                 return true;
             }
             break;

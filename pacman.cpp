@@ -50,6 +50,7 @@ list<Food> foodList;
 
 // Map object, not initialized
 Map map;
+
 void put_food();
 void draw_food();
 void check_collisions();
@@ -101,6 +102,7 @@ int main(int argc, char *argv[]) {
         Ghost ghost;
         ghost.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
         ghost.color = RED;
+        ghost.is_out = false;
         ghosts.push_back(ghost);
     }
     // put food
@@ -230,8 +232,9 @@ void idle() {
     long t;
     t = glutGet(GLUT_ELAPSED_TIME);
 
-    pacman.integrate(t-last_t);
     check_collisions();
+
+    pacman.integrate(t-last_t);
 
     std::list<Ghost>::iterator ghost;
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
