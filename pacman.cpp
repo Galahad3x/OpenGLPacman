@@ -115,19 +115,9 @@ void display(){
     glClear(GL_COLOR_BUFFER_BIT);
 
     map.draw(sq_size);
-
-    // Afegir lo que falti de baix a dins de map.draw()
-
-    set_3f_color(ORANGE);
-    // Print corridor colors
-    for(i = 0; i < ROWS; i++){
-        for(j = 0; j < COLS; j++){
-            if(map.mesh[i][j] == CELL_VISITED || map.mesh[i][j] == BASE_CELL){
-                draw_square(j*sq_size, i*sq_size, sq_size);
-            }
-        }
-  	}
     // Draw food
+
+    put_food();
 
     // Draw agents
     pacman.draw();
@@ -152,7 +142,7 @@ void put_food() {
 
             // calculate cell center
             float center_d = sq_size / 2;
-            float food_d = food_size /2;
+            float food_d = food_size / 2;
 
             // Calculate food cosition
             float food_x = cell_origin_x + center_d - food_d;
@@ -165,6 +155,7 @@ void put_food() {
         }
     }
 }
+
 void idle() {
     long t;
     t = glutGet(GLUT_ELAPSED_TIME);

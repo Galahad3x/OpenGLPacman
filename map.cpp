@@ -85,15 +85,14 @@ void Map::draw(int sq_size) {
     // Print corridor colors
     for(int i = 0; i < n_rows; i++){
         for(int j = 0; j < n_cols; j++){
-            if(this->mesh[i][j] == CELL_VISITED){
+            if(this->mesh[i][j] == CELL_VISITED || this->mesh[i][j] == BASE_CELL){
                 draw_square(j*sq_size, i*sq_size, sq_size);
             }
         }
-    }
+  	}
 }
 
 pair<int, int> Map::start_position(){
-    // TODO Take into account initial room
     int start_x = -1;
     int start_y = -1;
     while (true) {

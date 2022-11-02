@@ -58,7 +58,7 @@ class Agent {
 
 class Ghost : public Agent{
     public:
-        int random_timer = 3000;
+        int random_timer = 1500;
         int timer_elapsed = 0;
 
         void generate_new_movement(long t);
