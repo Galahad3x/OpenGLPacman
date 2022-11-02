@@ -54,6 +54,7 @@ void put_food();
 void draw_food();
 void check_collisions();
 void food_collision();
+bool have_collision(pair<float, float> obj1, pair<float, float> obj2);
 
 int main(int argc, char *argv[]) {
     if (argc < 3){
@@ -86,21 +87,21 @@ int main(int argc, char *argv[]) {
 
     WIDTH = sq_size * COLS;
     HEIGHT = sq_size * ROWS;
-
     // Generar fantasmes aqui
 
     pair<int, int> start_positions = map.start_position();
     pacman.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
     pacman.color = ORANGE;
 
-    for(int i = 0; i < 3; i++){
+    // calculate number of ghosts
+    int n_ghosts =  3 + 1/sq_size;
+    for(int i = 0; i < n_ghosts; i++){
         pair<int, int> start_positions = map.base_start_position();
         Ghost ghost;
         ghost.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
         ghost.color = RED;
         ghosts.push_back(ghost);
     }
-
     // put food
     put_food();
 
@@ -132,6 +133,7 @@ void display(){
     // Draw agents
     pacman.draw();
 
+    // Draw ghosts
     std::list<Ghost>::iterator ghost;
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
         ghost->draw();
@@ -143,25 +145,20 @@ void display(){
 
 
 void put_food() {
+    // calculate food size
     float food_size = sq_size / 3.7;
-    
     for (int y=0; y < map.n_rows; y++) {
         for (int x=0; x < map.n_cols; x++) {
-
-            // calculate cell  position
-            float cell_origin_x = x * sq_size;
-            float cell_origin_y = y * sq_size;
-
-            // calculate cell center
-            float center_d = sq_size / 2;
-            float food_d = food_size / 2;
-
-            // Calculate food cosition
-            float food_x = cell_origin_x + center_d - food_d;
-            float food_y = cell_origin_y + center_d - food_d;
-
             if(map.mesh[y][x] == CELL_VISITED){
-                // put food
+                // calculate cell  position
+                float cell_origin_x = x * sq_size;
+                float cell_origin_y = y * sq_size;
+                // calculate cell center
+                float center_d = sq_size / 2;
+                float food_d = food_size / 2;
+                // Calculate food cosition
+                float food_x = cell_origin_x + center_d - food_d;
+                float food_y = cell_origin_y + center_d - food_d;
                 foodList.push_back(Food(food_x, food_y, food_size));
             }
         }
@@ -180,10 +177,9 @@ void food_collision() {
     float dist = sq_size / 2;
     std::list<Food>::iterator food;
     for (food = foodList.begin(); food != foodList.end(); ++food){
-        float middle = food->size / 2;
-        float dx = abs(food->x + middle - pacman.x);
-        float dy = abs(food->y + middle - pacman.y);
-        if (dx <= dist && dy <= dist) {
+        float dx = abs(food->x - pacman.x);
+        float dy = abs(food->y - pacman.y);
+        if (dx + dy <= dist) {
             food_to_remove = &(*food);
         }
     }   
@@ -192,13 +188,14 @@ void food_collision() {
 
 
 void ghost_collision() {
-    float dist = sq_size / 2;
     std::list<Ghost>::iterator ghost;
     std::list<Ghost>::iterator ghost2;
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
         float dx = abs(ghost->x - pacman.x);
         float dy = abs(ghost->y - pacman.y);
-        if (dx <= dist && dy <= dist) {
+        pair<float, float> obj1 = make_pair(pacman.x, pacman.y);
+        pair<float, float> obj2 = make_pair(ghost->x, ghost->y);
+        if (have_collision(obj1, obj2)) {
             for(ghost2 = ghosts.begin(); ghost2 != ghosts.end(); ++ghost2){
                 pair<int, int> start_positions = map.base_start_position();
                 ghost2->initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
@@ -208,10 +205,17 @@ void ghost_collision() {
 }
 
 void check_collisions() {
-    // Check if the food collision
     food_collision();
     ghost_collision();
 }
+
+bool have_collision(pair<float, float> obj1, pair<float, float> obj2) {
+    float dist = sq_size / 2;
+    float dx = abs(obj1.first - obj2.first);
+    float dy = abs(obj1.second - obj2.second);
+    return dx <= dist && dy <= dist;
+}
+
 
 void idle() {
     long t;
