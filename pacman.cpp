@@ -6,6 +6,7 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include <algorithm>
 #include"graphic.h"
 #include"map.h"
 #include "food.h"
@@ -34,6 +35,8 @@ int HEIGHT;
 
 // Size of a corridor square (pixels)
 int sq_size;
+
+long last_t = glutGet(GLUT_ELAPSED_TIME);
 
 // Map object, not initialized
 Map map;
@@ -70,6 +73,8 @@ int main(int argc, char *argv[]) {
     WIDTH = sq_size * COLS;
     HEIGHT = sq_size * ROWS;
 
+    // Generar fantasmes aqui
+
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Pac-Man");
 
@@ -89,6 +94,7 @@ void display(){
     glClearColor(0.2,0.2,0.2,0.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    set_3f_color(ORANGE);
     // Print corridor colors
     for(i = 0; i < ROWS; i++){
         for(j = 0; j < COLS; j++){
@@ -97,10 +103,13 @@ void display(){
             }
         }
   	}
+    // Draw food
     put_food();
+    // Draw agents
     glutSwapBuffers();
 
 }
+
 
 void put_food() {
     float food_size = 7; 
@@ -125,4 +134,13 @@ void put_food() {
             }
         }
     }
+}
+void idle() {
+    long t;
+    t = glutGet(GLUT_ELAPSED_TIME);
+
+    // Integrate all entities
+
+    last_t = t;
+    glutPostRedisplay();
 }
