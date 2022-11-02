@@ -44,7 +44,7 @@ int sq_size;
 long last_t = 0;
 
 Agent pacman;
-Ghost ghosts[3];
+list<Ghost> ghosts;
 list<Food> foodList;
 
 
@@ -93,10 +93,12 @@ int main(int argc, char *argv[]) {
     pacman.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
     pacman.color = ORANGE;
 
-    for(int ag = 0; ag<3;ag++){
+    for(int i = 0; i < 3; i++){
         pair<int, int> start_positions = map.base_start_position();
-        ghosts[ag].initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
-        ghosts[ag].color = RED;
+        Ghost ghost;
+        ghost.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
+        ghost.color = RED;
+        ghosts.push_back(ghost);
     }
 
     // put food
@@ -130,8 +132,9 @@ void display(){
     // Draw agents
     pacman.draw();
 
-    for(int ag = 0; ag<3;ag++){
-        ghosts[ag].draw();
+    std::list<Ghost>::iterator ghost;
+    for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
+        ghost->draw();
     }
 
     glutSwapBuffers();
@@ -140,7 +143,8 @@ void display(){
 
 
 void put_food() {
-    float food_size = 7;
+    float food_size = sq_size / 3.7;
+    
     for (int y=0; y < map.n_rows; y++) {
         for (int x=0; x < map.n_cols; x++) {
 
@@ -189,15 +193,15 @@ void food_collision() {
 
 void ghost_collision() {
     float dist = sq_size / 2;
-    for(int ag = 0; ag<3;ag++){
-        Ghost *ghost = &ghosts[ag];
+    std::list<Ghost>::iterator ghost;
+    std::list<Ghost>::iterator ghost2;
+    for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
         float dx = abs(ghost->x - pacman.x);
         float dy = abs(ghost->y - pacman.y);
         if (dx <= dist && dy <= dist) {
-            for(int ag = 0; ag<3;ag++){
+            for(ghost2 = ghosts.begin(); ghost2 != ghosts.end(); ++ghost2){
                 pair<int, int> start_positions = map.base_start_position();
-                ghosts[ag].initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
-                ghosts[ag].color = RED;
+                ghost2->initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
             }
         }
     }
@@ -216,9 +220,10 @@ void idle() {
     pacman.integrate(t-last_t);
     check_collisions();
 
-    for(int ag = 0; ag<3;ag++){
-        ghosts[ag].integrate(t-last_t);
-        ghosts[ag].generate_new_movement(t-last_t);
+    std::list<Ghost>::iterator ghost;
+    for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
+        ghost->integrate(t-last_t);
+        ghost->generate_new_movement(t-last_t);
     }
 
     last_t = t;
