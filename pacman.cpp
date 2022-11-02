@@ -187,9 +187,9 @@ void food_collision() {
     float dist = sq_size / 2;
     std::list<Food>::iterator food;
     for (food = foodList.begin(); food != foodList.end(); ++food){
-        float dx = abs(food->x - pacman.x);
-        float dy = abs(food->y - pacman.y);
-        if (dx + dy <= dist) {
+        pair<float, float> obj1 = make_pair(pacman.x, pacman.y);
+        pair<float, float> obj2 = make_pair(food->x, food->y);
+        if (have_collision(obj1, obj2)) {
             food_to_remove = &(*food);
         }
     }   
@@ -217,10 +217,11 @@ void check_collisions() {
 }
 
 bool have_collision(pair<float, float> obj1, pair<float, float> obj2) {
-    float dist = sq_size / 2;
+    float dist = sq_size/2;
     float dx = abs(obj1.first - obj2.first);
     float dy = abs(obj1.second - obj2.second);
-    return dx <= dist && dy <= dist;
+    printf("%f\n", dx  +  dy);
+    return dx  +  dy <= dist;
 }
 
 
