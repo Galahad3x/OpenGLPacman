@@ -8,6 +8,7 @@
 #include<stdlib.h>
 #include <algorithm>
 #include<time.h>
+#include<list>
 #include"graphic.h"
 #include"map.h"
 #include"agent.h"
@@ -44,10 +45,14 @@ long last_t = 0;
 
 Agent pacman;
 Ghost ghosts[3];
+list<Food> foodList;
+
 
 // Map object, not initialized
 Map map;
 void put_food();
+void draw_food();
+void check_collisions();
 
 int main(int argc, char *argv[]) {
     if (argc < 3){
@@ -88,10 +93,13 @@ int main(int argc, char *argv[]) {
     pacman.color = ORANGE;
 
     for(int ag = 0; ag<3;ag++){
-        pair<int, int> start_positions = map.start_position();
+        pair<int, int> start_positions = map.base_start_position();
         ghosts[ag].initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
         ghosts[ag].color = RED;
     }
+
+    // put food
+    put_food();
 
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Pac-Man");
@@ -116,8 +124,7 @@ void display(){
 
     map.draw(sq_size);
     // Draw food
-
-    put_food();
+    draw_food();
 
     // Draw agents
     pacman.draw();
@@ -150,10 +157,32 @@ void put_food() {
 
             if(map.mesh[y][x] == CELL_VISITED){
                 // put food
-                Food(food_x, food_y, food_size).draw();
+                foodList.push_back(Food(food_x, food_y, food_size));
             }
         }
     }
+}
+
+void draw_food() {
+    std::list<Food>::iterator food;
+    for (food = foodList.begin(); food != foodList.end(); ++food){
+        food->draw();
+    }   
+}
+
+void check_collisions() {
+    // Check if the food collision
+    Food *food_to_remove;
+    float dist = sq_size / 2;
+    std::list<Food>::iterator food;
+    for (food = foodList.begin(); food != foodList.end(); ++food){
+        float dx = abs(food->x - pacman.x);
+        float dy = abs(food->y - pacman.y);
+        if (dx <= dist && dy <= dist) {
+            food_to_remove = &(*food);
+        }
+    }   
+    foodList.remove(*food_to_remove);
 }
 
 void idle() {
@@ -161,6 +190,7 @@ void idle() {
     t = glutGet(GLUT_ELAPSED_TIME);
 
     pacman.integrate(t-last_t);
+    check_collisions();
 
     for(int ag = 0; ag<3;ag++){
         ghosts[ag].integrate(t-last_t);

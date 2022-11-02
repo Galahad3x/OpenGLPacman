@@ -104,6 +104,21 @@ pair<int, int> Map::start_position(){
     }
 }
 
+
+pair<int, int> Map::base_start_position(){
+    int start_x = -1;
+    int start_y = -1;
+    while (true) {
+        start_x = rand() % n_rows;
+        start_y = rand() % n_cols;
+        if (this->mesh[start_x][start_y] == BASE_CELL){
+            return make_pair(start_y, start_x);
+        }
+    }
+}
+
+
+
 void Map::init_map() {
     this->mesh = new int*[n_rows]; // similar a malloc but more easy(c++)
     for (int i=0; i < n_rows; i++) {
@@ -187,6 +202,7 @@ void Map::dfs_generator(int x_start, int y_start) {
                     stack.push(next_position);
         }
     }
+    mesh[start_position.second + 1][start_position.first] = BASE_CELL;
 }
 
 
