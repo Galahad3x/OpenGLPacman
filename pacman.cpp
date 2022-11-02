@@ -53,6 +53,7 @@ Map map;
 void put_food();
 void draw_food();
 void check_collisions();
+void food_collision();
 
 int main(int argc, char *argv[]) {
     if (argc < 3){
@@ -170,19 +171,42 @@ void draw_food() {
     }   
 }
 
-void check_collisions() {
-    // Check if the food collision
+void food_collision() {
     Food *food_to_remove;
     float dist = sq_size / 2;
     std::list<Food>::iterator food;
     for (food = foodList.begin(); food != foodList.end(); ++food){
-        float dx = abs(food->x - pacman.x);
-        float dy = abs(food->y - pacman.y);
+        float middle = food->size / 2;
+        float dx = abs(food->x + middle - pacman.x);
+        float dy = abs(food->y + middle - pacman.y);
         if (dx <= dist && dy <= dist) {
             food_to_remove = &(*food);
         }
     }   
     foodList.remove(*food_to_remove);
+}
+
+
+void ghost_collision() {
+    float dist = sq_size / 2;
+    for(int ag = 0; ag<3;ag++){
+        Ghost *ghost = &ghosts[ag];
+        float dx = abs(ghost->x - pacman.x);
+        float dy = abs(ghost->y - pacman.y);
+        if (dx <= dist && dy <= dist) {
+            for(int ag = 0; ag<3;ag++){
+                pair<int, int> start_positions = map.base_start_position();
+                ghosts[ag].initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
+                ghosts[ag].color = RED;
+            }
+        }
+    }
+}
+
+void check_collisions() {
+    // Check if the food collision
+    food_collision();
+    ghost_collision();
 }
 
 void idle() {

@@ -25,7 +25,7 @@ class Map {
 
     // Returns a random start position
     pair<int, int> start_position();
-    pair<int,  int> base_start_position();
+    pair<int, int> base_start_position();
 
     private:
         int x_limit, y_limit;
