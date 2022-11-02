@@ -171,7 +171,7 @@ void draw_food() {
     std::list<Food>::iterator food;
     for (food = foodList.begin(); food != foodList.end(); ++food){
         food->draw();
-    }   
+    }
 }
 
 void move_ghosts_to_base() {
@@ -183,7 +183,7 @@ void move_ghosts_to_base() {
 }
 
 void food_collision() {
-    Food *food_to_remove;
+    Food *food_to_remove = 0;
     float dist = sq_size / 2;
     std::list<Food>::iterator food;
     for (food = foodList.begin(); food != foodList.end(); ++food){
@@ -192,8 +192,10 @@ void food_collision() {
         if (have_collision(obj1, obj2)) {
             food_to_remove = &(*food);
         }
-    }   
-    foodList.remove(*food_to_remove);
+    }
+    if (food_to_remove != 0){
+        foodList.remove(*food_to_remove);
+    }
 }
 
 
@@ -220,7 +222,6 @@ bool have_collision(pair<float, float> obj1, pair<float, float> obj2) {
     float dist = sq_size/2;
     float dx = abs(obj1.first - obj2.first);
     float dy = abs(obj1.second - obj2.second);
-    printf("%f\n", dx  +  dy);
     return dx  +  dy <= dist;
 }
 
