@@ -23,6 +23,17 @@ void draw_square(int x, int y, int size){
     draw_rectangle(x, y, size, size);
 }
 
+void draw_squaref(float x, float y, float size){
+    glBegin(GL_QUADS);
+    glVertex2f(x,y);
+    glVertex2f(x,y+size);
+    glVertex2f(x+size, y+size);
+    glVertex2f(x+size, y);
+    glEnd();
+}
+
+
+
 void set_3f_color(int color){
     switch (color) {
         case BLACK:

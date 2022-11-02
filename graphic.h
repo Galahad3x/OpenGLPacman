@@ -13,6 +13,7 @@ using namespace std;
 
 void draw_rectangle(int x, int y, int width, int height);
 void draw_square(int x, int y, int size);
+void draw_squaref(int x, int y, int size);
 
 void set_3f_color(int color);
 
