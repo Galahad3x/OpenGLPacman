@@ -39,6 +39,8 @@ class Agent {
 
         bool is_out = true;
 
+        bool is_autonomous = false;
+
         // Constructor
         Agent();
         Agent(int sq_size,int agent_size,int grid_x,int grid_y, Map map);
@@ -54,6 +56,8 @@ class Agent {
         void treat_input(int key_flag);
 
         bool next_move_valid(int key);
+
+        void before_next_move();
 };
 
 class Ghost : public Agent{

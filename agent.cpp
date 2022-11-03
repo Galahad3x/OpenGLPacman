@@ -86,6 +86,7 @@ void Agent::integrate(long t) {
                 this->init_movement(this->direction);
             }else{
                 this->state = STILL;
+                this->direction = -1;
                 this->key_flag = -1;
             }
         }
