@@ -9,6 +9,7 @@
 #include <algorithm>
 #include<time.h>
 #include<list>
+#include<tgmath.h>
 #include"graphic.h"
 #include"map.h"
 #include"agent.h"
@@ -50,12 +51,15 @@ list<Food> foodList;
 
 // Map object, not initialized
 Map map;
+
 void put_food();
 void draw_food();
 void check_collisions();
 void food_collision();
 bool have_collision(pair<float, float> obj1, pair<float, float> obj2);
 void move_ghosts_to_base();
+
+int calculate_next_ghost_move(Ghost ghost, Agent agent);
 
 int main(int argc, char *argv[]) {
     if (argc < 3){
@@ -101,6 +105,8 @@ int main(int argc, char *argv[]) {
         Ghost ghost;
         ghost.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
         ghost.color = RED;
+        ghost.is_out = false;
+        ghost.is_autonomous = true;
         ghosts.push_back(ghost);
     }
     // put food
@@ -171,7 +177,7 @@ void draw_food() {
     std::list<Food>::iterator food;
     for (food = foodList.begin(); food != foodList.end(); ++food){
         food->draw();
-    }   
+    }
 }
 
 void move_ghosts_to_base() {
@@ -183,7 +189,7 @@ void move_ghosts_to_base() {
 }
 
 void food_collision() {
-    Food *food_to_remove;
+    Food *food_to_remove = 0;
     float dist = sq_size / 2;
     std::list<Food>::iterator food;
     for (food = foodList.begin(); food != foodList.end(); ++food){
@@ -192,8 +198,10 @@ void food_collision() {
         if (have_collision(obj1, obj2)) {
             food_to_remove = &(*food);
         }
-    }   
-    foodList.remove(*food_to_remove);
+    }
+    if (food_to_remove != 0){
+        foodList.remove(*food_to_remove);
+    }
 }
 
 
@@ -228,13 +236,16 @@ void idle() {
     long t;
     t = glutGet(GLUT_ELAPSED_TIME);
 
-    pacman.integrate(t-last_t);
     check_collisions();
+
+    pacman.integrate(t-last_t);
 
     std::list<Ghost>::iterator ghost;
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
+        int movement = calculate_next_ghost_move(*ghost, pacman);
+        ghost->treat_input(movement);
         ghost->integrate(t-last_t);
-        ghost->generate_new_movement(t-last_t);
+        //ghost->generate_new_movement(t-last_t);
     }
 
     last_t = t;
@@ -251,4 +262,43 @@ void special_input(int key, int x, int y) {
             break;
     }
     glutPostRedisplay();
+}
+
+float pythagoras(int x1, int y1, int x2, int y2){
+    return sqrt(((abs(x1-x2)*abs(x1-x2))+(abs(y1-y2)*abs(y1-y2)))*1.0);
+}
+
+int calculate_next_ghost_move(Ghost ghost, Agent pacman){
+    int p = 4;
+    int directions[] = {GLUT_KEY_UP, GLUT_KEY_DOWN, GLUT_KEY_LEFT, GLUT_KEY_RIGHT};
+    float scores[] = {0,0,0,0};
+    for (int i = 0; i < p; i++){
+        switch (directions[i]) {
+            case GLUT_KEY_UP:
+                scores[i] = pythagoras(ghost.grid_x, ghost.grid_y-1, pacman.grid_x, pacman.grid_y);
+                break;
+            case GLUT_KEY_DOWN:
+                scores[i] = pythagoras(ghost.grid_x, ghost.grid_y+1, pacman.grid_x, pacman.grid_y);
+                break;
+            case GLUT_KEY_LEFT:
+                scores[i] = pythagoras(ghost.grid_x-1, ghost.grid_y, pacman.grid_x, pacman.grid_y);
+                break;
+            case GLUT_KEY_RIGHT:
+                scores[i] = pythagoras(ghost.grid_x+1, ghost.grid_y, pacman.grid_x, pacman.grid_y);
+                break;
+        }
+
+        printf("%.2f ", scores[i]);
+    }
+    float min_score = 999999.0;
+    int best_move = -1;
+    for (int i = 0; i < p; i++){
+        // Canviar true per normes
+        if (scores[i] < min_score && true){
+            best_move = directions[i];
+            min_score = scores[i];
+        }
+    }
+    printf("--------%i------------\n",best_move);
+    return best_move;
 }
