@@ -184,6 +184,7 @@ void move_ghosts_to_base() {
     std::list<Ghost>::iterator ghost;
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
         pair<int, int> start_positions = map.base_start_position();
+        ghost->is_out = false;
         ghost->initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
     }
 }

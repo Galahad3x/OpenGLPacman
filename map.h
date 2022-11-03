@@ -26,9 +26,11 @@ class Map {
     // Returns a random start position
     pair<int, int> start_position();
     pair<int, int> base_start_position();
+    pair<int, int> get_exit_base_position();
 
     private:
         int x_limit, y_limit;
+        pair<int, int> base_exit;
         void generate_mesh();
         void dfs_generator(int x_start, int y_start);
         pair<int, int> random_moviment(pair<int, int> current_position);
@@ -38,6 +40,7 @@ class Map {
         bool is_valid_to_jump(pair<int, int> position);
         vector<pair<int,int> > get_valids_neigbours(pair<int, int> position);
         vector<pair<int,int> > get_positions_to_jump(pair<int, int> position);
+    
 
 };
 #endif

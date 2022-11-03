@@ -203,6 +203,7 @@ void Map::dfs_generator(int x_start, int y_start) {
         }
     }
     mesh[start_position.second + 1][start_position.first] = BASE_CELL;
+    this->base_exit = make_pair(start_position.first, start_position.second - 1);
 }
 
 
@@ -311,4 +312,8 @@ vector<pair<int, int> > Map::get_positions_to_jump(pair<int, int> current_positi
         valids_neigbours.push_back(botton);
 
     return valids_neigbours;
+}
+
+pair<int, int> Map::get_exit_base_position() {
+    return this->base_exit;
 }
