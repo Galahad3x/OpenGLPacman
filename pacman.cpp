@@ -271,14 +271,15 @@ float pythagoras(int x1, int y1, int x2, int y2){
 }
 
 int calculate_ghost_behaviour(Ghost ghost, Agent agent){
-    if (ghost.behave_state == HOUSE){
-        // TODO ficar la funcio alejandria
-        return calculate_next_ghost_move(*ghost, pacman.grid_x, pacman.grid_y);
+    if (ghost.is_out == false){
+        pair<int, int> pos = map.get_exit_base_position();
+        return calculate_next_ghost_move(ghost, pos.first, pos.second);
     }else if (ghost.behave_state == SCATTER){
 
-    }else if (ghost.behave_state == CHASE){
-        return calculate_next_ghost_move(*ghost, pacman.grid_x, pacman.grid_y);
+    }else if (ghost.is_out){
+        return calculate_next_ghost_move(ghost, pacman.grid_x, pacman.grid_y);
     }
+    return GLUT_KEY_UP;
 }
 
 int calculate_next_ghost_move(Ghost ghost, int x, int y){
