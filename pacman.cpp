@@ -294,7 +294,7 @@ int calculate_next_ghost_move(Ghost ghost, Agent pacman){
     int best_move = -1;
     for (int i = 0; i < p; i++){
         // Canviar true per normes
-        if (scores[i] < min_score && true){
+        if (scores[i] < min_score && ghost.is_not_turn(directions[i]) && ghost.next_move_valid(directions[i])){
             best_move = directions[i];
             min_score = scores[i];
         }

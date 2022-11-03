@@ -9,6 +9,10 @@
 #define MOVING_BETWEEN 1
 #define REACHED 2
 
+#define HOUSE 0
+#define SCATTER 1
+#define CHASE 2
+
 using namespace std;
 
 class Agent {
@@ -56,8 +60,6 @@ class Agent {
         void treat_input(int key_flag);
 
         bool next_move_valid(int key);
-
-        void before_next_move();
 };
 
 class Ghost : public Agent{
@@ -65,6 +67,10 @@ class Ghost : public Agent{
         int random_timer = 1000;
         int timer_elapsed = 0;
 
+        int behave_state = HOUSE;
+
         void generate_new_movement(long t);
         int get_random_direction();
+
+        bool is_not_turn(int direction);
 };

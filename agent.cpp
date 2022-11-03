@@ -157,3 +157,17 @@ int Ghost::get_random_direction(){
     int directions[] = {GLUT_KEY_UP, GLUT_KEY_DOWN, GLUT_KEY_LEFT, GLUT_KEY_RIGHT};
     return directions[rand() % 4];
 }
+
+bool Ghost::is_not_turn(int direction){
+    switch (direction) {
+        case GLUT_KEY_UP:
+            return this->direction != GLUT_KEY_DOWN;
+        case GLUT_KEY_DOWN:
+            return this->direction != GLUT_KEY_UP;
+        case GLUT_KEY_LEFT:
+            return this->direction != GLUT_KEY_RIGHT;
+        case GLUT_KEY_RIGHT:
+            return this->direction != GLUT_KEY_LEFT;
+    }
+    return false;
+}
