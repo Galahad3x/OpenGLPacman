@@ -59,7 +59,8 @@ void food_collision();
 bool have_collision(pair<float, float> obj1, pair<float, float> obj2);
 void move_ghosts_to_base();
 
-int calculate_next_ghost_move(Ghost ghost, Agent agent);
+int calculate_ghost_behaviour(Ghost ghost, Agent agent);
+int calculate_next_ghost_move(Ghost ghost, int x, int y);
 
 int main(int argc, char *argv[]) {
     if (argc < 3){
@@ -242,7 +243,7 @@ void idle() {
 
     std::list<Ghost>::iterator ghost;
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
-        int movement = calculate_next_ghost_move(*ghost, pacman);
+        int movement = calculate_ghost_behaviour(*ghost, pacman);
         ghost->treat_input(movement);
         ghost->integrate(t-last_t);
         //ghost->generate_new_movement(t-last_t);
@@ -268,27 +269,36 @@ float pythagoras(int x1, int y1, int x2, int y2){
     return sqrt(((abs(x1-x2)*abs(x1-x2))+(abs(y1-y2)*abs(y1-y2)))*1.0);
 }
 
-int calculate_next_ghost_move(Ghost ghost, Agent pacman){
+int calculate_ghost_behaviour(Ghost ghost, Agent agent){
+    if (ghost.behave_state == HOUSE){
+        // TODO ficar la funcio alejandria
+        return calculate_next_ghost_move(*ghost, pacman.grid_x, pacman.grid_y);
+    }else if (ghost.behave_state == SCATTER){
+
+    }else if (ghost.behave_state == CHASE){
+        return calculate_next_ghost_move(*ghost, pacman.grid_x, pacman.grid_y);
+    }
+}
+
+int calculate_next_ghost_move(Ghost ghost, int x, int y){
     int p = 4;
     int directions[] = {GLUT_KEY_UP, GLUT_KEY_DOWN, GLUT_KEY_LEFT, GLUT_KEY_RIGHT};
     float scores[] = {0,0,0,0};
     for (int i = 0; i < p; i++){
         switch (directions[i]) {
             case GLUT_KEY_UP:
-                scores[i] = pythagoras(ghost.grid_x, ghost.grid_y-1, pacman.grid_x, pacman.grid_y);
+                scores[i] = pythagoras(ghost.grid_x, ghost.grid_y-1, x, y);
                 break;
             case GLUT_KEY_DOWN:
-                scores[i] = pythagoras(ghost.grid_x, ghost.grid_y+1, pacman.grid_x, pacman.grid_y);
+                scores[i] = pythagoras(ghost.grid_x, ghost.grid_y+1, x, y);
                 break;
             case GLUT_KEY_LEFT:
-                scores[i] = pythagoras(ghost.grid_x-1, ghost.grid_y, pacman.grid_x, pacman.grid_y);
+                scores[i] = pythagoras(ghost.grid_x-1, ghost.grid_y, x, y);
                 break;
             case GLUT_KEY_RIGHT:
-                scores[i] = pythagoras(ghost.grid_x+1, ghost.grid_y, pacman.grid_x, pacman.grid_y);
+                scores[i] = pythagoras(ghost.grid_x+1, ghost.grid_y, x, y);
                 break;
         }
-
-        printf("%.2f ", scores[i]);
     }
     float min_score = 999999.0;
     int best_move = -1;
@@ -299,6 +309,5 @@ int calculate_next_ghost_move(Ghost ghost, Agent pacman){
             min_score = scores[i];
         }
     }
-    printf("--------%i------------\n",best_move);
     return best_move;
 }
