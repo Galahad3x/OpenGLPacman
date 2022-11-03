@@ -244,9 +244,13 @@ void idle() {
 
     std::list<Ghost>::iterator ghost;
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
+        bool was_out = ghost->is_out;
         int movement = calculate_ghost_behaviour(*ghost, pacman);
         ghost->treat_input(movement);
         ghost->integrate(t-last_t);
+        if (ghost->is_out != was_out){
+            ghost->behave_state = CHASE;
+        }
         //ghost->generate_new_movement(t-last_t);
     }
 
@@ -276,7 +280,7 @@ int calculate_ghost_behaviour(Ghost ghost, Agent agent){
         return calculate_next_ghost_move(ghost, pos.first, pos.second);
     }else if (ghost.behave_state == SCATTER){
 
-    }else if (ghost.is_out){
+    }else if (ghost.behave_state == CHASE){
         return calculate_next_ghost_move(ghost, pacman.grid_x, pacman.grid_y);
     }
     return GLUT_KEY_UP;
