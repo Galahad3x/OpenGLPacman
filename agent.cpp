@@ -8,7 +8,7 @@ using namespace std;
 
 void Agent::initialize(int sq_size,int agent_size,int grid_x,int grid_y, Map map){
     this->state = STILL;
-    this->speed = 400.0;
+    this->speed = 250.0;
 
     this->grid_x = grid_x;
     this->grid_y = grid_y;
@@ -170,4 +170,34 @@ bool Ghost::is_not_turn(int direction){
             return this->direction != GLUT_KEY_LEFT;
     }
     return false;
+}
+
+void Ghost::integrate_timer(long t){
+    switch (this->behave_state) {
+        case HOUSE:
+            if (this->timer + t > exit_timer){
+                this->behave_state = CHASE;
+                this->timer = 0;
+            }
+            break;
+        case SCATTER:
+            if (this->timer + t > scatter_timer){
+                this->behave_state = CHASE;
+                this->color = RED;
+                this->timer = 0;
+            }
+            break;
+        case CHASE:
+            if (this->timer + t > chase_timer){
+                this->behave_state = SCATTER;
+                this->color = PINK;
+                int xs[] = {0,map.n_cols};
+                int ys[] = {0,map.n_rows};
+                this->corner_x = xs[rand() % 2];
+                this->corner_y = ys[rand() % 2];
+                this->timer = 0;
+            }
+            break;
+    }
+    this->timer += t;
 }

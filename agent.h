@@ -69,8 +69,17 @@ class Ghost : public Agent{
 
         int behave_state = HOUSE;
 
+        int corner_x, corner_y;
+
+        long timer = 0;
+        long exit_timer = 0;
+        long chase_timer = 0;
+        long scatter_timer = 0;
+
         void generate_new_movement(long t);
         int get_random_direction();
 
         bool is_not_turn(int direction);
+
+        void integrate_timer(long t);
 };

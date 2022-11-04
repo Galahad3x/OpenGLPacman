@@ -108,6 +108,10 @@ int main(int argc, char *argv[]) {
         ghost.color = RED;
         ghost.is_out = false;
         ghost.is_autonomous = true;
+        ghost.timer = 0;
+        ghost.exit_timer = 10000 * i;
+        ghost.chase_timer = 10000;
+        ghost.scatter_timer = 8000;
         ghosts.push_back(ghost);
     }
     // put food
@@ -244,16 +248,12 @@ void idle() {
 
     std::list<Ghost>::iterator ghost;
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
-        bool was_out = ghost->is_out;
         int movement = calculate_ghost_behaviour(*ghost, pacman);
         ghost->treat_input(movement);
         ghost->integrate(t-last_t);
-        if (ghost->is_out != was_out){
-            ghost->behave_state = CHASE;
-        }
+        ghost->integrate_timer(t-last_t);
         //ghost->generate_new_movement(t-last_t);
     }
-
     last_t = t;
     glutPostRedisplay();
 }
@@ -275,13 +275,15 @@ float pythagoras(int x1, int y1, int x2, int y2){
 }
 
 int calculate_ghost_behaviour(Ghost ghost, Agent agent){
-    if (ghost.is_out == false){
+    if (ghost.is_out == false && ghost.behave_state != HOUSE){
         pair<int, int> pos = map.get_exit_base_position();
         return calculate_next_ghost_move(ghost, pos.first, pos.second);
     }else if (ghost.behave_state == SCATTER){
-
+        return calculate_next_ghost_move(ghost, ghost.corner_x, ghost.corner_y);
     }else if (ghost.behave_state == CHASE){
         return calculate_next_ghost_move(ghost, pacman.grid_x, pacman.grid_y);
+    } else {
+        return ghost.get_random_direction();
     }
     return GLUT_KEY_UP;
 }
