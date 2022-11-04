@@ -5,8 +5,10 @@
 #include<stack>
 #include<vector>
 #include<list>
-#include <utility>
+#include<utility>
 #include<iostream>
+#include <algorithm>
+#include"graphic.h"
 
 using namespace std;
 
@@ -51,7 +53,7 @@ Implementation of the constructor and methods of the Map class
 ***************************************************************
 */
 Map::Map(int n_rows, int n_cols) {
-   generate(n_rows, n_cols); 
+   generate(n_rows, n_cols);
 }
 
 Map::Map(){}
@@ -78,6 +80,45 @@ void Map::print_map() {
     }
 }
 
+void Map::draw(int sq_size) {
+    set_3f_color(COOL_BLUE);
+    // Print corridor colors
+    for(int i = 0; i < n_rows; i++){
+        for(int j = 0; j < n_cols; j++){
+            if(this->mesh[i][j] == CELL_VISITED || this->mesh[i][j] == BASE_CELL){
+                draw_square(j*sq_size, i*sq_size, sq_size);
+            }
+        }
+  	}
+}
+
+pair<int, int> Map::start_position(){
+    int start_x = -1;
+    int start_y = -1;
+    while (true) {
+        start_x = rand() % n_rows;
+        start_y = rand() % n_cols;
+        if (this->mesh[start_x][start_y] == CELL_VISITED){
+            return make_pair(start_y, start_x);
+        }
+    }
+}
+
+
+pair<int, int> Map::base_start_position(){
+    int start_x = -1;
+    int start_y = -1;
+    while (true) {
+        start_x = rand() % n_rows;
+        start_y = rand() % n_cols;
+        if (this->mesh[start_x][start_y] == BASE_CELL){
+            return make_pair(start_y, start_x);
+        }
+    }
+}
+
+
+
 void Map::init_map() {
     this->mesh = new int*[n_rows]; // similar a malloc but more easy(c++)
     for (int i=0; i < n_rows; i++) {
@@ -89,22 +130,22 @@ void Map::init_map() {
 pair<int, int> Map::insert_base() {
     int base_width = 8;
     int base_height = 6;
-
     int x_mid = n_cols /2;
     int y_mid = n_rows /2;
 
+    // calculate base limits
     int x_start = x_mid - (base_width) / 2 - 1;
     int y_start = y_mid - (base_height) / 2;
     int y_end = y_mid + base_height / 2;
-    
+
     for (int i = y_start; i <= y_end; i++) {
         // put a wall in the first position to build a wall column base
         mesh[i][x_start] = WALL_CELL;
-
         // fill the base positions
-        int fill_value = (i == y_start || i == y_end) ? WALL_CELL : CELL_VISITED;
-        for(int j = x_start + 1; j < x_mid; j++)
+        int fill_value = (i == y_start || i == y_end) ? WALL_CELL : BASE_CELL;
+        for(int j = x_start + 1; j < x_mid; j++) {
             mesh[i][j] = fill_value;
+        }
         mesh[i][x_mid] = fill_value;
     }
     // mark the base exit position as visited
@@ -121,7 +162,6 @@ void Map::generate_mesh() {
 }
 
 void Map::dfs_generator(int x_start, int y_start) {
-    srand(clock());
     stack< pair<int,int> > stack;
 
     // Set start position
@@ -132,18 +172,16 @@ void Map::dfs_generator(int x_start, int y_start) {
     // apply dfs while the stack is no empty
     pair<int, int> current_position;
     pair<int, int> last_position;
-    while (!stack.empty()) {    
+    while (!stack.empty()) {
         current_position = stack.top();
+
         int x = current_position.first;
         int y = current_position.second;
-        
-    
         if (mesh[y][x] == CELL_POSSIBLE_WALL) {
             // find the valids position to jump
             vector<pair<int, int> > positions_to_jump = get_positions_to_jump(current_position);
             // remove the previus position of the list of valid position to jump
             remove_neighbour(positions_to_jump, last_position);
-
             // check if has valid positions to jump
             if(positions_to_jump.size()!=0) {
                 pair<int, int> next_position = positions_to_jump[rand() % positions_to_jump.size()]; // select a random neighbour
@@ -151,7 +189,7 @@ void Map::dfs_generator(int x_start, int y_start) {
                 mesh[current_position.second][current_position.first] = CELL_VISITED;
             } else {
                 // backtraking if is imposible continue for this position
-                mesh[current_position.second][current_position.first] = 0; 
+                mesh[current_position.second][current_position.first] = 0;
                 stack.pop();
             }
         } else {
@@ -160,10 +198,12 @@ void Map::dfs_generator(int x_start, int y_start) {
                 //check if have next position
                 if(next_position.first==-1)
                     stack.pop();
-                 else 
+                 else
                     stack.push(next_position);
         }
     }
+    mesh[start_position.second + 1][start_position.first] = BASE_CELL;
+    this->base_exit = make_pair(start_position.first, start_position.second - 1);
 }
 
 
@@ -184,7 +224,7 @@ pair<int, int> Map::random_moviment(pair<int, int> current_position) {
     }
 
     // return invalid position the current position don't have a valid neighbour
-    return make_pair(-1,-1); 
+    return make_pair(-1,-1);
 }
 
 bool Map::is_valid(pair<int, int> position) {
@@ -198,7 +238,7 @@ bool Map::is_valid(pair<int, int> position) {
     if (y <= 0 || y >= y_limit)
         return false;
 
-    return mesh[y][x] != CELL_VISITED && mesh[y][x] != WALL_CELL;
+    return mesh[y][x] != CELL_VISITED && mesh[y][x] != WALL_CELL && mesh[y][x] != BASE_CELL;
 }
 
 vector<pair<int,int> > Map::get_valids_neigbours(pair<int, int> position) {
@@ -235,13 +275,13 @@ bool Map::is_valid_to_jump(pair<int, int> current_position) {
     int y = current_position.second;
 
     // check cords of the position
-    if (x <= 0 || x > x_limit) 
+    if (x <= 0 || x > x_limit)
         return false;
 
     if (y <= 0 || y > y_limit)
         return false;
 
-    return mesh[y][x] != WALL_CELL;
+    return mesh[y][x] != WALL_CELL && mesh[y][x] != BASE_CELL;
     
 }
 
@@ -249,7 +289,7 @@ vector<pair<int, int> > Map::get_positions_to_jump(pair<int, int> current_positi
     int x = current_position.first;
     int y = current_position.second;
 
-    // generate all neighbours 
+    // generate all neighbours
     pair<int, int> right = make_pair(x - 2, y);
     pair<int, int> left = make_pair(x + 2, y);
     pair<int, int> top = make_pair(x, y - 2);
@@ -274,3 +314,6 @@ vector<pair<int, int> > Map::get_positions_to_jump(pair<int, int> current_positi
     return valids_neigbours;
 }
 
+pair<int, int> Map::get_exit_base_position() {
+    return this->base_exit;
+}
