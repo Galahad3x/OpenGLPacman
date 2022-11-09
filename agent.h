@@ -15,6 +15,9 @@
 
 using namespace std;
 
+#ifndef AGENT_GHOST
+#define AGENT_GHOST
+
 class Agent {
     public:
         // Position inside the grid of cells
@@ -83,3 +86,5 @@ class Ghost : public Agent{
 
         void integrate_timer(long t);
 };
+
+#endif

@@ -1,6 +1,5 @@
 #include "agent.h"
 #include "graphic.h"
-//#include "map.h"
 #include <stdio.h>
 #include <stdlib.h>
 

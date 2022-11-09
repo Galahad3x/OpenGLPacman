@@ -14,6 +14,7 @@
 #include"map.h"
 #include"agent.h"
 #include"food.h"
+#include"ghost.h"
 
 #define PI 3.1416
 
@@ -23,6 +24,7 @@ void display();
 void special_input(int key, int x, int y);
 void idle();
 
+// 3D Special functions
 void positionObserver(float alpha, float beta, int radi);
 void draw_edges();
 //-------------------------
@@ -51,8 +53,6 @@ Agent pacman;
 list<Ghost> ghosts;
 list<Food> foodList;
 
-
-// Map object, not initialized
 Map map;
 
 void put_food();
@@ -61,9 +61,6 @@ void check_collisions();
 void food_collision();
 bool have_collision(pair<float, float> obj1, pair<float, float> obj2);
 void move_ghosts_to_base();
-
-int calculate_ghost_behaviour(Ghost ghost, Agent agent);
-int calculate_next_ghost_move(Ghost ghost, int x, int y);
 
 int main(int argc, char *argv[]) {
     if (argc < 3){
@@ -269,7 +266,7 @@ void idle() {
 
     std::list<Ghost>::iterator ghost;
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
-        int movement = calculate_ghost_behaviour(*ghost, pacman);
+        int movement = calculate_ghost_behaviour(*ghost, pacman, map);
         ghost->treat_input(movement);
         ghost->integrate(t-last_t);
         ghost->integrate_timer(t-last_t);
@@ -290,57 +287,6 @@ void special_input(int key, int x, int y) {
     }
     glutPostRedisplay();
 }
-
-float pythagoras(int x1, int y1, int x2, int y2){
-    return sqrt(((abs(x1-x2)*abs(x1-x2))+(abs(y1-y2)*abs(y1-y2)))*1.0);
-}
-
-int calculate_ghost_behaviour(Ghost ghost, Agent agent){
-    if (ghost.is_out == false && ghost.behave_state != HOUSE){
-        pair<int, int> pos = map.get_exit_base_position();
-        return calculate_next_ghost_move(ghost, pos.first, pos.second);
-    }else if (ghost.behave_state == SCATTER){
-        return calculate_next_ghost_move(ghost, ghost.corner_x, ghost.corner_y);
-    }else if (ghost.behave_state == CHASE){
-        return calculate_next_ghost_move(ghost, pacman.grid_x, pacman.grid_y);
-    } else {
-        return ghost.get_random_direction();
-    }
-    return GLUT_KEY_UP;
-}
-
-int calculate_next_ghost_move(Ghost ghost, int x, int y){
-    int p = 4;
-    int directions[] = {GLUT_KEY_UP, GLUT_KEY_DOWN, GLUT_KEY_LEFT, GLUT_KEY_RIGHT};
-    float scores[] = {0,0,0,0};
-    for (int i = 0; i < p; i++){
-        switch (directions[i]) {
-            case GLUT_KEY_UP:
-                scores[i] = pythagoras(ghost.grid_x, ghost.grid_y-1, x, y);
-                break;
-            case GLUT_KEY_DOWN:
-                scores[i] = pythagoras(ghost.grid_x, ghost.grid_y+1, x, y);
-                break;
-            case GLUT_KEY_LEFT:
-                scores[i] = pythagoras(ghost.grid_x-1, ghost.grid_y, x, y);
-                break;
-            case GLUT_KEY_RIGHT:
-                scores[i] = pythagoras(ghost.grid_x+1, ghost.grid_y, x, y);
-                break;
-        }
-    }
-    float min_score = 999999.0;
-    int best_move = -1;
-    for (int i = 0; i < p; i++){
-        // Canviar true per normes
-        if (scores[i] < min_score && ghost.is_not_turn(directions[i]) && ghost.next_move_valid(directions[i])){
-            best_move = directions[i];
-            min_score = scores[i];
-        }
-    }
-    return best_move;
-}
-
 
 void positionObserver(float alpha,float beta,int radi) {
   float x,y,z;
