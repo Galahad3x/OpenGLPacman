@@ -10,10 +10,10 @@
 void draw_rectangle(int x, int y, int width, int height){
     glBegin(GL_QUADS);
 
-    glVertex2i(x,y);
-    glVertex2i(x,y+height);
-    glVertex2i(x+width, y+height);
-    glVertex2i(x+width, y);
+    glVertex3i(x,0,y);
+    glVertex3i(x,0,y+height);
+    glVertex3i(x+width, 0, y+height);
+    glVertex3i(x+width, 0,y);
 
     glEnd();
 }

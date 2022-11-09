@@ -6,22 +6,25 @@
 
 #include<stdio.h>
 #include<stdlib.h>
-#include <algorithm>
+#include<algorithm>
 #include<time.h>
 #include<list>
 #include<tgmath.h>
 #include"graphic.h"
 #include"map.h"
 #include"agent.h"
-#include "food.h"
+#include"food.h"
 
-
+#define PI 3.1416
 
 //-------------------------
 // OpenGL functions
 void display();
 void special_input(int key, int x, int y);
 void idle();
+
+void positionObserver(float alpha, float beta, int radi);
+void draw_edges();
 //-------------------------
 
 // Maze size (cells)
@@ -86,7 +89,7 @@ int main(int argc, char *argv[]) {
 
     // init the windows
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowPosition(50,50);
 
     sq_size = min(MAX_WIDTH / COLS, MAX_HEIGHT / ROWS);
@@ -120,6 +123,8 @@ int main(int argc, char *argv[]) {
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Pac-Man");
 
+    glEnable(GL_DEPTH_TEST);
+
     glutDisplayFunc(display);
     glutSpecialFunc(special_input);
     glutIdleFunc(idle);
@@ -136,7 +141,21 @@ void display(){
 
     // Set wall color as grey
     glClearColor(0.2,0.2,0.2,0.0);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    positionObserver(45, 45, 450);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(-WIDTH*0.6, WIDTH*0.6, -HEIGHT*0.6, HEIGHT*0.6, 10, 2000);
+
+    glMatrixMode(GL_MODELVIEW);
+
+    glPolygonMode(GL_FRONT, GL_FILL);
+    glPolygonMode(GL_BACK, GL_LINE);
 
     map.draw(sq_size);
     // Draw food
@@ -150,6 +169,8 @@ void display(){
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
         ghost->draw();
     }
+
+    draw_edges();
 
     glutSwapBuffers();
 
@@ -318,4 +339,68 @@ int calculate_next_ghost_move(Ghost ghost, int x, int y){
         }
     }
     return best_move;
+}
+
+
+void positionObserver(float alpha,float beta,int radi) {
+  float x,y,z;
+  float upx,upy,upz;
+  float modul;
+
+  x = (float)radi*cos(alpha*2*PI/360.0)*cos(beta*2*PI/360.0);
+  y = (float)radi*sin(beta*2*PI/360.0);
+  z = (float)radi*sin(alpha*2*PI/360.0)*cos(beta*2*PI/360.0);
+
+  if (beta>0)
+    {
+      upx=-x;
+      upz=-z;
+      upy=(x*x+z*z)/y;
+    }
+  else if(beta==0)
+    {
+      upx=0;
+      upy=1;
+      upz=0;
+    }
+  else
+    {
+      upx=x;
+      upz=z;
+      upy=-(x*x+z*z)/y;
+    }
+
+  modul=sqrt(upx*upx+upy*upy+upz*upz);
+
+  upx=upx/modul;
+  upy=upy/modul;
+  upz=upz/modul;
+
+  gluLookAt(x,y,z,    0.0, 0.0, 0.0,     upx,upy,upz);
+}
+
+void draw_edges(){
+    for (int i = 0; i<2000;i++){
+      glColor3f(0, 0, 1);
+      glBegin(GL_QUADS);
+      glVertex3i(i,0,0);
+      glVertex3i(i,5,0);
+      glVertex3i(i+5,5,0);
+      glVertex3i(0,5,0);
+      glEnd();
+      glColor3f(0, 1, 0);
+      glBegin(GL_QUADS);
+      glVertex3i(0,i,0);
+      glVertex3i(0,i,5);
+      glVertex3i(0,i+5,5);
+      glVertex3i(0,0,5);
+      glEnd();
+      glColor3f(1, 0, 0);
+      glBegin(GL_QUADS);
+      glVertex3i(0,0,i);
+      glVertex3i(5,0,i);
+      glVertex3i(5,0,i+5);
+      glVertex3i(5,0,0);
+      glEnd();
+  }
 }
