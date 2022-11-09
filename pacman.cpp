@@ -32,6 +32,7 @@ void draw_edges();
 float alpha_angle = 45.0;
 float beta_angle = 45.0;
 int radi_cam = 450;
+float multi = 0.65;
 //-------------------------
 
 // Maze size (cells)
@@ -150,7 +151,7 @@ void display(){
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-WIDTH*0.65, WIDTH*0.65, -HEIGHT*0.65, HEIGHT*0.65, 10, 2000);
+    glOrtho(-WIDTH*multi, WIDTH*multi, -HEIGHT*multi, HEIGHT*multi, 10, 2000);
 
     glMatrixMode(GL_MODELVIEW);
 
@@ -319,13 +320,13 @@ void keyboard(unsigned char key, int x, int y) {
             }
             break;
         case 'e':
-            if (radi_cam > 200){
-                radi_cam -= 5;
+            if (multi > 0.45){
+                multi -= 0.05;
             }
             break;
         case 'r':
-            if (radi_cam < 600){
-                radi_cam += 5;
+            if (multi < 0.75){
+                multi += 0.05;
             }
             break;
     }

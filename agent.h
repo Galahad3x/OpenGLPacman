@@ -89,4 +89,6 @@ class Ghost : public Agent{
         void initialize_autonomous(int i);
 };
 
+int inverse_direction(int direction);
+
 #endif

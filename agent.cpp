@@ -185,14 +185,14 @@ void Ghost::integrate_timer(long t){
         case SCATTER:
             if (this->timer + t > scatter_timer){
                 this->behave_state = CHASE;
-                this->color = RED;
+                this->direction = inverse_direction(this->direction);
                 this->timer = 0;
             }
             break;
         case CHASE:
             if (this->timer + t > chase_timer){
                 this->behave_state = SCATTER;
-                this->color = PINK;
+                this->direction = inverse_direction(this->direction);
                 int xs[] = {0,map.n_cols};
                 int ys[] = {0,map.n_rows};
                 this->corner_x = xs[rand() % 2];
@@ -213,4 +213,18 @@ void Ghost::initialize_autonomous(int i){
     this->exit_timer = 10000 * i;
     this->chase_timer = 10000;
     this->scatter_timer = 8000;
+}
+
+int inverse_direction(int direction){
+    switch (direction) {
+        case GLUT_KEY_UP:
+            return GLUT_KEY_DOWN;
+        case GLUT_KEY_DOWN:
+            return GLUT_KEY_UP;
+        case GLUT_KEY_LEFT:
+            return GLUT_KEY_RIGHT;
+        case GLUT_KEY_RIGHT:
+            return GLUT_KEY_LEFT;
+    }
+    return GLUT_KEY_UP;
 }
