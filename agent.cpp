@@ -39,6 +39,10 @@ void Agent::draw() {
     //draw_square((int) x, (int) y, agent_size);
     draw_prism(x,0,y,agent_size, agent_size, agent_size);
     set_raised(0);
+    /*
+    set_3f_color(this->color);
+    draw_cube(agent_size, (int) x, 0,(int) y);
+    */
 }
 
 void Agent::init_movement(int direction) {

@@ -156,7 +156,8 @@ void display(){
     glMatrixMode(GL_MODELVIEW);
 
     glPolygonMode(GL_FRONT, GL_FILL);
-    glPolygonMode(GL_BACK, GL_LINE);
+    glPolygonMode(GL_BACK, GL_FILL);
+    //glPolygonMode(GL_BACK, GL_LINE);
 
     map.draw(sq_size);
     // Draw food
@@ -171,7 +172,7 @@ void display(){
         ghost->draw();
     }
 
-    // draw_edges();
+    draw_edges();
 
     glutSwapBuffers();
 

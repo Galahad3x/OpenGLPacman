@@ -76,6 +76,34 @@ void draw_prism(int x, int y, int z, int width, int height, int length){
     glVertex3i(offset+x, raised+y+height, offset+z);
     glVertex3i(offset+x, raised+y, offset+z);
     glEnd();
+
+    // Quadrat 3
+    glBegin(GL_QUADS);
+    set_raised(0);
+    glVertex3i(offset+x, raised+y, offset+z);
+    glVertex3i(offset+x, raised+y+height, offset+z);
+    glVertex3i(offset+x+width, raised+y+height, offset+z);
+    glVertex3i(offset+x+width, raised+y, offset+z);
+    glEnd();
+}
+
+void draw_cube(int size, int x, int y, int z){
+    glPushMatrix();
+        glLoadIdentity();
+        glTranslatef(0,0,0);
+        glRotatef(50,0,0,1.0);
+        glRotatef(30,0,1,0);
+        glutSolidCube(200);
+    glPopMatrix();
+}
+
+void draw_sphere(int radi, int x, int y, int z){
+    glPushMatrix();
+        glLoadIdentity();
+        glTranslatef(100,0,0);
+        // glRotatef(50,0,0,1.0);
+        glutSolidSphere(radi*2, 20, 20);
+    glPopMatrix();
 }
 
 void set_offset(int new_offset){
