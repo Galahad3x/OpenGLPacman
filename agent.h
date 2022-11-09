@@ -85,6 +85,8 @@ class Ghost : public Agent{
         bool is_not_turn(int direction);
 
         void integrate_timer(long t);
+
+        void initialize_autonomous(int i);
 };
 
 #endif

@@ -7,13 +7,18 @@
 #include <stdio.h>
 #include"graphic.h"
 
+int offset = 0;
+int raised = 0;
+float color_offset = 0;
+int saved_color;
+
 void draw_rectangle(int x, int y, int width, int height){
     glBegin(GL_QUADS);
 
-    glVertex3i(x,0,y);
-    glVertex3i(x,0,y+height);
-    glVertex3i(x+width, 0, y+height);
-    glVertex3i(x+width, 0,y);
+    glVertex3i(x+offset,0+raised,y+offset);
+    glVertex3i(x+offset,0+raised,y+height+offset);
+    glVertex3i(x+width+offset, 0+raised, y+height+offset);
+    glVertex3i(x+width+offset, 0+raised,y+offset);
 
     glEnd();
 }
@@ -24,48 +29,110 @@ void draw_square(int x, int y, int size){
 
 void draw_squaref(float x, float y, float size){
     glBegin(GL_QUADS);
-    glVertex2f(x,y);
-    glVertex2f(x,y+size);
-    glVertex2f(x+size, y+size);
-    glVertex2f(x+size, y);
+    glVertex3f(x+offset,5+raised,y+offset);
+    glVertex3f(x+offset,5+raised,y+size+offset);
+    glVertex3f(x+size+offset,5+raised,y+size+offset);
+    glVertex3f(x+size+offset,5+raised,y+offset);
     glEnd();
 }
 
+void draw_prism(int x, int y, int z, int width, int height, int length){
+    // Quadrat 6
+    glBegin(GL_QUADS);
+    set_raised(height);
+    glVertex3i(offset+x, raised+y, offset+z+length);
+    glVertex3i(offset+x+width, raised+y, offset+z+length);
+    glVertex3i(offset+x+width, raised+y, offset+z);
+    glVertex3i(offset+x, raised+y, offset+z);
+    glEnd();
 
+    // Quadrat 1
+    color_darken();
+    glBegin(GL_QUADS);
+    set_raised(0);
+    glVertex3i(offset+x+width, raised+y+height, offset+z);
+    glVertex3i(offset+x+width, raised+y+height, offset+z+length);
+    glVertex3i(offset+x+width, raised+y, offset+z+length);
+    glVertex3i(offset+x+width, raised+y, offset+z);
+    glEnd();
+
+    // Quadrat 5
+    color_lighten();
+    glBegin(GL_QUADS);
+    set_raised(0);
+    glVertex3i(offset+x+width, raised+y, offset+z+length);
+    glVertex3i(offset+x+width, raised+y+height, offset+z+length);
+    glVertex3i(offset+x, raised+y+height, offset+z+length);
+    glVertex3i(offset+x, raised+y, offset+z+length);
+    glEnd();
+}
+
+void set_offset(int new_offset){
+    offset = new_offset;
+}
+void set_raised(int new_raised){
+    raised = new_raised;
+}
 
 void set_3f_color(int color){
+    saved_color = color;
     switch (color) {
         case BLACK:
-            glColor3f(0,0,0);
+            glColor3f(0+color_offset,0+color_offset,0+color_offset);
             break;
         case LIGHT_GREY:
-            glColor3f(0.8,0.8,0.8);
+            glColor3f(0.8+color_offset,0.8+color_offset,0.8+color_offset);
             break;
         case DARK_GREY:
-            glColor3f(0.2,0.2,0.2);
+            glColor3f(0.2+color_offset,0.2+color_offset,0.2+color_offset);
             break;
         case RED:
-            glColor3f(1,0,0);
+            glColor3f(1+color_offset,0+color_offset,0+color_offset);
             break;
         case ORANGE:
-            glColor3f(scale(236),scale(151),scale(4));
+            glColor3f(scale(236)+color_offset,scale(151)+color_offset,scale(4)+color_offset);
             break;
         case PINK:
-            glColor3f(scale(241),scale(186),scale(161));
+            glColor3f(scale(241)+color_offset,scale(186)+color_offset,scale(161)+color_offset);
             break;
         case GREEN:
-            glColor3f(0,1,0);
+            glColor3f(0+color_offset,1+color_offset,0+color_offset);
             break;
         case DARK_GREEN:
-            glColor3f(scale(52),scale(76),scale(17));
+            glColor3f(scale(52)+color_offset,scale(76)+color_offset,scale(17)+color_offset);
             break;
         case BLUE:
-            glColor3f(0,0,1);
+            glColor3f(0+color_offset,0+color_offset,1+color_offset);
             break;
         case COOL_BLUE:
-            glColor3f(scale(33),scale(112),scale(116));
+            glColor3f(scale(33)+color_offset,scale(112)+color_offset,scale(116)+color_offset);
+            break;
+        case FULVOUS:
+            glColor3f(scale(226)+color_offset, scale(132)+color_offset, scale(19)+color_offset);
+            break;
+        case RED_PIGMENT:
+            glColor3f(scale(239)+color_offset, scale(39)+color_offset, scale(27)+color_offset);
+            break;
+        case RED_CRAYOLA:
+            glColor3f(scale(234)+color_offset, scale(23)+color_offset, scale(68)+color_offset);
+            break;
+        case BLUE_CRAYOLA:
+            glColor3f(scale(55)+color_offset, scale(119)+color_offset, scale(255)+color_offset);
+            break;
+        case GREEN_SHEEN:
+            glColor3f(scale(119)+color_offset, scale(175)+color_offset, scale(156)+color_offset);
             break;
     }
+}
+
+void color_darken(){
+    color_offset -= 0.1;
+    set_3f_color(saved_color);
+}
+
+void color_lighten(){
+    color_offset += 0.1;
+    set_3f_color(saved_color);
 }
 
 double scale(int input){

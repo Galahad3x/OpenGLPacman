@@ -35,7 +35,9 @@ void Agent::set_position(float x,float y) {
 
 void Agent::draw() {
     set_3f_color(this->color);
+    set_raised(1);
     draw_square((int) x, (int) y, agent_size);
+    set_raised(0);
 }
 
 void Agent::init_movement(int direction) {
@@ -199,4 +201,15 @@ void Ghost::integrate_timer(long t){
             break;
     }
     this->timer += t;
+}
+
+void Ghost::initialize_autonomous(int i){
+    this->color = RED_CRAYOLA;
+    this->is_out = false;
+    this->behave_state = HOUSE;
+    this->is_autonomous = true;
+    this->timer = 0;
+    this->exit_timer = 10000 * i;
+    this->chase_timer = 10000;
+    this->scatter_timer = 8000;
 }

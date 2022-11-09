@@ -59,7 +59,7 @@ void put_food();
 void draw_food();
 void check_collisions();
 void food_collision();
-bool have_collision(pair<float, float> obj1, pair<float, float> obj2);
+bool collides(pair<float, float> obj1, pair<float, float> obj2);
 void move_ghosts_to_base();
 
 int main(int argc, char *argv[]) {
@@ -93,11 +93,14 @@ int main(int argc, char *argv[]) {
 
     WIDTH = sq_size * COLS;
     HEIGHT = sq_size * ROWS;
+    printf("WIDTH: %i HEIGHT %i\n", WIDTH, HEIGHT);
+    set_offset(-300);
+
     // Generar fantasmes aqui
 
     pair<int, int> start_positions = map.start_position();
     pacman.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
-    pacman.color = ORANGE;
+    pacman.color = FULVOUS;
 
     // calculate number of ghosts
     int n_ghosts =  max(COLS, ROWS) / 5;
@@ -105,13 +108,7 @@ int main(int argc, char *argv[]) {
         pair<int, int> start_positions = map.base_start_position();
         Ghost ghost;
         ghost.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
-        ghost.color = RED;
-        ghost.is_out = false;
-        ghost.is_autonomous = true;
-        ghost.timer = 0;
-        ghost.exit_timer = 10000 * i;
-        ghost.chase_timer = 10000;
-        ghost.scatter_timer = 8000;
+        ghost.initialize_autonomous(i);
         ghosts.push_back(ghost);
     }
     // put food
@@ -147,7 +144,7 @@ void display(){
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-WIDTH*0.6, WIDTH*0.6, -HEIGHT*0.6, HEIGHT*0.6, 10, 2000);
+    glOrtho(-WIDTH*0.65, WIDTH*0.65, -HEIGHT*0.65, HEIGHT*0.65, 10, 2000);
 
     glMatrixMode(GL_MODELVIEW);
 
@@ -205,10 +202,13 @@ void draw_food() {
 
 void move_ghosts_to_base() {
     std::list<Ghost>::iterator ghost;
+    int counter = 0;
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
         pair<int, int> start_positions = map.base_start_position();
         ghost->is_out = false;
         ghost->initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
+        ghost->initialize_autonomous(counter);
+        counter++;
     }
 }
 
@@ -219,7 +219,7 @@ void food_collision() {
     for (food = foodList.begin(); food != foodList.end(); ++food){
         pair<float, float> obj1 = make_pair(pacman.x, pacman.y);
         pair<float, float> obj2 = make_pair(food->x, food->y);
-        if (have_collision(obj1, obj2)) {
+        if (collides(obj1, obj2)) {
             food_to_remove = &(*food);
         }
     }
@@ -236,7 +236,7 @@ void ghost_collision() {
         float dy = abs(ghost->y - pacman.y);
         pair<float, float> obj1 = make_pair(pacman.x, pacman.y);
         pair<float, float> obj2 = make_pair(ghost->x, ghost->y);
-        if (have_collision(obj1, obj2)) {
+        if (collides(obj1, obj2)) {
             move_ghosts_to_base();
         }
     }
@@ -248,7 +248,7 @@ void check_collisions() {
     ghost_collision();
 }
 
-bool have_collision(pair<float, float> obj1, pair<float, float> obj2) {
+bool collides(pair<float, float> obj1, pair<float, float> obj2) {
     float dist = sq_size/2;
     float dx = abs(obj1.first - obj2.first);
     float dy = abs(obj1.second - obj2.second);

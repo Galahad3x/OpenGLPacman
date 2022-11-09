@@ -86,7 +86,11 @@ void Map::draw(int sq_size) {
     for(int i = 0; i < n_rows; i++){
         for(int j = 0; j < n_cols; j++){
             if(this->mesh[i][j] == CELL_VISITED || this->mesh[i][j] == BASE_CELL){
+                set_3f_color(GREEN_SHEEN);
                 draw_square(j*sq_size, i*sq_size, sq_size);
+            }else{
+                set_3f_color(BLUE_CRAYOLA);
+                draw_prism(j*sq_size, 0, i*sq_size, sq_size, 5, sq_size);
             }
         }
   	}
@@ -282,7 +286,7 @@ bool Map::is_valid_to_jump(pair<int, int> current_position) {
         return false;
 
     return mesh[y][x] != WALL_CELL && mesh[y][x] != BASE_CELL;
-    
+
 }
 
 vector<pair<int, int> > Map::get_positions_to_jump(pair<int, int> current_position) {
