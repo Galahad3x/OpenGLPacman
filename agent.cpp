@@ -36,7 +36,8 @@ void Agent::set_position(float x,float y) {
 void Agent::draw() {
     set_3f_color(this->color);
     set_raised(1);
-    draw_square((int) x, (int) y, agent_size);
+    //draw_square((int) x, (int) y, agent_size);
+    draw_prism(x,0,y,agent_size, agent_size, agent_size);
     set_raised(0);
 }
 

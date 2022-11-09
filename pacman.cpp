@@ -22,11 +22,16 @@
 // OpenGL functions
 void display();
 void special_input(int key, int x, int y);
+void keyboard(unsigned char key, int x, int y);
 void idle();
 
 // 3D Special functions
 void positionObserver(float alpha, float beta, int radi);
 void draw_edges();
+
+float alpha_angle = 45.0;
+float beta_angle = 45.0;
+int radi_cam = 450;
 //-------------------------
 
 // Maze size (cells)
@@ -99,7 +104,7 @@ int main(int argc, char *argv[]) {
     // Generar fantasmes aqui
 
     pair<int, int> start_positions = map.start_position();
-    pacman.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
+    pacman.initialize(sq_size, sq_size-9, start_positions.first, start_positions.second, map);
     pacman.color = FULVOUS;
 
     // calculate number of ghosts
@@ -121,6 +126,7 @@ int main(int argc, char *argv[]) {
 
     glutDisplayFunc(display);
     glutSpecialFunc(special_input);
+    glutKeyboardFunc(keyboard);
     glutIdleFunc(idle);
 
     glMatrixMode(GL_PROJECTION);
@@ -140,7 +146,7 @@ void display(){
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    positionObserver(45, 45, 450);
+    positionObserver(alpha_angle, beta_angle, radi_cam);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -164,7 +170,7 @@ void display(){
         ghost->draw();
     }
 
-    draw_edges();
+    // draw_edges();
 
     glutSwapBuffers();
 
@@ -206,7 +212,7 @@ void move_ghosts_to_base() {
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
         pair<int, int> start_positions = map.base_start_position();
         ghost->is_out = false;
-        ghost->initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
+        ghost->initialize(sq_size, sq_size-9, start_positions.first, start_positions.second, map);
         ghost->initialize_autonomous(counter);
         counter++;
     }
@@ -286,6 +292,43 @@ void special_input(int key, int x, int y) {
             break;
     }
     glutPostRedisplay();
+}
+
+void keyboard(unsigned char key, int x, int y) {
+    switch (key) {
+        case 'a':
+            alpha_angle += 0.5;
+            if (alpha_angle >= 360.0){
+                alpha_angle -= 360;
+            }
+            break;
+        case 'd':
+            alpha_angle -= 0.5;
+            if (alpha_angle <= 0.0){
+                alpha_angle += 360;
+            }
+            break;
+        case 'w':
+            if (beta_angle < 65.0){
+                beta_angle += 0.5;
+            }
+            break;
+        case 's':
+            if (beta_angle > 30.0){
+                beta_angle -= 0.5;
+            }
+            break;
+        case 'e':
+            if (radi_cam > 200){
+                radi_cam -= 5;
+            }
+            break;
+        case 'r':
+            if (radi_cam < 600){
+                radi_cam += 5;
+            }
+            break;
+    }
 }
 
 void positionObserver(float alpha,float beta,int radi) {

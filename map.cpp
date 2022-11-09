@@ -90,7 +90,7 @@ void Map::draw(int sq_size) {
                 draw_square(j*sq_size, i*sq_size, sq_size);
             }else{
                 set_3f_color(BLUE_CRAYOLA);
-                draw_prism(j*sq_size, 0, i*sq_size, sq_size, 5, sq_size);
+                draw_prism(j*sq_size, 0, i*sq_size, sq_size, sq_size-11, sq_size);
             }
         }
   	}

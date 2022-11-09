@@ -47,23 +47,34 @@ void draw_prism(int x, int y, int z, int width, int height, int length){
     glEnd();
 
     // Quadrat 1
-    color_darken();
     glBegin(GL_QUADS);
     set_raised(0);
     glVertex3i(offset+x+width, raised+y+height, offset+z);
     glVertex3i(offset+x+width, raised+y+height, offset+z+length);
+    color_darken();
+    color_darken();
     glVertex3i(offset+x+width, raised+y, offset+z+length);
     glVertex3i(offset+x+width, raised+y, offset+z);
+    color_lighten();
+    color_lighten();
     glEnd();
 
     // Quadrat 5
-    color_lighten();
     glBegin(GL_QUADS);
     set_raised(0);
     glVertex3i(offset+x+width, raised+y, offset+z+length);
     glVertex3i(offset+x+width, raised+y+height, offset+z+length);
     glVertex3i(offset+x, raised+y+height, offset+z+length);
     glVertex3i(offset+x, raised+y, offset+z+length);
+    glEnd();
+
+    // Quadrat 2
+    glBegin(GL_QUADS);
+    set_raised(0);
+    glVertex3i(offset+x, raised+y, offset+z+length);
+    glVertex3i(offset+x, raised+y+height, offset+z+length);
+    glVertex3i(offset+x, raised+y+height, offset+z);
+    glVertex3i(offset+x, raised+y, offset+z);
     glEnd();
 }
 
