@@ -89,20 +89,15 @@ void draw_prism(int x, int y, int z, int width, int height, int length){
 
 void draw_cube(int size, int x, int y, int z){
     glPushMatrix();
-        glLoadIdentity();
-        glTranslatef(0,0,0);
-        glRotatef(50,0,0,1.0);
-        glRotatef(30,0,1,0);
-        glutSolidCube(200);
+        glTranslatef(x+offset,y,z+offset);
+        glutSolidCube(size);
     glPopMatrix();
 }
 
 void draw_sphere(int radi, int x, int y, int z){
     glPushMatrix();
-        glLoadIdentity();
-        glTranslatef(100,0,0);
-        // glRotatef(50,0,0,1.0);
-        glutSolidSphere(radi*2, 20, 20);
+        glTranslatef(x+offset,y,z+offset);
+        glutSolidSphere(radi, 20, 20);
     glPopMatrix();
 }
 

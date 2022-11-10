@@ -35,13 +35,13 @@ void Agent::set_position(float x,float y) {
 
 void Agent::draw() {
     set_3f_color(this->color);
-    set_raised(1);
+    //set_raised(1);
     //draw_square((int) x, (int) y, agent_size);
-    draw_prism(x,0,y,agent_size, agent_size, agent_size);
-    set_raised(0);
+    //draw_prism(x,0,y,agent_size, agent_size, agent_size);
+    //set_raised(0);
 
     set_3f_color(this->color);
-    draw_sphere(agent_size, (int) x, 0,(int) y);
+    draw_sphere(agent_size / 2, (int) x + agent_size/2, agent_size/2,(int) y + agent_size/2);
 }
 
 void Agent::init_movement(int direction) {

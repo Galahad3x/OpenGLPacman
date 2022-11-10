@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
     // Generar fantasmes aqui
 
     pair<int, int> start_positions = map.start_position();
-    pacman.initialize(sq_size, sq_size-9, start_positions.first, start_positions.second, map);
+    pacman.initialize(sq_size, sq_size-5, start_positions.first, start_positions.second, map);
     pacman.color = FULVOUS;
 
     // calculate number of ghosts
@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
     for(int i = 0; i < n_ghosts; i++){
         pair<int, int> start_positions = map.base_start_position();
         Ghost ghost;
-        ghost.initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
+        ghost.initialize(sq_size, sq_size-5, start_positions.first, start_positions.second, map);
         ghost.initialize_autonomous(i);
         ghosts.push_back(ghost);
     }
@@ -138,7 +138,6 @@ int main(int argc, char *argv[]) {
 }
 
 void display(){
-    int i, j;
 
     // Set wall color as grey
     glClearColor(0.2,0.2,0.2,0.0);
@@ -156,8 +155,8 @@ void display(){
     glMatrixMode(GL_MODELVIEW);
 
     glPolygonMode(GL_FRONT, GL_FILL);
-    glPolygonMode(GL_BACK, GL_FILL);
-    //glPolygonMode(GL_BACK, GL_LINE);
+    //glPolygonMode(GL_BACK, GL_FILL);
+    glPolygonMode(GL_BACK, GL_LINE);
 
     map.draw(sq_size);
     // Draw food
@@ -172,7 +171,7 @@ void display(){
         ghost->draw();
     }
 
-    draw_edges();
+    // draw_edges();
 
     glutSwapBuffers();
 
@@ -214,7 +213,7 @@ void move_ghosts_to_base() {
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
         pair<int, int> start_positions = map.base_start_position();
         ghost->is_out = false;
-        ghost->initialize(sq_size, sq_size-9, start_positions.first, start_positions.second, map);
+        ghost->initialize(sq_size, sq_size-7, start_positions.first, start_positions.second, map);
         ghost->initialize_autonomous(counter);
         counter++;
     }
