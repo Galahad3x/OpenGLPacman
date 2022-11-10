@@ -15,6 +15,7 @@
 #include"agent.h"
 #include"food.h"
 #include"ghost.h"
+#include"texture.h"
 
 #define PI 3.1416
 
@@ -133,6 +134,10 @@ int main(int argc, char *argv[]) {
     glMatrixMode(GL_PROJECTION);
     gluOrtho2D(0,WIDTH-1,HEIGHT-1,0);
 
+    /*--------Loading textures----*/
+    glBindTexture(GL_TEXTURE_2D,0);
+    LoadTexture("assets/gespa.jpg",64);
+    /*-----------------------------*/
     glutMainLoop();
     return 0;
 }

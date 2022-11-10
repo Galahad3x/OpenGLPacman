@@ -27,6 +27,24 @@ void draw_square(int x, int y, int size){
     draw_rectangle(x, y, size, size);
 }
 
+void draw_rectangle_textured(int x, int y, int width, int height){
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D,0);
+    glBegin(GL_QUADS);
+
+    glTexCoord2f(0.0,1.0); glVertex3i(x+offset,0+raised,y+offset);
+    glTexCoord2f(0.0,0.0); glVertex3i(x+offset,0+raised,y+height+offset);
+    glTexCoord2f(1.0,0.0); glVertex3i(x+width+offset, 0+raised, y+height+offset);
+    glTexCoord2f(1.0,1.0); glVertex3i(x+width+offset, 0+raised,y+offset);
+
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+}
+
+void draw_square_textured(int x, int y, int size){
+    draw_rectangle_textured(x, y, size, size);
+}
+
 void draw_squaref(float x, float y, float size){
     glBegin(GL_QUADS);
     glVertex3f(x+offset,5+raised,y+offset);

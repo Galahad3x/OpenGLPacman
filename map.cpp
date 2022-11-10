@@ -87,7 +87,7 @@ void Map::draw(int sq_size) {
         for(int j = 0; j < n_cols; j++){
             if(this->mesh[i][j] == CELL_VISITED || this->mesh[i][j] == BASE_CELL){
                 set_3f_color(GREEN_SHEEN);
-                draw_square(j*sq_size, i*sq_size, sq_size);
+                draw_square_textured(j*sq_size, i*sq_size, sq_size);
             }else{
                 set_3f_color(BLUE_CRAYOLA);
                 draw_prism(j*sq_size, 0, i*sq_size, sq_size, sq_size-11, sq_size);

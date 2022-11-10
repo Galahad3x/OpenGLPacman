@@ -18,6 +18,9 @@ using namespace std;
 
 void draw_rectangle(int x, int y, int width, int height);
 void draw_square(int x, int y, int size);
+void draw_rectangle_textured(int x, int y, int width, int height);
+void draw_square_textured(int x, int y, int size);
+
 void draw_squaref(float x, float y, float size);
 
 void draw_prism(int x, int y, int z, int width, int height, int length);
