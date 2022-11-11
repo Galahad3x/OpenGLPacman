@@ -135,8 +135,10 @@ int main(int argc, char *argv[]) {
     gluOrtho2D(0,WIDTH-1,HEIGHT-1,0);
 
     /*--------Loading textures----*/
-    glBindTexture(GL_TEXTURE_2D,0);
+    glBindTexture(GL_TEXTURE_2D,GRASS);
     LoadTexture("assets/gespa.jpg",64);
+    glBindTexture(GL_TEXTURE_2D,COBBLESTONE);
+    LoadTexture("assets/cobble2.jpg",64);
     /*-----------------------------*/
     glutMainLoop();
     return 0;
@@ -328,11 +330,13 @@ void keyboard(unsigned char key, int x, int y) {
             if (multi > 0.45){
                 multi -= 0.05;
             }
+            multi -= 0.05;
             break;
         case 'r':
             if (multi < 0.75){
                 multi += 0.05;
             }
+            multi += 0.05;
             break;
     }
 }

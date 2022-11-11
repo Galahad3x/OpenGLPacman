@@ -9,6 +9,7 @@
 #include<iostream>
 #include <algorithm>
 #include"graphic.h"
+#include"texture.h"
 
 using namespace std;
 
@@ -86,11 +87,14 @@ void Map::draw(int sq_size) {
     for(int i = 0; i < n_rows; i++){
         for(int j = 0; j < n_cols; j++){
             if(this->mesh[i][j] == CELL_VISITED || this->mesh[i][j] == BASE_CELL){
-                set_3f_color(GREEN_SHEEN);
+                //set_3f_color(GREEN_SHEEN);
+                set_texture(GRASS);
                 draw_square_textured(j*sq_size, i*sq_size, sq_size);
             }else{
-                set_3f_color(BLUE_CRAYOLA);
-                draw_prism(j*sq_size, 0, i*sq_size, sq_size, sq_size-11, sq_size);
+                //set_3f_color(BLUE_CRAYOLA);
+                set_texture(COBBLESTONE);
+                draw_prism_textured(j*sq_size, 0, i*sq_size, sq_size, sq_size-11, sq_size);
+                //draw_cube(sq_size, j*sq_size+(sq_size/2), 0, i*sq_size+(sq_size/2));
             }
         }
   	}

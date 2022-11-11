@@ -17,5 +17,6 @@ Food::Food(float x, float y, float size) {
 void Food::draw() {
     set_3f_color(DARK_GREEN);
     //draw_squaref(x, y, size);
-    draw_prism(x, 0, y, size, size, size);
+    //draw_prism(x, 0, y, size, size, size);
+    draw_sphere(size, x, this->size ,y);
 }

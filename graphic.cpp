@@ -6,11 +6,13 @@
 
 #include <stdio.h>
 #include"graphic.h"
+#include"texture.h"
 
 int offset = 0;
 int raised = 0;
 float color_offset = 0;
 int saved_color;
+int saved_texture;
 
 void draw_rectangle(int x, int y, int width, int height){
     glBegin(GL_QUADS);
@@ -29,7 +31,7 @@ void draw_square(int x, int y, int size){
 
 void draw_rectangle_textured(int x, int y, int width, int height){
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D,0);
+    glBindTexture(GL_TEXTURE_2D,saved_texture);
     glBegin(GL_QUADS);
 
     glTexCoord2f(0.0,1.0); glVertex3i(x+offset,0+raised,y+offset);
@@ -104,6 +106,55 @@ void draw_prism(int x, int y, int z, int width, int height, int length){
     glVertex3i(offset+x+width, raised+y, offset+z);
     glEnd();
 }
+void draw_prism_textured(int x, int y, int z, int width, int height, int length){
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D,saved_texture);
+    // Quadrat 6
+    glBegin(GL_QUADS);
+    set_raised(height);
+    glTexCoord2f(0.0,1.0); glVertex3i(offset+x, raised+y, offset+z+length);
+    glTexCoord2f(0.0,0.0); glVertex3i(offset+x+width, raised+y, offset+z+length);
+    glTexCoord2f(1.0,0.0); glVertex3i(offset+x+width, raised+y, offset+z);
+    glTexCoord2f(1.0,1.0);glVertex3i(offset+x, raised+y, offset+z);
+    glEnd();
+
+    // Quadrat 1
+    glBegin(GL_QUADS);
+    set_raised(0);
+    glTexCoord2f(0.0,1.0); glVertex3i(offset+x+width, raised+y+height, offset+z);
+    glTexCoord2f(0.0,0.0); glVertex3i(offset+x+width, raised+y+height, offset+z+length);
+    glTexCoord2f(1.0,0.0); glVertex3i(offset+x+width, raised+y, offset+z+length);
+    glTexCoord2f(1.0,1.0); glVertex3i(offset+x+width, raised+y, offset+z);
+    glEnd();
+
+    // Quadrat 5
+    glBegin(GL_QUADS);
+    set_raised(0);
+    glTexCoord2f(0.0,1.0); glVertex3i(offset+x+width, raised+y, offset+z+length);
+    glTexCoord2f(0.0,0.0); glVertex3i(offset+x+width, raised+y+height, offset+z+length);
+    glTexCoord2f(1.0,0.0); glVertex3i(offset+x, raised+y+height, offset+z+length);
+    glTexCoord2f(1.0,1.0); glVertex3i(offset+x, raised+y, offset+z+length);
+    glEnd();
+
+    // Quadrat 2
+    glBegin(GL_QUADS);
+    set_raised(0);
+    glTexCoord2f(0.0,1.0); glVertex3i(offset+x, raised+y, offset+z+length);
+    glTexCoord2f(0.0,0.0); glVertex3i(offset+x, raised+y+height, offset+z+length);
+    glTexCoord2f(1.0,0.0); glVertex3i(offset+x, raised+y+height, offset+z);
+    glTexCoord2f(1.0,1.0); glVertex3i(offset+x, raised+y, offset+z);
+    glEnd();
+
+    // Quadrat 3
+    glBegin(GL_QUADS);
+    set_raised(0);
+    glTexCoord2f(0.0,1.0); glVertex3i(offset+x, raised+y, offset+z);
+    glTexCoord2f(0.0,0.0); glVertex3i(offset+x, raised+y+height, offset+z);
+    glTexCoord2f(1.0,0.0); glVertex3i(offset+x+width, raised+y+height, offset+z);
+    glTexCoord2f(1.0,1.0); glVertex3i(offset+x+width, raised+y, offset+z);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+}
 
 void draw_cube(int size, int x, int y, int z){
     glPushMatrix();
@@ -124,6 +175,9 @@ void set_offset(int new_offset){
 }
 void set_raised(int new_raised){
     raised = new_raised;
+}
+void set_texture(int new_texture){
+    saved_texture = new_texture;
 }
 
 void set_3f_color(int color){

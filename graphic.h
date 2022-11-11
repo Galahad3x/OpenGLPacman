@@ -24,12 +24,14 @@ void draw_square_textured(int x, int y, int size);
 void draw_squaref(float x, float y, float size);
 
 void draw_prism(int x, int y, int z, int width, int height, int length);
+void draw_prism_textured(int x, int y, int z, int width, int height, int length);
 
 void draw_cube(int size, int x, int y, int z);
 void draw_sphere(int radi, int x, int y, int z);
 
 void set_offset(int new_offset);
 void set_raised(int new_raised);
+void set_texture(int new_texture);
 
 void set_3f_color(int color);
 
