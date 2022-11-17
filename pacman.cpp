@@ -125,6 +125,7 @@ int main(int argc, char *argv[]) {
     glutCreateWindow("Pac-Man");
 
     glEnable(GL_DEPTH_TEST);
+    // glEnable(GL_LIGHTING);
 
     glutDisplayFunc(display);
     glutSpecialFunc(special_input);
@@ -290,13 +291,52 @@ void idle() {
     glutPostRedisplay();
 }
 
+int adapt_to_cam(int key){
+    if (alpha_angle >= 315 || alpha_angle < 45){
+        switch (key) {
+            case GLUT_KEY_UP:
+                return GLUT_KEY_LEFT;
+            case GLUT_KEY_DOWN:
+                return GLUT_KEY_RIGHT;
+            case GLUT_KEY_LEFT:
+                return GLUT_KEY_DOWN;
+            case GLUT_KEY_RIGHT:
+                return GLUT_KEY_UP;
+        }
+    } else if (alpha_angle < 135) {
+        return key;
+    } else if (alpha_angle < 225) {
+        switch (key) {
+            case GLUT_KEY_UP:
+                return GLUT_KEY_RIGHT;
+            case GLUT_KEY_DOWN:
+                return GLUT_KEY_LEFT;
+            case GLUT_KEY_LEFT:
+                return GLUT_KEY_UP;
+            case GLUT_KEY_RIGHT:
+                return GLUT_KEY_DOWN;
+        }
+    } else {
+        switch (key) {
+            case GLUT_KEY_UP:
+                return GLUT_KEY_DOWN;
+            case GLUT_KEY_DOWN:
+                return GLUT_KEY_UP;
+            case GLUT_KEY_LEFT:
+                return GLUT_KEY_RIGHT;
+            case GLUT_KEY_RIGHT:
+                return GLUT_KEY_LEFT;
+        }
+    }
+}
+
 void special_input(int key, int x, int y) {
     switch(key) {
         case GLUT_KEY_F1:
             exit(0);
             break;
         default:
-            pacman.treat_input(key);
+            pacman.treat_input(adapt_to_cam(key));
             break;
     }
     glutPostRedisplay();
