@@ -6,6 +6,7 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include<math.h>  
 #include<algorithm>
 #include<time.h>
 #include<list>
@@ -66,7 +67,7 @@ void put_food();
 void draw_food();
 void check_collisions();
 void food_collision();
-bool collides(pair<float, float> obj1, pair<float, float> obj2);
+bool collides(pair<float, float> obj1, pair<float, float> obj2, float size_obj1);
 void move_ghosts_to_base();
 
 int main(int argc, char *argv[]) {
@@ -233,7 +234,7 @@ void food_collision() {
     for (food = foodList.begin(); food != foodList.end(); ++food){
         pair<float, float> obj1 = make_pair(pacman.x, pacman.y);
         pair<float, float> obj2 = make_pair(food->x, food->y);
-        if (collides(obj1, obj2)) {
+        if (collides(obj1, obj2, pacman.agent_size)) {
             food_to_remove = &(*food);
         }
     }
@@ -250,7 +251,7 @@ void ghost_collision() {
         float dy = abs(ghost->y - pacman.y);
         pair<float, float> obj1 = make_pair(pacman.x, pacman.y);
         pair<float, float> obj2 = make_pair(ghost->x, ghost->y);
-        if (collides(obj1, obj2)) {
+        if (collides(obj1, obj2, pacman.agent_size)) {
             move_ghosts_to_base();
         }
     }
@@ -262,11 +263,12 @@ void check_collisions() {
     ghost_collision();
 }
 
-bool collides(pair<float, float> obj1, pair<float, float> obj2) {
-    float dist = sq_size/2;
-    float dx = abs(obj1.first - obj2.first);
-    float dy = abs(obj1.second - obj2.second);
-    return dx  +  dy <= dist;
+bool collides(pair<float, float> obj1, pair<float, float> obj2, float size_obj1) {
+    float dist = sq_size/5;
+    float dx = pow(obj1.first - obj2.first, 2);
+    float dy = pow(obj1.second - obj2.second, 2);
+    float distance = sqrt(dx + dy);
+    return distance <= (size_obj1 / 2);
 }
 
 
