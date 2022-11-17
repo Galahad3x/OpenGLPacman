@@ -330,13 +330,11 @@ void keyboard(unsigned char key, int x, int y) {
             if (multi > 0.45){
                 multi -= 0.05;
             }
-            multi -= 0.05;
             break;
         case 'r':
             if (multi < 0.75){
                 multi += 0.05;
             }
-            multi += 0.05;
             break;
     }
 }
