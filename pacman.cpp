@@ -181,17 +181,29 @@ void display(){
         glEnable(GL_LIGHT0);
         //------------------------------
 
-        //------Directional light-------
+        //--------Light in base---------
         position[0]=0; position[1]=20; position[2]=0; position[3]=1;
-        glLightiv(GL_LIGHT0,GL_POSITION,position);
-        glLightf(GL_LIGHT0,GL_LINEAR_ATTENUATION,0.01);
-        glLightf(GL_LIGHT0,GL_QUADRATIC_ATTENUATION,0.0001);
+        glLightiv(GL_LIGHT1,GL_POSITION,position);
+        glLightf(GL_LIGHT1,GL_LINEAR_ATTENUATION,0.01);
+        glLightf(GL_LIGHT1,GL_QUADRATIC_ATTENUATION,0.0001);
+
+        color[0]=1; color[1]=1; color[2]=1; color[3]=1;
+        glLightfv(GL_LIGHT1,GL_SPECULAR,color);
+        color[0]=1; color[1]=1; color[2]=1; color[3]=1;
+        glLightfv(GL_LIGHT1,GL_DIFFUSE,color);
+        //------------------------------
+
+        //--------Spot Lighting---------
+        position[0]=150; position[1]=20; position[2]=150; position[3]=1;
+        glLightiv(GL_LIGHT2,GL_POSITION,position);
+        glLightf(GL_LIGHT2,GL_LINEAR_ATTENUATION,0.01);
+        glLightf(GL_LIGHT2,GL_QUADRATIC_ATTENUATION,0.0);
         //------------------------------
         material[0]=1.0; material[1]=1.0; material[2]=1.0; material[3]=1.0;
         glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, material);
 
-    glEnable(GL_LIGHT0);
-    glDisable(GL_LIGHT1);
+    glEnable(GL_LIGHT1);
+    glEnable(GL_LIGHT2);
 
     map.draw(sq_size);
 
