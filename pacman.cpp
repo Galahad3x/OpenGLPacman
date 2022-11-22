@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
     glutCreateWindow("Pac-Man");
 
     glEnable(GL_DEPTH_TEST);
-    // glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHTING);
 
     glutDisplayFunc(display);
     glutSpecialFunc(special_input);
@@ -166,7 +166,29 @@ void display(){
     //glPolygonMode(GL_BACK, GL_FILL);
     glPolygonMode(GL_BACK, GL_LINE);
 
+    //-- Ambient light
+    GLint position[4];
+    GLfloat color[4];
+    GLfloat direction[3];
+    GLfloat material[4];
+
+        //--------Ambient light---------
+        position[0]=0; position[1]=0; position[2]=0; position[3]=0;
+        glLightiv(GL_LIGHT0,GL_POSITION,position);
+
+        color[0]=0.2; color[1]=0.2; color[2]=0.2; color[3]=1;
+        glLightfv(GL_LIGHT0,GL_AMBIENT,color);
+        glEnable(GL_LIGHT0);
+        //------------------------------
+
+        material[0]=1.0; material[1]=1.0; material[2]=1.0; material[3]=1.0;
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, material);
+
+    glEnable(GL_LIGHT0);
+    glDisable(GL_LIGHT1);
+
     map.draw(sq_size);
+
     // Draw food
     draw_food();
 
@@ -285,7 +307,6 @@ void idle() {
         ghost->treat_input(movement);
         ghost->integrate(t-last_t);
         ghost->integrate_timer(t-last_t);
-        //ghost->generate_new_movement(t-last_t);
     }
     last_t = t;
     glutPostRedisplay();
@@ -328,6 +349,7 @@ int adapt_to_cam(int key){
                 return GLUT_KEY_LEFT;
         }
     }
+    return key;
 }
 
 void special_input(int key, int x, int y) {

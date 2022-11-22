@@ -34,13 +34,16 @@ void Agent::set_position(float x,float y) {
 }
 
 void Agent::draw() {
-    set_3f_color(this->color);
+
     //set_raised(1);
     //draw_square((int) x, (int) y, agent_size);
     //draw_prism(x,0,y,agent_size, agent_size, agent_size);
     //set_raised(0);
 
     set_3f_color(this->color);
+    GLfloat vec[4];
+    vec[0]=1.0; vec[1]=0.0; vec[2]=0.0; vec[3]=1.0;
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, vec);
     draw_sphere(agent_size / 2, (int) x + agent_size/2, agent_size/2,(int) y + agent_size/2);
 }
 
