@@ -181,6 +181,12 @@ void display(){
         glEnable(GL_LIGHT0);
         //------------------------------
 
+        //------Directional light-------
+        position[0]=0; position[1]=20; position[2]=0; position[3]=1;
+        glLightiv(GL_LIGHT0,GL_POSITION,position);
+        glLightf(GL_LIGHT0,GL_LINEAR_ATTENUATION,0.01);
+        glLightf(GL_LIGHT0,GL_QUADRATIC_ATTENUATION,0.0001);
+        //------------------------------
         material[0]=1.0; material[1]=1.0; material[2]=1.0; material[3]=1.0;
         glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, material);
 
