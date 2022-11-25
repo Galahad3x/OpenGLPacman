@@ -98,6 +98,7 @@ void Agent::integrate(long t) {
             }
         }
     }
+    this->flashlight.set_position(this->x, this->sq_size, this->y);
 }
 
 void Agent::treat_input(int key_flag){

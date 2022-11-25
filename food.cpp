@@ -5,6 +5,7 @@
 #endif
 #include "food.h"
 #include "graphic.h"
+#include "lighting.h"
 
 
 Food::Food(float x, float y, float size) {
@@ -15,8 +16,9 @@ Food::Food(float x, float y, float size) {
 
 
 void Food::draw() {
-    set_3f_color(DARK_GREEN);
+    //set_3f_color(DARK_GREEN);
     //draw_squaref(x, y, size);
     //draw_prism(x, 0, y, size, size, size);
+    set_material_id(DARK_GREEN_MATERIAL);
     draw_sphere(size, x, this->size ,y);
 }

@@ -6,6 +6,8 @@
 
 #include "lighting.h"
 
+int light_offset = 0;
+
 // parameter: GL_AMBIENT, GL_SPECULAR, GL_DIFFUSE
 void set_lighting_color(int light_id, int parameter, int color_id){
     GLfloat color[4];
@@ -32,6 +34,12 @@ void set_light_position(int light_id, int x, int y, int z){
     glLightiv(light_id,GL_POSITION,position);
 }
 
+void set_light_direction(int light_id, int x, int y, int z){
+    GLint position[4];
+    position[0]=x; position[1]=y; position[2]=z; position[3]=1;
+    glLightiv(light_id,GL_SPOT_DIRECTION,position);
+}
+
 void set_directional_light(int light_id, int x, int y, int z){
     GLint position[4];
     position[0]=x; position[1]=y; position[2]=z; position[3]=0;
@@ -54,6 +62,9 @@ void set_material_id(int material_id){
         case RED_CRAYOLA_MATERIAL:
             material[0]=scale_l(234); material[1]=scale_l(23); material[2]=scale_l(68); material[3]=1.0;
             break;
+        case DARK_GREEN_MATERIAL:
+            material[0]=scale_l(52); material[1]=scale_l(76); material[2]=scale_l(17); material[3]=1.0;
+            break;
     }
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, material);
 }
@@ -64,4 +75,38 @@ double scale_l(int input){
     double output_start = 0.0;
     double output_end = 1.0;
     return output_start + ((output_end - output_start) / (input_end - input_start)) * (input - input_start);
+}
+
+void set_light_offset(int offset){
+    light_offset = offset;
+}
+
+//---------------FLASHLIGHT---------------
+
+Flashlight::Flashlight(){}
+
+void Flashlight::draw() {
+    //glLightf(GL_LIGHT2,GL_LINEAR_ATTENUATION,0.005);
+    //glLightf(GL_LIGHT2,GL_QUADRATIC_ATTENUATION,0.0);
+    set_light_position(this->light_id, (int) this->x, (int) this->y, (int) this->z);
+
+    set_lighting_color(this->light_id, GL_SPECULAR, this->color);
+    set_lighting_color(this->light_id, GL_DIFFUSE, this->color);
+
+    set_light_direction(this->light_id, dx, dy, dz);
+
+    glLighti(this->light_id,GL_SPOT_CUTOFF,30);
+    glEnable(this->light_id);
+}
+
+void Flashlight::set_position(float x, float y, float z){
+    this->x = (int) x+light_offset;
+    this->y = (int) y;
+    this->z = (int) z+light_offset;
+}
+
+void Flashlight::set_direction(int dx, int dy, int dz){
+    this->dx = dx;
+    this->dy = dy;
+    this->dz = dz;
 }

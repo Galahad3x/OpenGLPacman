@@ -98,19 +98,23 @@ int main(int argc, char *argv[]) {
     glutInitWindowPosition(50,50);
 
     sq_size = min(MAX_WIDTH / COLS, MAX_HEIGHT / ROWS);
-    printf("SQSIZE: %i\n", sq_size);
 
     WIDTH = sq_size * COLS;
     HEIGHT = sq_size * ROWS;
-    printf("WIDTH: %i HEIGHT %i\n", WIDTH, HEIGHT);
+    printf("WIDTH: %i\n", GL_MAX_LIGHTS);
     set_offset(-300);
-    // TODO fer offset de lighting
+    set_light_offset(-300);
 
     // Generar fantasmes aqui
 
     pair<int, int> start_positions = map.start_position();
     pacman.initialize(sq_size, sq_size-5, start_positions.first, start_positions.second, map);
     pacman.color = FULVOUS_MATERIAL;
+    pacman.flashlight = Flashlight();
+    pacman.flashlight.light_id = GL_LIGHT1;
+    pacman.flashlight.color = RED_LIGHT;
+    pacman.flashlight.set_direction(-1,0,0);
+    pacman.flashlight.set_position(pacman.x, sq_size, pacman.y);
 
     // calculate number of ghosts
     int n_ghosts =  max(COLS, ROWS) / 5;
@@ -169,37 +173,13 @@ void display(){
     //glPolygonMode(GL_BACK, GL_FILL);
     glPolygonMode(GL_BACK, GL_LINE);
 
-    //-- Ambient light
-    GLint position[4];
-    GLfloat color[4];
-    GLfloat direction[3];
-    GLfloat material[4];
-
         //--------Ambient light---------
         set_directional_light(GL_LIGHT0, 0, 0, 0);
         set_lighting_color(GL_LIGHT0, GL_AMBIENT, AMBIENT_LIGHT);
         glEnable(GL_LIGHT0);
         //------------------------------
 
-        //--------Spot Lighting---------
-        position[0]=(int) pacman.x - 300; position[1]=200; position[2]=(int) pacman.y - 300; position[3]=1;
-        glLightiv(GL_LIGHT2,GL_POSITION,position);
-        //glLightf(GL_LIGHT2,GL_LINEAR_ATTENUATION,0.005);
-        //glLightf(GL_LIGHT2,GL_QUADRATIC_ATTENUATION,0.0);
-
-        color[0]=1; color[1]=1; color[2]=1; color[3]=1;
-        glLightfv(GL_LIGHT2,GL_SPECULAR,color);
-        color[0]=1; color[1]=1; color[2]=1; color[3]=1;
-        glLightfv(GL_LIGHT2,GL_DIFFUSE,color);
-
-        color[0]=0; color[1]=-1; color[2]=0; color[3]=1;
-        glLightfv(GL_LIGHT2,GL_SPOT_DIRECTION,color);
-        glLighti(GL_LIGHT2,GL_SPOT_CUTOFF,20);
-        //------------------------------
-
-
-    //glEnable(GL_LIGHT1);
-    glEnable(GL_LIGHT2);
+    pacman.flashlight.draw();
 
     set_material(1.0, 1.0, 1.0);
     map.draw(sq_size);
