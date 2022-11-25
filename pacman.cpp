@@ -16,6 +16,7 @@
 #include"food.h"
 #include"ghost.h"
 #include"texture.h"
+#include"lighting.h"
 
 #define PI 3.1416
 
@@ -103,13 +104,13 @@ int main(int argc, char *argv[]) {
     HEIGHT = sq_size * ROWS;
     printf("WIDTH: %i HEIGHT %i\n", WIDTH, HEIGHT);
     set_offset(-300);
-    // TODO fer offset de lighting 
+    // TODO fer offset de lighting
 
     // Generar fantasmes aqui
 
     pair<int, int> start_positions = map.start_position();
     pacman.initialize(sq_size, sq_size-5, start_positions.first, start_positions.second, map);
-    pacman.color = FULVOUS;
+    pacman.color = FULVOUS_MATERIAL;
 
     // calculate number of ghosts
     int n_ghosts =  max(COLS, ROWS) / 5;
@@ -175,47 +176,32 @@ void display(){
     GLfloat material[4];
 
         //--------Ambient light---------
-        position[0]=0; position[1]=0; position[2]=0; position[3]=0;
-        glLightiv(GL_LIGHT0,GL_POSITION,position);
-
-        color[0]=0.2; color[1]=0.2; color[2]=0.2; color[3]=1;
-        glLightfv(GL_LIGHT0,GL_AMBIENT,color);
+        set_directional_light(GL_LIGHT0, 0, 0, 0);
+        set_lighting_color(GL_LIGHT0, GL_AMBIENT, AMBIENT_LIGHT);
         glEnable(GL_LIGHT0);
         //------------------------------
 
-        //--------Light in base---------
-        position[0]=0; position[1]=1; position[2]=0; position[3]=1;
-        glLightiv(GL_LIGHT1,GL_POSITION,position);
-        glLightf(GL_LIGHT1,GL_LINEAR_ATTENUATION,0.005);
-        //glLightf(GL_LIGHT1,GL_QUADRATIC_ATTENUATION,0.0001);
-
-        color[0]=1; color[1]=1; color[2]=1; color[3]=1;
-        glLightfv(GL_LIGHT1,GL_SPECULAR,color);
-        color[0]=1; color[1]=1; color[2]=1; color[3]=1;
-        glLightfv(GL_LIGHT1,GL_DIFFUSE,color);
-        //------------------------------
-
         //--------Spot Lighting---------
-        position[0]=(int) pacman.x - 300; position[1]=30; position[2]=(int) pacman.y - 300; position[3]=1;
+        position[0]=(int) pacman.x - 300; position[1]=200; position[2]=(int) pacman.y - 300; position[3]=1;
         glLightiv(GL_LIGHT2,GL_POSITION,position);
         //glLightf(GL_LIGHT2,GL_LINEAR_ATTENUATION,0.005);
         //glLightf(GL_LIGHT2,GL_QUADRATIC_ATTENUATION,0.0);
 
-        color[0]=1; color[1]=0; color[2]=0; color[3]=1;
+        color[0]=1; color[1]=1; color[2]=1; color[3]=1;
         glLightfv(GL_LIGHT2,GL_SPECULAR,color);
-        color[0]=1; color[1]=0; color[2]=0; color[3]=1;
+        color[0]=1; color[1]=1; color[2]=1; color[3]=1;
         glLightfv(GL_LIGHT2,GL_DIFFUSE,color);
 
-        color[0]=1; color[1]=0; color[2]=0; color[3]=1;
+        color[0]=0; color[1]=-1; color[2]=0; color[3]=1;
         glLightfv(GL_LIGHT2,GL_SPOT_DIRECTION,color);
-        glLighti(GL_LIGHT2,GL_SPOT_CUTOFF,30);
+        glLighti(GL_LIGHT2,GL_SPOT_CUTOFF,20);
         //------------------------------
-        material[0]=1.0; material[1]=1.0; material[2]=1.0; material[3]=1.0;
-        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, material);
+
 
     //glEnable(GL_LIGHT1);
     glEnable(GL_LIGHT2);
 
+    set_material(1.0, 1.0, 1.0);
     map.draw(sq_size);
 
     // Draw food

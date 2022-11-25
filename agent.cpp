@@ -1,5 +1,6 @@
 #include "agent.h"
 #include "graphic.h"
+#include "lighting.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -40,10 +41,8 @@ void Agent::draw() {
     //draw_prism(x,0,y,agent_size, agent_size, agent_size);
     //set_raised(0);
 
-    set_3f_color(this->color);
-    GLfloat vec[4];
-    vec[0]=1.0; vec[1]=0.0; vec[2]=0.0; vec[3]=1.0;
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, vec);
+    //set_3f_color(this->color);
+    set_material_id(this->color);
     draw_sphere(agent_size / 2, (int) x + agent_size/2, agent_size/2,(int) y + agent_size/2);
 }
 
@@ -211,7 +210,7 @@ void Ghost::integrate_timer(long t){
 }
 
 void Ghost::initialize_autonomous(int i){
-    this->color = RED_CRAYOLA;
+    this->color = RED_CRAYOLA_MATERIAL;
     this->is_out = false;
     this->behave_state = HOUSE;
     this->is_autonomous = true;
