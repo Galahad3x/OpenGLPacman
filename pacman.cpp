@@ -6,7 +6,7 @@
 
 #include<stdio.h>
 #include<stdlib.h>
-#include<math.h>  
+#include<math.h>
 #include<algorithm>
 #include<time.h>
 #include<list>
@@ -268,7 +268,7 @@ bool collides(pair<float, float> obj1, pair<float, float> obj2, float size_obj1)
     float dx = pow(obj1.first - obj2.first, 2);
     float dy = pow(obj1.second - obj2.second, 2);
     float distance = sqrt(dx + dy);
-    return distance <= (size_obj1 / 2);
+    return distance <= ((size_obj1+2) / 2);
 }
 
 
