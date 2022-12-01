@@ -14,16 +14,12 @@ float pythagoras(int x1, int y1, int x2, int y2){
 }
 
 int calculate_ghost_behaviour(Ghost ghost, Agent agent, Map map){
-    printf("%i %i %i %i\n", ghost.is_out, ghost.behave_state, ghost.corner_x, ghost.corner_y);
     if (ghost.is_out == false && ghost.behave_state != HOUSE){
         pair<int, int> pos = map.get_exit_base_position();
-        printf("Next %i %i\n", pos.first, pos.second);
         return calculate_next_ghost_move(ghost, pos.first, pos.second);
     }else if (ghost.behave_state == SCATTER){
-        printf("Ghost %i %i\n", ghost.corner_x, ghost.corner_y);
         return calculate_next_ghost_move(ghost, ghost.corner_x, ghost.corner_y);
     }else if (ghost.behave_state == CHASE){
-        printf("CHASE %i %i\n", agent.grid_x, agent.grid_y);
         return calculate_next_ghost_move(ghost, agent.grid_x, agent.grid_y);
     } else {
         return ghost.get_random_direction();

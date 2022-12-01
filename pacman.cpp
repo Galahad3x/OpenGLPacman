@@ -123,7 +123,6 @@ int main(int argc, char *argv[]) {
         Ghost ghost;
         ghost.initialize(sq_size, sq_size-5, start_positions.first, start_positions.second, map);
         ghost.initialize_autonomous(i);
-        printf("%i\n", ghost.behave_state);
         ghosts.push_back(ghost);
     }
     // put food
@@ -305,7 +304,6 @@ void idle() {
         ghost->treat_input(movement);
         ghost->integrate(t-last_t);
         ghost->integrate_timer(t-last_t);
-        printf("IDLE %i\n", ghost->behave_state);
     }
     last_t = t;
     glutPostRedisplay();
