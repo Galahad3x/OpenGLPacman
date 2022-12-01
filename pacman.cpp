@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
     pacman.color = FULVOUS_MATERIAL;
     pacman.flashlight = Flashlight();
     pacman.flashlight.light_id = GL_LIGHT1;
-    pacman.flashlight.color = RED_LIGHT;
+    pacman.flashlight.color = WHITE_LIGHT;
     pacman.flashlight.set_direction(-1,0,0);
     pacman.flashlight.set_position(pacman.x, sq_size, pacman.y);
 
@@ -178,6 +178,8 @@ void display(){
         set_lighting_color(GL_LIGHT0, GL_AMBIENT, AMBIENT_LIGHT);
         glEnable(GL_LIGHT0);
         //------------------------------
+
+    pacman.flashlight.set_to_direction(pacman.direction);
 
     pacman.flashlight.draw();
 
@@ -444,14 +446,14 @@ void draw_edges(){
       glVertex3i(i+5,5,0);
       glVertex3i(0,5,0);
       glEnd();
-      glColor3f(0, 1, 0);
+      set_material(0.0, 1.0, 0.0);
       glBegin(GL_QUADS);
       glVertex3i(0,i,0);
       glVertex3i(0,i,5);
       glVertex3i(0,i+5,5);
       glVertex3i(0,0,5);
       glEnd();
-      glColor3f(1, 0, 0);
+      set_material(0.0, 0.0, 1.0);
       glBegin(GL_QUADS);
       glVertex3i(0,0,i);
       glVertex3i(5,0,i);

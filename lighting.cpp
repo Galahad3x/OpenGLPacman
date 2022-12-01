@@ -5,6 +5,7 @@
 #endif
 
 #include "lighting.h"
+#include <stdio.h>
 
 int light_offset = 0;
 
@@ -22,7 +23,7 @@ void set_lighting_color(int light_id, int parameter, int color_id){
             color[0]=1.0; color[1]=1.0; color[2]=1.0; color[3]=1;
             break;
         case AMBIENT_LIGHT:
-            color[0]=0.05; color[1]=0.05; color[2]=0.05; color[3]=1;
+            color[0]=0.005; color[1]=0.005; color[2]=0.005; color[3]=1;
             break;
     }
     glLightfv(light_id,parameter,color);
@@ -96,6 +97,10 @@ void Flashlight::draw() {
     set_light_direction(this->light_id, dx, dy, dz);
 
     glLighti(this->light_id,GL_SPOT_CUTOFF,30);
+
+    glLightf(this->light_id,GL_LINEAR_ATTENUATION,0.0001);
+    glLightf(this->light_id,GL_QUADRATIC_ATTENUATION,0.00008);
+
     glEnable(this->light_id);
 }
 
@@ -109,4 +114,23 @@ void Flashlight::set_direction(int dx, int dy, int dz){
     this->dx = dx;
     this->dy = dy;
     this->dz = dz;
+}
+
+void Flashlight::set_to_direction(int keydir){
+    switch (keydir) {
+    case GLUT_KEY_UP:
+        set_direction(0,0,-1);
+        break;
+    case GLUT_KEY_DOWN:
+        set_direction(0,0,1);
+        break;
+    case GLUT_KEY_LEFT:
+        set_direction(-1,0,0);
+        break;
+    case GLUT_KEY_RIGHT:
+        set_direction(1,0,0);
+        break;
+    default:
+        break;
+    }
 }

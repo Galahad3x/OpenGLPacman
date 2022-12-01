@@ -39,6 +39,8 @@ class Flashlight {
 
     void set_position(float x, float y, float z);
     void set_direction(int dx, int dy, int dz);
+
+    void set_to_direction(int keydir);
 };
 
 #endif
