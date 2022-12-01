@@ -88,7 +88,7 @@ Flashlight::Flashlight(){}
 void Flashlight::draw() {
     //glLightf(GL_LIGHT2,GL_LINEAR_ATTENUATION,0.005);
     //glLightf(GL_LIGHT2,GL_QUADRATIC_ATTENUATION,0.0);
-    set_light_position(this->light_id, (int) this->x, (int) this->y, (int) this->z);
+    set_light_position(this->light_id, this->x, this->y, this->z);
 
     set_lighting_color(this->light_id, GL_SPECULAR, this->color);
     set_lighting_color(this->light_id, GL_DIFFUSE, this->color);

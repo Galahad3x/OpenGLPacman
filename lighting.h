@@ -29,7 +29,7 @@ class Flashlight {
     public:
     Flashlight();
 
-    float x, y, z;
+    int x, y, z;
     int dx, dy, dz;
     int color;
 

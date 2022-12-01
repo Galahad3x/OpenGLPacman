@@ -101,7 +101,6 @@ int main(int argc, char *argv[]) {
 
     WIDTH = sq_size * COLS;
     HEIGHT = sq_size * ROWS;
-    printf("WIDTH: %i\n", GL_MAX_LIGHTS);
     set_offset(-300);
     set_light_offset(-300);
 
@@ -118,11 +117,13 @@ int main(int argc, char *argv[]) {
 
     // calculate number of ghosts
     int n_ghosts =  max(COLS, ROWS) / 5;
+    //int n_ghosts = 1;
     for(int i = 0; i < n_ghosts; i++){
         pair<int, int> start_positions = map.base_start_position();
         Ghost ghost;
         ghost.initialize(sq_size, sq_size-5, start_positions.first, start_positions.second, map);
         ghost.initialize_autonomous(i);
+        printf("%i\n", ghost.behave_state);
         ghosts.push_back(ghost);
     }
     // put food
@@ -189,6 +190,8 @@ void display(){
 
     // Draw agents
     pacman.draw();
+
+    
 
     // Draw ghosts
     std::list<Ghost>::iterator ghost;
@@ -302,6 +305,7 @@ void idle() {
         ghost->treat_input(movement);
         ghost->integrate(t-last_t);
         ghost->integrate_timer(t-last_t);
+        printf("IDLE %i\n", ghost->behave_state);
     }
     last_t = t;
     glutPostRedisplay();
