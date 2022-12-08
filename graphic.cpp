@@ -17,9 +17,13 @@ int saved_texture;
 void draw_rectangle(int x, int y, int width, int height){
     glBegin(GL_QUADS);
 
+    glNormal3f(0,-1,0);
     glVertex3i(x+offset,0+raised,y+offset);
+    glNormal3f(0,-1,0);
     glVertex3i(x+offset,0+raised,y+height+offset);
+    glNormal3f(0,-1,0);
     glVertex3i(x+width+offset, 0+raised, y+height+offset);
+    glNormal3f(0,-1,0);
     glVertex3i(x+width+offset, 0+raised,y+offset);
 
     glEnd();
@@ -34,9 +38,13 @@ void draw_rectangle_textured(int x, int y, int width, int height){
     glBindTexture(GL_TEXTURE_2D,saved_texture);
     glBegin(GL_QUADS);
 
+    glNormal3f(0,1,0);
     glTexCoord2f(0.0,1.0); glVertex3i(x+offset,0+raised,y+offset);
+    glNormal3f(0,1,0);
     glTexCoord2f(0.0,0.0); glVertex3i(x+offset,0+raised,y+height+offset);
+    glNormal3f(0,1,0);
     glTexCoord2f(1.0,0.0); glVertex3i(x+width+offset, 0+raised, y+height+offset);
+    glNormal3f(0,1,0);
     glTexCoord2f(1.0,1.0); glVertex3i(x+width+offset, 0+raised,y+offset);
 
     glEnd();
@@ -49,15 +57,21 @@ void draw_square_textured(int x, int y, int size){
 
 void draw_squaref(float x, float y, float size){
     glBegin(GL_QUADS);
+    glNormal3f(0,-1,0);
     glVertex3f(x+offset,5+raised,y+offset);
+    glNormal3f(0,-1,0);
     glVertex3f(x+offset,5+raised,y+size+offset);
+    glNormal3f(0,-1,0);
     glVertex3f(x+size+offset,5+raised,y+size+offset);
+    glNormal3f(0,-1,0);
     glVertex3f(x+size+offset,5+raised,y+offset);
     glEnd();
 }
 
 void draw_prism(int x, int y, int z, int width, int height, int length){
     // Quadrat 6
+    set_3f_color(BLACK);
+    glNormal3f(0,1,0);
     glBegin(GL_QUADS);
     set_raised(height);
     glVertex3i(offset+x, raised+y, offset+z+length);
@@ -67,6 +81,8 @@ void draw_prism(int x, int y, int z, int width, int height, int length){
     glEnd();
 
     // Quadrat 1
+    glNormal3f(1,0,0);
+    set_3f_color(LIGHT_GREY);
     glBegin(GL_QUADS);
     set_raised(0);
     glVertex3i(offset+x+width, raised+y+height, offset+z);
@@ -80,6 +96,8 @@ void draw_prism(int x, int y, int z, int width, int height, int length){
     glEnd();
 
     // Quadrat 5
+    glNormal3f(0,0,1);
+    set_3f_color(RED);
     glBegin(GL_QUADS);
     set_raised(0);
     glVertex3i(offset+x+width, raised+y, offset+z+length);
@@ -89,6 +107,8 @@ void draw_prism(int x, int y, int z, int width, int height, int length){
     glEnd();
 
     // Quadrat 2
+    glNormal3f(-1,0,0);
+    set_3f_color(ORANGE);
     glBegin(GL_QUADS);
     set_raised(0);
     glVertex3i(offset+x, raised+y, offset+z+length);
@@ -98,6 +118,8 @@ void draw_prism(int x, int y, int z, int width, int height, int length){
     glEnd();
 
     // Quadrat 3
+    glNormal3f(0,0,-1);
+    set_3f_color(GREEN);
     glBegin(GL_QUADS);
     set_raised(0);
     glVertex3i(offset+x, raised+y, offset+z);
@@ -109,36 +131,40 @@ void draw_prism(int x, int y, int z, int width, int height, int length){
 void draw_prism_textured(int x, int y, int z, int width, int height, int length){
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D,saved_texture);
-    // Quadrat 6
+    // Quadrat 6 BE
     glBegin(GL_QUADS);
     set_raised(height);
+    glNormal3f(0,1,0);
     glTexCoord2f(0.0,1.0); glVertex3i(offset+x, raised+y, offset+z+length);
     glTexCoord2f(0.0,0.0); glVertex3i(offset+x+width, raised+y, offset+z+length);
     glTexCoord2f(1.0,0.0); glVertex3i(offset+x+width, raised+y, offset+z);
     glTexCoord2f(1.0,1.0);glVertex3i(offset+x, raised+y, offset+z);
     glEnd();
 
-    // Quadrat 1
+    // Quadrat 1 BE
     glBegin(GL_QUADS);
     set_raised(0);
+    glNormal3f(1,0,0);
     glTexCoord2f(0.0,1.0); glVertex3i(offset+x+width, raised+y+height, offset+z);
     glTexCoord2f(0.0,0.0); glVertex3i(offset+x+width, raised+y+height, offset+z+length);
     glTexCoord2f(1.0,0.0); glVertex3i(offset+x+width, raised+y, offset+z+length);
     glTexCoord2f(1.0,1.0); glVertex3i(offset+x+width, raised+y, offset+z);
     glEnd();
 
-    // Quadrat 5
+    // Quadrat 5 BE
     glBegin(GL_QUADS);
     set_raised(0);
+    glNormal3f(0,0,1);
     glTexCoord2f(0.0,1.0); glVertex3i(offset+x+width, raised+y, offset+z+length);
     glTexCoord2f(0.0,0.0); glVertex3i(offset+x+width, raised+y+height, offset+z+length);
     glTexCoord2f(1.0,0.0); glVertex3i(offset+x, raised+y+height, offset+z+length);
     glTexCoord2f(1.0,1.0); glVertex3i(offset+x, raised+y, offset+z+length);
     glEnd();
 
-    // Quadrat 2
+    // Quadrat 2 BE
     glBegin(GL_QUADS);
     set_raised(0);
+    glNormal3f(-1,0,0);
     glTexCoord2f(0.0,1.0); glVertex3i(offset+x, raised+y, offset+z+length);
     glTexCoord2f(0.0,0.0); glVertex3i(offset+x, raised+y+height, offset+z+length);
     glTexCoord2f(1.0,0.0); glVertex3i(offset+x, raised+y+height, offset+z);
@@ -148,6 +174,7 @@ void draw_prism_textured(int x, int y, int z, int width, int height, int length)
     // Quadrat 3
     glBegin(GL_QUADS);
     set_raised(0);
+    glNormal3f(0,0,-1);
     glTexCoord2f(0.0,1.0); glVertex3i(offset+x, raised+y, offset+z);
     glTexCoord2f(0.0,0.0); glVertex3i(offset+x, raised+y+height, offset+z);
     glTexCoord2f(1.0,0.0); glVertex3i(offset+x+width, raised+y+height, offset+z);

@@ -4,6 +4,7 @@
 #include <GL/glut.h>
 #endif
 #include "map.h"
+#include "lighting.h"
 
 #define STILL 0
 #define MOVING_BETWEEN 1
@@ -47,6 +48,8 @@ class Agent {
         bool is_out = true;
 
         bool is_autonomous = false;
+
+        Flashlight flashlight;
 
         // Constructor
         Agent();

@@ -1,5 +1,6 @@
 #include "agent.h"
 #include "graphic.h"
+#include "lighting.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -34,13 +35,14 @@ void Agent::set_position(float x,float y) {
 }
 
 void Agent::draw() {
-    set_3f_color(this->color);
+
     //set_raised(1);
     //draw_square((int) x, (int) y, agent_size);
     //draw_prism(x,0,y,agent_size, agent_size, agent_size);
     //set_raised(0);
 
-    set_3f_color(this->color);
+    //set_3f_color(this->color);
+    set_material_id(this->color);
     draw_sphere(agent_size / 2, (int) x + agent_size/2, agent_size/2,(int) y + agent_size/2);
 }
 
@@ -96,6 +98,7 @@ void Agent::integrate(long t) {
             }
         }
     }
+    this->flashlight.set_position(this->x+(this->sq_size/2),this->sq_size, this->y+(this->sq_size/2));
 }
 
 void Agent::treat_input(int key_flag){
@@ -182,12 +185,14 @@ void Ghost::integrate_timer(long t){
         case HOUSE:
             if (this->timer + t > exit_timer){
                 this->behave_state = CHASE;
+                this->flashlight.color = RED_LIGHT;
                 this->timer = 0;
             }
             break;
         case SCATTER:
             if (this->timer + t > scatter_timer){
                 this->behave_state = CHASE;
+                this->flashlight.color = RED_LIGHT;
                 this->direction = inverse_direction(this->direction);
                 this->timer = 0;
             }
@@ -195,6 +200,7 @@ void Ghost::integrate_timer(long t){
         case CHASE:
             if (this->timer + t > chase_timer){
                 this->behave_state = SCATTER;
+                this->flashlight.color = BLUE_LIGHT;
                 this->direction = inverse_direction(this->direction);
                 int xs[] = {0,map.n_cols};
                 int ys[] = {0,map.n_rows};
@@ -208,7 +214,7 @@ void Ghost::integrate_timer(long t){
 }
 
 void Ghost::initialize_autonomous(int i){
-    this->color = RED_CRAYOLA;
+    this->color = RED_CRAYOLA_MATERIAL;
     this->is_out = false;
     this->behave_state = HOUSE;
     this->is_autonomous = true;

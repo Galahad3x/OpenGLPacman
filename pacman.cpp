@@ -17,6 +17,7 @@
 #include"food.h"
 #include"ghost.h"
 #include"texture.h"
+#include"lighting.h"
 
 #define PI 3.1416
 
@@ -101,22 +102,35 @@ int main(int argc, char *argv[]) {
 
     WIDTH = sq_size * COLS;
     HEIGHT = sq_size * ROWS;
-    printf("WIDTH: %i HEIGHT %i\n", WIDTH, HEIGHT);
     set_offset(-300);
+    set_light_offset(-300);
 
     // Generar fantasmes aqui
 
     pair<int, int> start_positions = map.start_position();
     pacman.initialize(sq_size, sq_size-5, start_positions.first, start_positions.second, map);
-    pacman.color = FULVOUS;
+    pacman.color = FULVOUS_MATERIAL;
+    pacman.flashlight = Flashlight();
+    pacman.flashlight.light_id = GL_LIGHT1;
+    pacman.flashlight.color = WHITE_LIGHT;
+    pacman.flashlight.set_direction(-1,0,0);
+    pacman.flashlight.set_position(pacman.x, sq_size, pacman.y);
+    set_lighting_color(pacman.flashlight.light_id, GL_AMBIENT, ZEROS_LIGHT);
 
     // calculate number of ghosts
-    int n_ghosts =  max(COLS, ROWS) / 5;
+    int n_ghosts = max(COLS, ROWS) / 5;
+    //int n_ghosts = 1;
     for(int i = 0; i < n_ghosts; i++){
         pair<int, int> start_positions = map.base_start_position();
         Ghost ghost;
         ghost.initialize(sq_size, sq_size-5, start_positions.first, start_positions.second, map);
         ghost.initialize_autonomous(i);
+        ghost.flashlight = Flashlight();
+        ghost.flashlight.light_id = GL_LIGHT2+i;
+        ghost.flashlight.color = SAGE_LIGHT;
+        ghost.flashlight.set_direction(-1,0,0);
+        ghost.flashlight.set_position(ghost.x, sq_size, ghost.y);
+        set_lighting_color(ghost.flashlight.light_id, GL_AMBIENT, ZEROS_LIGHT);
         ghosts.push_back(ghost);
     }
     // put food
@@ -126,6 +140,7 @@ int main(int argc, char *argv[]) {
     glutCreateWindow("Pac-Man");
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
 
     glutDisplayFunc(display);
     glutSpecialFunc(special_input);
@@ -148,7 +163,7 @@ int main(int argc, char *argv[]) {
 void display(){
 
     // Set wall color as grey
-    glClearColor(0.2,0.2,0.2,0.0);
+    glClearColor(0.15,0.15,0.15,0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
@@ -166,7 +181,32 @@ void display(){
     //glPolygonMode(GL_BACK, GL_FILL);
     glPolygonMode(GL_BACK, GL_LINE);
 
+        //--------Ambient light---------
+        set_directional_light(GL_LIGHT0, 0, 0, 0);
+        set_lighting_color(GL_LIGHT0, GL_AMBIENT, AMBIENT_LIGHT);
+        //glEnable(GL_LIGHT0);
+        //------------------------------
+
+    pacman.flashlight.set_to_direction(pacman.direction);
+
+    glLightf(pacman.flashlight.light_id,GL_CONSTANT_ATTENUATION,0.1);
+    //glLightf(this->light_id,GL_LINEAR_ATTENUATION,0.009);
+    glLightf(pacman.flashlight.light_id,GL_QUADRATIC_ATTENUATION,0.00009);
+
+    pacman.flashlight.draw();
+
+    std::list<Ghost>::iterator ghost;
+    for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
+        glLightf(ghost->flashlight.light_id,GL_CONSTANT_ATTENUATION,0.08);
+        glLightf(ghost->flashlight.light_id,GL_LINEAR_ATTENUATION,0.009);
+        glLightf(ghost->flashlight.light_id,GL_QUADRATIC_ATTENUATION,0.00009);
+        ghost->flashlight.set_to_direction(ghost->direction);
+        ghost->flashlight.draw();
+    }
+
+    set_material(1.0, 1.0, 1.0);
     map.draw(sq_size);
+
     // Draw food
     draw_food();
 
@@ -174,7 +214,6 @@ void display(){
     pacman.draw();
 
     // Draw ghosts
-    std::list<Ghost>::iterator ghost;
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
         ghost->draw();
     }
@@ -286,10 +325,49 @@ void idle() {
         ghost->treat_input(movement);
         ghost->integrate(t-last_t);
         ghost->integrate_timer(t-last_t);
-        //ghost->generate_new_movement(t-last_t);
     }
     last_t = t;
     glutPostRedisplay();
+}
+
+int adapt_to_cam(int key){
+    if (alpha_angle >= 315 || alpha_angle < 45){
+        switch (key) {
+            case GLUT_KEY_UP:
+                return GLUT_KEY_LEFT;
+            case GLUT_KEY_DOWN:
+                return GLUT_KEY_RIGHT;
+            case GLUT_KEY_LEFT:
+                return GLUT_KEY_DOWN;
+            case GLUT_KEY_RIGHT:
+                return GLUT_KEY_UP;
+        }
+    } else if (alpha_angle < 135) {
+        return key;
+    } else if (alpha_angle < 225) {
+        switch (key) {
+            case GLUT_KEY_UP:
+                return GLUT_KEY_RIGHT;
+            case GLUT_KEY_DOWN:
+                return GLUT_KEY_LEFT;
+            case GLUT_KEY_LEFT:
+                return GLUT_KEY_UP;
+            case GLUT_KEY_RIGHT:
+                return GLUT_KEY_DOWN;
+        }
+    } else {
+        switch (key) {
+            case GLUT_KEY_UP:
+                return GLUT_KEY_DOWN;
+            case GLUT_KEY_DOWN:
+                return GLUT_KEY_UP;
+            case GLUT_KEY_LEFT:
+                return GLUT_KEY_RIGHT;
+            case GLUT_KEY_RIGHT:
+                return GLUT_KEY_LEFT;
+        }
+    }
+    return key;
 }
 
 void special_input(int key, int x, int y) {
@@ -298,7 +376,7 @@ void special_input(int key, int x, int y) {
             exit(0);
             break;
         default:
-            pacman.treat_input(key);
+            pacman.treat_input(adapt_to_cam(key));
             break;
     }
     glutPostRedisplay();
@@ -387,14 +465,14 @@ void draw_edges(){
       glVertex3i(i+5,5,0);
       glVertex3i(0,5,0);
       glEnd();
-      glColor3f(0, 1, 0);
+      set_material(0.0, 1.0, 0.0);
       glBegin(GL_QUADS);
       glVertex3i(0,i,0);
       glVertex3i(0,i,5);
       glVertex3i(0,i+5,5);
       glVertex3i(0,0,5);
       glEnd();
-      glColor3f(1, 0, 0);
+      set_material(0.0, 0.0, 1.0);
       glBegin(GL_QUADS);
       glVertex3i(0,0,i);
       glVertex3i(5,0,i);

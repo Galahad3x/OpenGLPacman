@@ -90,10 +90,12 @@ void Map::draw(int sq_size) {
                 //set_3f_color(GREEN_SHEEN);
                 set_texture(GRASS);
                 draw_square_textured(j*sq_size, i*sq_size, sq_size);
+                //draw_square(j*sq_size, i*sq_size, sq_size);
             }else{
                 //set_3f_color(BLUE_CRAYOLA);
                 set_texture(COBBLESTONE);
                 draw_prism_textured(j*sq_size, 0, i*sq_size, sq_size, sq_size-11, sq_size);
+                //draw_prism(j*sq_size, 0, i*sq_size, sq_size, sq_size-11, sq_size);
                 //draw_cube(sq_size, j*sq_size+(sq_size/2), 0, i*sq_size+(sq_size/2));
             }
         }
