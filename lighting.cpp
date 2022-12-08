@@ -25,6 +25,9 @@ void set_lighting_color(int light_id, int parameter, int color_id){
         case AMBIENT_LIGHT:
             color[0]=0.1; color[1]=0.1; color[2]=0.1; color[3]=0.1;
             break;
+        case SAGE_LIGHT:
+            color[0]=0.9; color[1]=0.74; color[2]=0.23; color[3]=1.0;
+            break;
         case ZEROS_LIGHT:
             color[0]=0.0; color[1]=0.0; color[2]=0.0; color[3]=0.0;
             break;
@@ -101,10 +104,6 @@ void Flashlight::draw() {
 
     glLighti(this->light_id,GL_SPOT_CUTOFF,90);
     glLighti(this->light_id,GL_SPOT_EXPONENT,8);
-
-    glLightf(this->light_id,GL_CONSTANT_ATTENUATION,0.1);
-    //glLightf(this->light_id,GL_LINEAR_ATTENUATION,0.009);
-    glLightf(this->light_id,GL_QUADRATIC_ATTENUATION,0.00009);
 
     glEnable(this->light_id);
 }

@@ -98,7 +98,7 @@ void Agent::integrate(long t) {
             }
         }
     }
-    this->flashlight.set_position(this->x+(this->sq_size/2),this->sq_size+10, this->y+(this->sq_size/2));
+    this->flashlight.set_position(this->x+(this->sq_size/2),this->sq_size, this->y+(this->sq_size/2));
 }
 
 void Agent::treat_input(int key_flag){
@@ -185,12 +185,14 @@ void Ghost::integrate_timer(long t){
         case HOUSE:
             if (this->timer + t > exit_timer){
                 this->behave_state = CHASE;
+                this->flashlight.color = RED_LIGHT;
                 this->timer = 0;
             }
             break;
         case SCATTER:
             if (this->timer + t > scatter_timer){
                 this->behave_state = CHASE;
+                this->flashlight.color = RED_LIGHT;
                 this->direction = inverse_direction(this->direction);
                 this->timer = 0;
             }
@@ -198,6 +200,7 @@ void Ghost::integrate_timer(long t){
         case CHASE:
             if (this->timer + t > chase_timer){
                 this->behave_state = SCATTER;
+                this->flashlight.color = BLUE_LIGHT;
                 this->direction = inverse_direction(this->direction);
                 int xs[] = {0,map.n_cols};
                 int ys[] = {0,map.n_rows};

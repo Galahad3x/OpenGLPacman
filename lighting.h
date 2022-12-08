@@ -8,6 +8,7 @@ using namespace std;
 #define WHITE_LIGHT 2
 #define AMBIENT_LIGHT 3
 #define ZEROS_LIGHT 4
+#define SAGE_LIGHT 5
 
 #define FULVOUS_MATERIAL -1
 #define RED_CRAYOLA_MATERIAL -2

@@ -124,6 +124,12 @@ int main(int argc, char *argv[]) {
         Ghost ghost;
         ghost.initialize(sq_size, sq_size-5, start_positions.first, start_positions.second, map);
         ghost.initialize_autonomous(i);
+        ghost.flashlight = Flashlight();
+        ghost.flashlight.light_id = GL_LIGHT2+i;
+        ghost.flashlight.color = SAGE_LIGHT;
+        ghost.flashlight.set_direction(-1,0,0);
+        ghost.flashlight.set_position(ghost.x, sq_size, ghost.y);
+        set_lighting_color(ghost.flashlight.light_id, GL_AMBIENT, ZEROS_LIGHT);
         ghosts.push_back(ghost);
     }
     // put food
@@ -182,7 +188,20 @@ void display(){
 
     pacman.flashlight.set_to_direction(pacman.direction);
 
+    glLightf(pacman.flashlight.light_id,GL_CONSTANT_ATTENUATION,0.1);
+    //glLightf(this->light_id,GL_LINEAR_ATTENUATION,0.009);
+    glLightf(pacman.flashlight.light_id,GL_QUADRATIC_ATTENUATION,0.00009);
+
     pacman.flashlight.draw();
+
+    std::list<Ghost>::iterator ghost;
+    for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
+        glLightf(ghost->flashlight.light_id,GL_CONSTANT_ATTENUATION,0.08);
+        glLightf(ghost->flashlight.light_id,GL_LINEAR_ATTENUATION,0.009);
+        glLightf(ghost->flashlight.light_id,GL_QUADRATIC_ATTENUATION,0.00009);
+        ghost->flashlight.set_to_direction(ghost->direction);
+        ghost->flashlight.draw();
+    }
 
     set_material(1.0, 1.0, 1.0);
     map.draw(sq_size);
@@ -193,10 +212,7 @@ void display(){
     // Draw agents
     pacman.draw();
 
-    
-
     // Draw ghosts
-    std::list<Ghost>::iterator ghost;
     for(ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost){
         ghost->draw();
     }
