@@ -14,16 +14,19 @@ void set_lighting_color(int light_id, int parameter, int color_id){
     GLfloat color[4];
     switch (color_id) {
         case RED_LIGHT:
-            color[0]=1.0; color[1]=0.0; color[2]=0.0; color[3]=1;
+            color[0]=1.0; color[1]=0.0; color[2]=0.0; color[3]=1.0;
             break;
         case BLUE_LIGHT:
-            color[0]=0.0; color[1]=0.0; color[2]=1.0; color[3]=1;
+            color[0]=0.0; color[1]=0.0; color[2]=1.0; color[3]=1.0;
             break;
         case WHITE_LIGHT:
-            color[0]=1.0; color[1]=1.0; color[2]=1.0; color[3]=1;
+            color[0]=1.0; color[1]=1.0; color[2]=1.0; color[3]=1.0;
             break;
         case AMBIENT_LIGHT:
-            color[0]=0.005; color[1]=0.005; color[2]=0.005; color[3]=1;
+            color[0]=0.1; color[1]=0.1; color[2]=0.1; color[3]=0.1;
+            break;
+        case ZEROS_LIGHT:
+            color[0]=0.0; color[1]=0.0; color[2]=0.0; color[3]=0.0;
             break;
     }
     glLightfv(light_id,parameter,color);
@@ -96,10 +99,12 @@ void Flashlight::draw() {
 
     set_light_direction(this->light_id, dx, dy, dz);
 
-    glLighti(this->light_id,GL_SPOT_CUTOFF,30);
+    glLighti(this->light_id,GL_SPOT_CUTOFF,90);
+    glLighti(this->light_id,GL_SPOT_EXPONENT,8);
 
-    glLightf(this->light_id,GL_LINEAR_ATTENUATION,0.0001);
-    glLightf(this->light_id,GL_QUADRATIC_ATTENUATION,0.00008);
+    glLightf(this->light_id,GL_CONSTANT_ATTENUATION,0.1);
+    //glLightf(this->light_id,GL_LINEAR_ATTENUATION,0.009);
+    glLightf(this->light_id,GL_QUADRATIC_ATTENUATION,0.00009);
 
     glEnable(this->light_id);
 }
@@ -119,16 +124,16 @@ void Flashlight::set_direction(int dx, int dy, int dz){
 void Flashlight::set_to_direction(int keydir){
     switch (keydir) {
     case GLUT_KEY_UP:
-        set_direction(0,0,-1);
+        set_direction(0,-1,-4);
         break;
     case GLUT_KEY_DOWN:
-        set_direction(0,0,1);
+        set_direction(0,-1,4);
         break;
     case GLUT_KEY_LEFT:
-        set_direction(-1,0,0);
+        set_direction(-4,-1,0);
         break;
     case GLUT_KEY_RIGHT:
-        set_direction(1,0,0);
+        set_direction(4,-1,0);
         break;
     default:
         break;

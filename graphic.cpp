@@ -38,13 +38,13 @@ void draw_rectangle_textured(int x, int y, int width, int height){
     glBindTexture(GL_TEXTURE_2D,saved_texture);
     glBegin(GL_QUADS);
 
-    glNormal3f(0,-1,0);
+    glNormal3f(0,1,0);
     glTexCoord2f(0.0,1.0); glVertex3i(x+offset,0+raised,y+offset);
-    glNormal3f(0,-1,0);
+    glNormal3f(0,1,0);
     glTexCoord2f(0.0,0.0); glVertex3i(x+offset,0+raised,y+height+offset);
-    glNormal3f(0,-1,0);
+    glNormal3f(0,1,0);
     glTexCoord2f(1.0,0.0); glVertex3i(x+width+offset, 0+raised, y+height+offset);
-    glNormal3f(0,-1,0);
+    glNormal3f(0,1,0);
     glTexCoord2f(1.0,1.0); glVertex3i(x+width+offset, 0+raised,y+offset);
 
     glEnd();

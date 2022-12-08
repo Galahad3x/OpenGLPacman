@@ -114,9 +114,10 @@ int main(int argc, char *argv[]) {
     pacman.flashlight.color = WHITE_LIGHT;
     pacman.flashlight.set_direction(-1,0,0);
     pacman.flashlight.set_position(pacman.x, sq_size, pacman.y);
+    set_lighting_color(pacman.flashlight.light_id, GL_AMBIENT, ZEROS_LIGHT);
 
     // calculate number of ghosts
-    int n_ghosts =  max(COLS, ROWS) / 5;
+    int n_ghosts = max(COLS, ROWS) / 5;
     //int n_ghosts = 1;
     for(int i = 0; i < n_ghosts; i++){
         pair<int, int> start_positions = map.base_start_position();
@@ -155,7 +156,7 @@ int main(int argc, char *argv[]) {
 void display(){
 
     // Set wall color as grey
-    glClearColor(0.2,0.2,0.2,0.0);
+    glClearColor(0.15,0.15,0.15,0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
@@ -176,7 +177,7 @@ void display(){
         //--------Ambient light---------
         set_directional_light(GL_LIGHT0, 0, 0, 0);
         set_lighting_color(GL_LIGHT0, GL_AMBIENT, AMBIENT_LIGHT);
-        glEnable(GL_LIGHT0);
+        //glEnable(GL_LIGHT0);
         //------------------------------
 
     pacman.flashlight.set_to_direction(pacman.direction);
