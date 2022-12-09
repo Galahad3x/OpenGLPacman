@@ -411,7 +411,7 @@ void keyboard(unsigned char key, int x, int y) {
                 multi -= 0.05;
             }
             break;
-        case 'r':
+        case 'q':
             if (multi < 0.75){
                 multi += 0.05;
             }
