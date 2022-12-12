@@ -68,6 +68,8 @@ Map map;
 
 int state;
 
+long transition_timer;
+
 void put_food();
 
 int main(int argc, char *argv[]) {
@@ -166,6 +168,9 @@ void display(){
     case GAMESTATE:
         GameState::displayFunc();
         break;
+    case MENUTOGAMESTATE:
+        MenuToGameState::displayFunc();
+        break;
     default:
         break;
     }
@@ -178,6 +183,9 @@ void idle() {
         break;
     case GAMESTATE:
         GameState::idleFunc();
+        break;
+    case MENUTOGAMESTATE:
+        MenuToGameState::idleFunc();
         break;
     default:
         break;
@@ -192,6 +200,9 @@ void special_input(int key, int x, int y) {
     case GAMESTATE:
         GameState::specialFunc(key,x,y);
         break;
+    case MENUTOGAMESTATE:
+        MenuToGameState::specialFunc(key,x,y);
+        break;
     default:
         break;
     }
@@ -204,6 +215,9 @@ void keyboard(unsigned char key, int x, int y) {
         break;
     case GAMESTATE:
         GameState::keyboardFunc(key,x,y);
+        break;
+    case MENUTOGAMESTATE:
+        MenuToGameState::keyboardFunc(key,x,y);
         break;
     default:
         break;

@@ -1,5 +1,6 @@
-#define MENUSTATE 0
-#define GAMESTATE 1
+#define MENUSTATE 1
+#define GAMESTATE 2
+#define MENUTOGAMESTATE 12
 
 #ifndef STATE_H
 #define STATE_H
