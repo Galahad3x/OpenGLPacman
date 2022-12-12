@@ -5,8 +5,11 @@
 #endif
 
 #include <stdio.h>
+#include<math.h>
 #include"graphic.h"
 #include"texture.h"
+
+#define PI 3.1416
 
 int offset = 0;
 int raised = 0;
@@ -274,4 +277,42 @@ double scale(int input){
     double output_start = 0.0;
     double output_end = 1.0;
     return output_start + ((output_end - output_start) / (input_end - input_start)) * (input - input_start);
+}
+
+
+void positionObserver(float alpha,float beta,int radi) {
+  float x,y,z;
+  float upx,upy,upz;
+  float modul;
+
+  x = (float)radi*cos(alpha*2*PI/360.0)*cos(beta*2*PI/360.0);
+  y = (float)radi*sin(beta*2*PI/360.0);
+  z = (float)radi*sin(alpha*2*PI/360.0)*cos(beta*2*PI/360.0);
+
+  if (beta>0)
+    {
+      upx=-x;
+      upz=-z;
+      upy=(x*x+z*z)/y;
+    }
+  else if(beta==0)
+    {
+      upx=0;
+      upy=1;
+      upz=0;
+    }
+  else
+    {
+      upx=x;
+      upz=z;
+      upy=-(x*x+z*z)/y;
+    }
+
+  modul=sqrt(upx*upx+upy*upy+upz*upz);
+
+  upx=upx/modul;
+  upy=upy/modul;
+  upz=upz/modul;
+
+  gluLookAt(x,y,z,    0.0, 0.0, 0.0,     upx,upy,upz);
 }

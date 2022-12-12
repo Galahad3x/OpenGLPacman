@@ -1,4 +1,4 @@
-OBJS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+OBJS = $(patsubst %.cpp,%.o,$(wildcard *.cpp)) $(patsubst %.cpp,%.o,$(wildcard **/*.cpp))
 
 all: pacman
 

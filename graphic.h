@@ -39,3 +39,5 @@ void color_darken();
 void color_lighten();
 
 double scale(int input);
+
+void positionObserver(float alpha, float beta, int radi);

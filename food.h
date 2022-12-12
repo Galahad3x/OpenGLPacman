@@ -1,3 +1,6 @@
+#ifndef FOOD_H
+#define FOOD_H
+
 using namespace std;
 
 class Food {
@@ -11,3 +14,4 @@ class Food {
         Food(float x, float y, float size);
         void draw();
 };
+#endif
