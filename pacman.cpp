@@ -397,12 +397,12 @@ void keyboard(unsigned char key, int x, int y) {
             }
             break;
         case 'w':
-            if (beta_angle < 65.0){
+            if (beta_angle < 80.0){
                 beta_angle += 0.5;
             }
             break;
         case 's':
-            if (beta_angle > 30.0){
+            if (beta_angle > -80.0){
                 beta_angle -= 0.5;
             }
             break;
