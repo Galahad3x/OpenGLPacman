@@ -23,6 +23,7 @@
 
 #include "states/gamestate.h"
 #include "states/menustate.h"
+#include "states/countdownstate.h"
 
 //-------------------------
 // OpenGL functions
@@ -111,6 +112,7 @@ int main(int argc, char *argv[])
 
     pair<int, int> start_positions = map.start_position();
     pacman.initialize(sq_size, sq_size - 5, start_positions.first, start_positions.second, map);
+    pacman.agent_size = 0;
     pacman.color = FULVOUS_MATERIAL;
     pacman.flashlight = Flashlight();
     pacman.flashlight.light_id = GL_LIGHT1;
@@ -127,6 +129,7 @@ int main(int argc, char *argv[])
         pair<int, int> start_positions = map.base_start_position();
         Ghost ghost;
         ghost.initialize(sq_size, sq_size - 5, start_positions.first, start_positions.second, map);
+        ghost.agent_size = 0;
         ghost.initialize_autonomous(i);
         ghost.flashlight = Flashlight();
         ghost.flashlight.light_id = GL_LIGHT2 + i;
@@ -177,6 +180,9 @@ void display()
     case MENUTOGAMESTATE:
         MenuToGameState::displayFunc();
         break;
+    case COUNTDOWNSTATE:
+        CountdownState::displayFunc();
+        break;
     default:
         break;
     }
@@ -194,6 +200,9 @@ void idle()
         break;
     case MENUTOGAMESTATE:
         MenuToGameState::idleFunc();
+        break;
+    case COUNTDOWNSTATE:
+        CountdownState::idleFunc();
         break;
     default:
         break;
@@ -213,6 +222,9 @@ void special_input(int key, int x, int y)
     case MENUTOGAMESTATE:
         MenuToGameState::specialFunc(key, x, y);
         break;
+    case COUNTDOWNSTATE:
+        CountdownState::specialFunc(key, x, y);
+        break;
     default:
         break;
     }
@@ -231,6 +243,9 @@ void keyboard(unsigned char key, int x, int y)
     case MENUTOGAMESTATE:
         MenuToGameState::keyboardFunc(key, x, y);
         break;
+    case COUNTDOWNSTATE:
+        CountdownState::specialFunc(key, x, y);
+        break;
     default:
         break;
     }
@@ -241,6 +256,7 @@ void put_food()
     // calculate food size
     float food_size = sq_size / 4;
     food_size = ((int)food_size % 2 == 0) ? food_size + 1 : food_size;
+    food_size = 0;
     for (int y = 0; y < map.n_rows; y++)
     {
         for (int x = 0; x < map.n_cols; x++)

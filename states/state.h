@@ -1,6 +1,7 @@
 #define MENUSTATE 1
 #define GAMESTATE 2
 #define MENUTOGAMESTATE 3
+#define COUNTDOWNSTATE 4
 
 #ifndef STATE_H
 #define STATE_H

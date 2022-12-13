@@ -13,11 +13,14 @@
 #include "../globals.h"
 
 #include "gamestate.h"
+#include "countdownstate.h"
 
 #include "../graphic.h"
 #include "../lighting.h"
 #include "../map.h"
 #include "../ghost.h"
+
+void draw_food();
 
 void MenuState::enter()
 {
@@ -120,19 +123,27 @@ MenuState::MenuState()
 float va = 0.0;
 float vb = 0.0;
 
+float food_size_a = 0;
+float food_size_va;
+
 void MenuToGameState::enter()
 {
     stateOfGame = MENUTOGAMESTATE;
-    transition_timer = 900;
+    transition_timer = 1000;
 
     last_t = glutGet(GLUT_ELAPSED_TIME);
 
     va = -(alpha_angle - 45) / transition_timer;
     vb = -(beta_angle - 45) / transition_timer;
+
+    float food_size = sq_size / 4;
+    food_size = ((int)food_size % 2 == 0) ? food_size + 1 : food_size;
+
+    food_size_va = food_size / transition_timer;
 }
 void MenuToGameState::exitState()
 {
-    GameState::enter();
+    CountdownState::enter();
 }
 
 void MenuToGameState::displayFunc()
@@ -157,6 +168,8 @@ void MenuToGameState::displayFunc()
 
     set_material(1.0, 1.0, 1.0);
     map.draw(sq_size);
+
+    draw_food();
 
     /**
      * Draw text
@@ -218,6 +231,12 @@ void MenuToGameState::idleFunc()
     {
         alpha_angle += va * time_elapsed;
         beta_angle += vb * time_elapsed;
+        food_size_a += food_size_va * time_elapsed;
+        std::list<Food>::iterator food;
+        for (food = foodList.begin(); food != foodList.end(); ++food)
+        {
+            food->size = (int)food_size_a;
+        }
     }
     else
     {

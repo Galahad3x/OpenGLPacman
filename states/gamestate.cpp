@@ -22,9 +22,11 @@ int adapt_to_cam(int key);
 void check_collisions();
 void food_collision();
 void ghost_collision();
-bool collides(pair<float, float> obj1, pair<float, float> obj2, float size_obj1);
+bool collides(pair<float, float> obj1, pair<float, float> obj2, float size_obj1, float size_obj2);
 
 void move_ghosts_to_base();
+
+float quadratic;
 
 void GameState::enter()
 {
@@ -33,6 +35,8 @@ void GameState::enter()
 
     alpha_angle = 45.0;
     beta_angle = 45.0;
+
+    quadratic = 0.00009;
 }
 void GameState::exitState()
 {
@@ -71,7 +75,7 @@ void GameState::displayFunc()
 
     glLightf(pacman.flashlight.light_id, GL_CONSTANT_ATTENUATION, 0.1);
     // glLightf(this->light_id,GL_LINEAR_ATTENUATION,0.009);
-    glLightf(pacman.flashlight.light_id, GL_QUADRATIC_ATTENUATION, 0.00009);
+    glLightf(pacman.flashlight.light_id, GL_QUADRATIC_ATTENUATION, quadratic);
 
     pacman.flashlight.draw();
 
@@ -80,7 +84,7 @@ void GameState::displayFunc()
     {
         glLightf(ghost->flashlight.light_id, GL_CONSTANT_ATTENUATION, 0.08);
         glLightf(ghost->flashlight.light_id, GL_LINEAR_ATTENUATION, 0.009);
-        glLightf(ghost->flashlight.light_id, GL_QUADRATIC_ATTENUATION, 0.00009);
+        glLightf(ghost->flashlight.light_id, GL_QUADRATIC_ATTENUATION, quadratic);
         ghost->flashlight.set_to_direction(ghost->direction);
         ghost->flashlight.draw();
     }
@@ -264,7 +268,7 @@ void food_collision()
     {
         pair<float, float> obj1 = make_pair(pacman.x, pacman.y);
         pair<float, float> obj2 = make_pair(food->x, food->y);
-        if (collides(obj1, obj2, pacman.agent_size))
+        if (collides(obj1, obj2, pacman.agent_size, food->size * 2))
         {
             food_to_remove = &(*food);
         }
@@ -284,20 +288,20 @@ void ghost_collision()
         float dy = abs(ghost->y - pacman.y);
         pair<float, float> obj1 = make_pair(pacman.x, pacman.y);
         pair<float, float> obj2 = make_pair(ghost->x, ghost->y);
-        if (collides(obj1, obj2, pacman.agent_size))
+        if (collides(obj1, obj2, pacman.agent_size, pacman.agent_size))
         {
             move_ghosts_to_base();
         }
     }
 }
 
-bool collides(pair<float, float> obj1, pair<float, float> obj2, float size_obj1)
+bool collides(pair<float, float> obj1, pair<float, float> obj2, float size_obj1, float size_obj2)
 {
     float dist = sq_size / 5;
     float dx = pow(obj1.first - obj2.first, 2);
     float dy = pow(obj1.second - obj2.second, 2);
     float distance = sqrt(dx + dy);
-    return distance <= ((size_obj1 + 2) / 2);
+    return distance <= ((size_obj1 / 2.0) + (size_obj2 / 2.0));
 }
 
 void move_ghosts_to_base()
