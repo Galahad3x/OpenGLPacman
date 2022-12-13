@@ -22,6 +22,6 @@ extern int sq_size;
 
 extern long last_t;
 
-extern int state;
+extern int stateOfGame;
 
 extern long transition_timer;
