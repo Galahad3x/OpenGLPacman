@@ -22,6 +22,10 @@
 
 void draw_food();
 
+void put_food();
+
+float food_size_a = 0;
+
 void MenuState::enter()
 {
     stateOfGame = MENUSTATE;
@@ -31,6 +35,12 @@ void MenuState::enter()
 }
 void MenuState::exitState()
 {
+    std::list<Food>::iterator food;
+    for (food = foodList.begin(); food != foodList.end(); ++food)
+    {
+        food->size = 0;
+    }
+    food_size_a = 0;
 }
 
 void MenuState::displayFunc()
@@ -98,11 +108,13 @@ void MenuState::displayFunc()
 }
 void MenuState::specialFunc(int key, int x, int y)
 {
+    MenuState::exitState();
     MenuToGameState::enter();
 }
 void MenuState::keyboardFunc(unsigned char key, int x, int y)
 {
     // GO TO GAME STATE
+    MenuState::exitState();
     MenuToGameState::enter();
 }
 void MenuState::idleFunc()
@@ -112,7 +124,6 @@ void MenuState::idleFunc()
     {
         alpha_angle -= 360;
     }
-    int t = glutGet(GLUT_ELAPSED_TIME);
     glutPostRedisplay();
 }
 
@@ -123,7 +134,6 @@ MenuState::MenuState()
 float va = 0.0;
 float vb = 0.0;
 
-float food_size_a = 0;
 float food_size_va;
 
 void MenuToGameState::enter()
@@ -140,6 +150,39 @@ void MenuToGameState::enter()
     food_size = ((int)food_size % 2 == 0) ? food_size + 1 : food_size;
 
     food_size_va = food_size / transition_timer;
+
+    pair<int, int> start_positions = map.start_position();
+    pacman.initialize(sq_size, sq_size - 5, start_positions.first, start_positions.second, map);
+    pacman.agent_size = 0;
+    pacman.color = FULVOUS_MATERIAL;
+    pacman.flashlight = Flashlight();
+    pacman.flashlight.light_id = GL_LIGHT1;
+    pacman.flashlight.color = WHITE_LIGHT;
+    pacman.flashlight.set_direction(-1, 0, 0);
+    pacman.flashlight.set_position(pacman.x, sq_size, pacman.y);
+    set_lighting_color(pacman.flashlight.light_id, GL_AMBIENT, ZEROS_LIGHT);
+
+    // calculate number of ghosts
+    int n_ghosts = max(COLS, ROWS) / 5;
+    // TODO ficar llista de ghosts a 0
+    // int n_ghosts = 1;
+    for (int i = 0; i < n_ghosts; i++)
+    {
+        pair<int, int> start_positions = map.base_start_position();
+        Ghost ghost;
+        ghost.initialize(sq_size, sq_size - 5, start_positions.first, start_positions.second, map);
+        ghost.agent_size = 0;
+        ghost.initialize_autonomous(i);
+        ghost.flashlight = Flashlight();
+        ghost.flashlight.light_id = GL_LIGHT2 + i;
+        ghost.flashlight.color = SAGE_LIGHT;
+        ghost.flashlight.set_direction(-1, 0, 0);
+        ghost.flashlight.set_position(ghost.x, sq_size, ghost.y);
+        set_lighting_color(ghost.flashlight.light_id, GL_AMBIENT, ZEROS_LIGHT);
+        ghosts.push_back(ghost);
+    }
+    // put food
+    put_food();
 }
 void MenuToGameState::exitState()
 {
@@ -171,45 +214,6 @@ void MenuToGameState::displayFunc()
 
     draw_food();
 
-    /**
-     * Draw text
-     **/
-    /*
-    char *c = "Pac-Man";
-
-    glDisable(GL_LIGHTING);
-    glPushMatrix();
-        glRotatef(-90.0, 1.0, 0.0, 0.0);
-        glRotatef(90.0-alpha_angle, 0.0, 0.0, 1.0);
-        glScalef(0.5, 0.5, 0.5);
-        glTranslatef(-105*0.5*strlen(c), 0.0, 0.0);
-        glTranslatef(0.0, 0.0, 100.0);
-        glRotatef(90 - beta_angle, 1.0, 0.0 ,0.0);
-        for (int i = 0; i < strlen(c); i++)
-        {
-            glColor3f(1.0,1.0,1.0);
-            glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, c[i]);
-        }
-    glPopMatrix();
-
-    char *c2 = "Press any key to play";
-
-    glPushMatrix();
-        glRotatef(-90.0, 1.0, 0.0, 0.0);
-        glRotatef(90.0-alpha_angle, 0.0, 0.0, 1.0);
-        glScalef(0.2, 0.2, 0.2);
-        glTranslatef(-105*0.5*strlen(c2), 0.0, 0.0);
-        glTranslatef(0.0, -200.0, 200.0);
-        glRotatef(90 - beta_angle, 1.0, 0.0 ,0.0);
-        for (int i = 0; i < strlen(c2); i++)
-        {
-            glColor3f(1.0,1.0,1.0);
-            glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, c2[i]);
-        }
-    glPopMatrix();
-    glEnable(GL_LIGHTING);
-
-    */
     glutSwapBuffers();
 }
 void MenuToGameState::specialFunc(int key, int x, int y)

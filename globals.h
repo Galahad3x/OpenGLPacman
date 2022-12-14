@@ -25,3 +25,6 @@ extern long last_t;
 extern int stateOfGame;
 
 extern long transition_timer;
+
+extern float agent_size_a;
+extern float agent_size_va;

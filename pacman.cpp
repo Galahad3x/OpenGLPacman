@@ -24,6 +24,7 @@
 #include "states/gamestate.h"
 #include "states/menustate.h"
 #include "states/countdownstate.h"
+#include "states/losestate.h"
 
 //-------------------------
 // OpenGL functions
@@ -71,6 +72,9 @@ int stateOfGame;
 
 long transition_timer;
 
+float agent_size_a;
+float agent_size_va;
+
 void put_food();
 
 int main(int argc, char *argv[])
@@ -109,38 +113,6 @@ int main(int argc, char *argv[])
     set_light_offset(-300);
 
     // Generar fantasmes aqui
-
-    pair<int, int> start_positions = map.start_position();
-    pacman.initialize(sq_size, sq_size - 5, start_positions.first, start_positions.second, map);
-    pacman.agent_size = 0;
-    pacman.color = FULVOUS_MATERIAL;
-    pacman.flashlight = Flashlight();
-    pacman.flashlight.light_id = GL_LIGHT1;
-    pacman.flashlight.color = WHITE_LIGHT;
-    pacman.flashlight.set_direction(-1, 0, 0);
-    pacman.flashlight.set_position(pacman.x, sq_size, pacman.y);
-    set_lighting_color(pacman.flashlight.light_id, GL_AMBIENT, ZEROS_LIGHT);
-
-    // calculate number of ghosts
-    int n_ghosts = max(COLS, ROWS) / 5;
-    // int n_ghosts = 1;
-    for (int i = 0; i < n_ghosts; i++)
-    {
-        pair<int, int> start_positions = map.base_start_position();
-        Ghost ghost;
-        ghost.initialize(sq_size, sq_size - 5, start_positions.first, start_positions.second, map);
-        ghost.agent_size = 0;
-        ghost.initialize_autonomous(i);
-        ghost.flashlight = Flashlight();
-        ghost.flashlight.light_id = GL_LIGHT2 + i;
-        ghost.flashlight.color = SAGE_LIGHT;
-        ghost.flashlight.set_direction(-1, 0, 0);
-        ghost.flashlight.set_position(ghost.x, sq_size, ghost.y);
-        set_lighting_color(ghost.flashlight.light_id, GL_AMBIENT, ZEROS_LIGHT);
-        ghosts.push_back(ghost);
-    }
-    // put food
-    put_food();
 
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Pac-Man");
@@ -183,6 +155,12 @@ void display()
     case COUNTDOWNSTATE:
         CountdownState::displayFunc();
         break;
+    case LOSESTATE:
+        LoseState::displayFunc();
+        break;
+    case GAMETOLOSESTATE:
+        GameToLoseState::displayFunc();
+        break;
     default:
         break;
     }
@@ -203,6 +181,12 @@ void idle()
         break;
     case COUNTDOWNSTATE:
         CountdownState::idleFunc();
+        break;
+    case LOSESTATE:
+        LoseState::idleFunc();
+        break;
+    case GAMETOLOSESTATE:
+        GameToLoseState::idleFunc();
         break;
     default:
         break;
@@ -225,6 +209,12 @@ void special_input(int key, int x, int y)
     case COUNTDOWNSTATE:
         CountdownState::specialFunc(key, x, y);
         break;
+    case LOSESTATE:
+        LoseState::specialFunc(key, x, y);
+        break;
+    case GAMETOLOSESTATE:
+        GameToLoseState::specialFunc(key, x, y);
+        break;
     default:
         break;
     }
@@ -245,6 +235,12 @@ void keyboard(unsigned char key, int x, int y)
         break;
     case COUNTDOWNSTATE:
         CountdownState::specialFunc(key, x, y);
+        break;
+    case LOSESTATE:
+        LoseState::specialFunc(key, x, y);
+        break;
+    case GAMETOLOSESTATE:
+        GameToLoseState::specialFunc(key, x, y);
         break;
     default:
         break;

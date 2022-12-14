@@ -21,8 +21,6 @@
 void draw_food();
 
 // items to animate
-float agent_size_a = 0;
-float agent_size_va;
 float quadratic_a = 0.005;
 float quadratic_va;
 

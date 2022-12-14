@@ -11,6 +11,8 @@
 
 #include "../globals.h"
 
+#include "losestate.h"
+
 #include "../graphic.h"
 #include "../lighting.h"
 #include "../map.h"
@@ -20,8 +22,8 @@ void draw_food();
 int adapt_to_cam(int key);
 
 void check_collisions();
-void food_collision();
-void ghost_collision();
+int food_collision();
+int ghost_collision();
 bool collides(pair<float, float> obj1, pair<float, float> obj2, float size_obj1, float size_obj2);
 
 void move_ghosts_to_base();
@@ -256,17 +258,20 @@ int adapt_to_cam(int key)
 void check_collisions()
 {
     food_collision();
-    ghost_collision();
+    if (ghost_collision() == 1)
+    {
+        GameToLoseState::enter();
+    }
 }
 
-void food_collision()
+int food_collision()
 {
     Food *food_to_remove = 0;
     float dist = sq_size / 2;
     std::list<Food>::iterator food;
     for (food = foodList.begin(); food != foodList.end(); ++food)
     {
-        pair<float, float> obj1 = make_pair(pacman.x, pacman.y);
+        pair<float, float> obj1 = make_pair(pacman.x + pacman.agent_size / 2, pacman.y + pacman.agent_size / 2);
         pair<float, float> obj2 = make_pair(food->x, food->y);
         if (collides(obj1, obj2, pacman.agent_size, food->size * 2))
         {
@@ -276,23 +281,24 @@ void food_collision()
     if (food_to_remove != 0)
     {
         foodList.remove(*food_to_remove);
+        return 1;
     }
+    return 0;
 }
 
-void ghost_collision()
+int ghost_collision()
 {
     std::list<Ghost>::iterator ghost;
     for (ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost)
     {
-        float dx = abs(ghost->x - pacman.x);
-        float dy = abs(ghost->y - pacman.y);
-        pair<float, float> obj1 = make_pair(pacman.x, pacman.y);
+        pair<float, float> obj1 = make_pair(pacman.x + pacman.agent_size / 2, pacman.y + pacman.agent_size / 2);
         pair<float, float> obj2 = make_pair(ghost->x, ghost->y);
         if (collides(obj1, obj2, pacman.agent_size, pacman.agent_size))
         {
-            move_ghosts_to_base();
+            return 1;
         }
     }
+    return 0;
 }
 
 bool collides(pair<float, float> obj1, pair<float, float> obj2, float size_obj1, float size_obj2)
