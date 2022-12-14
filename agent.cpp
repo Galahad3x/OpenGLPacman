@@ -19,7 +19,7 @@ void Agent::initialize(int sq_size, int agent_size, int grid_x, int grid_y, Map 
     this->x = this->grid_x * sq_size + this->dist;
     this->y = this->grid_y * sq_size + this->dist;
     this->sq_size = sq_size;
-    this->agent_size = agent_size;
+    this->agent_size = 0;
 
     this->map = map;
 }

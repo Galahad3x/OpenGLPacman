@@ -28,3 +28,5 @@ extern long transition_timer;
 
 extern float agent_size_a;
 extern float agent_size_va;
+
+extern int lives_left;

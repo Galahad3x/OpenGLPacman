@@ -15,6 +15,7 @@
 
 #include "gamestate.h"
 #include "menustate.h"
+#include "countdownstate.h"
 
 #include "../graphic.h"
 #include "../lighting.h"
@@ -257,7 +258,15 @@ void GameToLoseState::idleFunc()
         if (transition_timer <= 0)
         {
             // Depen de les vides seguir o acabar
-            LoseState::enter();
+            if (lives_left == 0)
+            {
+                LoseState::enter();
+            }
+            else
+            {
+                lives_left--;
+                CountdownState::enter();
+            }
         }
         else
         {

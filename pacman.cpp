@@ -75,6 +75,8 @@ long transition_timer;
 float agent_size_a;
 float agent_size_va;
 
+int lives_left;
+
 void put_food();
 
 int main(int argc, char *argv[])

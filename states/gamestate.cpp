@@ -257,7 +257,10 @@ int adapt_to_cam(int key)
 
 void check_collisions()
 {
-    food_collision();
+    if (food_collision() == 1)
+    {
+        WinState::enter();
+    }
     if (ghost_collision() == 1)
     {
         GameToLoseState::enter();
@@ -281,6 +284,9 @@ int food_collision()
     if (food_to_remove != 0)
     {
         foodList.remove(*food_to_remove);
+    }
+    if (foodList.size() == 0)
+    {
         return 1;
     }
     return 0;

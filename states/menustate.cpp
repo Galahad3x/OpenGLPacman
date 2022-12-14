@@ -30,6 +30,8 @@ void MenuState::enter()
 {
     stateOfGame = MENUSTATE;
 
+    lives_left = 3;
+
     map.generate(ROWS, COLS);
     map.print_map();
 }
@@ -164,7 +166,8 @@ void MenuToGameState::enter()
 
     // calculate number of ghosts
     int n_ghosts = max(COLS, ROWS) / 5;
-    // TODO ficar llista de ghosts a 0
+    // ficar llista de ghosts a 0
+    ghosts.clear();
     // int n_ghosts = 1;
     for (int i = 0; i < n_ghosts; i++)
     {

@@ -33,6 +33,17 @@ void CountdownState::enter()
 
     transition_timer = 1200;
 
+    move_ghosts_to_base();
+
+    pair<int, int> start_positions = map.start_position();
+    pacman.grid_x = start_positions.first;
+    pacman.grid_y = start_positions.second;
+
+    int destination_x = pacman.grid_x * sq_size + pacman.dist;
+    int destination_y = pacman.grid_y * sq_size + pacman.dist;
+
+    pacman.set_position(destination_x, destination_y);
+
     agent_size_va = (sq_size - 5.0) / transition_timer;
     quadratic_va = (0.00007 - quadratic_a) / transition_timer;
 }
