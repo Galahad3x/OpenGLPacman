@@ -30,3 +30,6 @@ extern float agent_size_a;
 extern float agent_size_va;
 
 extern int lives_left;
+
+extern float observer_offset_x;
+extern float observer_offset_z;

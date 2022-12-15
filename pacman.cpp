@@ -80,6 +80,9 @@ int lives_left;
 
 void put_food();
 
+float observer_offset_x;
+float observer_offset_z;
+
 int main(int argc, char *argv[])
 {
     if (argc < 3)
@@ -113,8 +116,11 @@ int main(int argc, char *argv[])
     WIDTH = sq_size * COLS;
     HEIGHT = sq_size * ROWS;
     // TODO canviar aixo a 0 i moure el observer
-    set_offset(-300);
-    set_light_offset(-300);
+    set_offset(0);
+    set_light_offset(0);
+
+    observer_offset_x = (sq_size * map.n_cols) / 2.0;
+    observer_offset_z = (sq_size * map.n_rows) / 2.0;
 
     // Generar fantasmes aqui
 

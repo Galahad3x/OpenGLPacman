@@ -96,6 +96,7 @@ void LoseState::displayFunc()
 
     glDisable(GL_LIGHTING);
     glPushMatrix();
+    glTranslatef(observer_offset_x, 0, observer_offset_z);
     glRotatef(-90.0, 1.0, 0.0, 0.0);
     glRotatef(90.0 - alpha_angle, 0.0, 0.0, 1.0);
     glScalef(0.5, 0.5, 0.5);
@@ -112,6 +113,7 @@ void LoseState::displayFunc()
     char *c2 = "Press any key to restart";
 
     glPushMatrix();
+    glTranslatef(observer_offset_x, 0, observer_offset_z);
     glRotatef(-90.0, 1.0, 0.0, 0.0);
     glRotatef(90.0 - alpha_angle, 0.0, 0.0, 1.0);
     glScalef(0.2, 0.2, 0.2);

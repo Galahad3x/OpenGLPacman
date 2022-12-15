@@ -60,7 +60,7 @@ void GameState::displayFunc()
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-WIDTH * multi, WIDTH * multi, -HEIGHT * multi, HEIGHT * multi, 10, 2000);
+    glOrtho(-WIDTH * multi, WIDTH * multi, -HEIGHT * multi, HEIGHT * multi, 0, 2000);
 
     glMatrixMode(GL_MODELVIEW);
 
