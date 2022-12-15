@@ -147,6 +147,12 @@ void CountdownState::displayFunc()
 
     // draw_edges();
 
+    for (int l = 0; l < lives_left; l++)
+    {
+        set_material_id(FULVOUS_MATERIAL);
+        draw_sphere((sq_size - 5) / 2.0, sq_size * map.n_cols + sq_size, 0, sq_size * map.n_rows - (sq_size + 8) * l);
+    }
+
     glutSwapBuffers();
 }
 void CountdownState::specialFunc(int key, int x, int y)

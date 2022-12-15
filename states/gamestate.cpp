@@ -36,8 +36,8 @@ void GameState::enter()
     // El que sa de carregar al iniciar el joc
     stateOfGame = GAMESTATE;
 
-    alpha_angle = 45.0;
-    beta_angle = 45.0;
+    // alpha_angle = 45.0;
+    // beta_angle = 45.0;
 
     quadratic = 0.00009;
 }
@@ -105,6 +105,13 @@ void GameState::displayFunc()
     for (ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost)
     {
         ghost->draw();
+    }
+
+    // Lives left
+    for (int l = 0; l < lives_left; l++)
+    {
+        set_material_id(FULVOUS_MATERIAL);
+        draw_sphere(pacman.agent_size / 2.0, sq_size * map.n_cols + sq_size, 0, sq_size * map.n_rows - (sq_size + 8) * l);
     }
 
     // draw_edges();

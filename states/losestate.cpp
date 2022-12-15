@@ -158,6 +158,8 @@ LoseState::LoseState()
 
 long wait_timer;
 
+int maintained_agent_size;
+
 void GameToLoseState::enter()
 {
     // El que sa de carregar al iniciar el joc
@@ -165,6 +167,8 @@ void GameToLoseState::enter()
 
     agent_size_a = sq_size - 5.0;
     agent_size_va = 0.0;
+
+    maintained_agent_size = agent_size_a;
 
     transition_timer = 600;
     wait_timer = 1000;
@@ -235,6 +239,19 @@ void GameToLoseState::displayFunc()
     for (ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost)
     {
         ghost->draw();
+    }
+
+    for (int l = 0; l < lives_left; l++)
+    {
+        set_material_id(FULVOUS_MATERIAL);
+        if (l == lives_left - 1)
+        {
+            draw_sphere(pacman.agent_size / 2.0, sq_size * map.n_cols + sq_size, 0, sq_size * map.n_rows - (sq_size + 8) * l);
+        }
+        else
+        {
+            draw_sphere(maintained_agent_size / 2.0, sq_size * map.n_cols + sq_size, 0, sq_size * map.n_rows - (sq_size + 8) * l);
+        }
     }
 
     glutSwapBuffers();

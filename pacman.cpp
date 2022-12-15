@@ -112,6 +112,7 @@ int main(int argc, char *argv[])
 
     WIDTH = sq_size * COLS;
     HEIGHT = sq_size * ROWS;
+    // TODO canviar aixo a 0 i moure el observer
     set_offset(-300);
     set_light_offset(-300);
 

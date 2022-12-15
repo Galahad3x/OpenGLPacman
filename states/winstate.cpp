@@ -116,6 +116,12 @@ void WinState::displayFunc()
     glPopMatrix();
     glEnable(GL_LIGHTING);
 
+    for (int l = 0; l < lives_left; l++)
+    {
+        set_material_id(FULVOUS_MATERIAL);
+        draw_sphere(pacman.agent_size / 2.0, sq_size * map.n_cols + sq_size, 0, sq_size * map.n_rows - (sq_size + 8) * l);
+    }
+
     glutSwapBuffers();
 }
 void WinState::specialFunc(int key, int x, int y)
