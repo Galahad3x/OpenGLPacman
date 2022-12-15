@@ -12,6 +12,7 @@
 #include "../globals.h"
 
 #include "losestate.h"
+#include "winstate.h"
 
 #include "../graphic.h"
 #include "../lighting.h"
@@ -313,7 +314,7 @@ bool collides(pair<float, float> obj1, pair<float, float> obj2, float size_obj1,
     float dx = pow(obj1.first - obj2.first, 2);
     float dy = pow(obj1.second - obj2.second, 2);
     float distance = sqrt(dx + dy);
-    return distance <= ((size_obj1 / 2.0) + (size_obj2 / 2.0));
+    return distance <= ((size_obj1 / 2.0) + (size_obj2 / 2.0) - 3);
 }
 
 void move_ghosts_to_base()

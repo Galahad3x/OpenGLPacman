@@ -33,18 +33,49 @@ void CountdownState::enter()
 
     transition_timer = 1200;
 
+    agent_size_a = 0;
+
     move_ghosts_to_base();
 
+    std::list<Ghost>::iterator ghost;
+    int i = 0;
+    for (ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost)
+    {
+        pair<int, int> start_positions = map.base_start_position();
+        Ghost ghost;
+        ghost.initialize(sq_size, sq_size - 5, start_positions.first, start_positions.second, map);
+        ghost.agent_size = 0;
+        ghost.initialize_autonomous(i);
+        ghost.flashlight = Flashlight();
+        ghost.flashlight.light_id = GL_LIGHT2 + i;
+        ghost.flashlight.color = SAGE_LIGHT;
+        ghost.flashlight.set_direction(-1, 0, 0);
+        ghost.flashlight.set_position(ghost.x, sq_size, ghost.y);
+        i++;
+    }
+
     pair<int, int> start_positions = map.start_position();
-    pacman.grid_x = start_positions.first;
-    pacman.grid_y = start_positions.second;
+    pacman.initialize(sq_size, sq_size - 5, start_positions.first, start_positions.second, map);
+    pacman.agent_size = 0;
+    pacman.color = FULVOUS_MATERIAL;
+    pacman.flashlight = Flashlight();
+    pacman.flashlight.light_id = GL_LIGHT1;
+    pacman.flashlight.color = WHITE_LIGHT;
+    pacman.flashlight.set_direction(-1, 0, 0);
+    pacman.flashlight.set_position(pacman.x, sq_size, pacman.y);
 
     int destination_x = pacman.grid_x * sq_size + pacman.dist;
     int destination_y = pacman.grid_y * sq_size + pacman.dist;
 
+    pacman.vx = 0.0;
+    pacman.vy = 0.0;
+    pacman.time_remaining = 0;
+
+    pacman.flashlight.set_position(pacman.x + (sq_size / 2), sq_size, pacman.y + (sq_size / 2));
+
     pacman.set_position(destination_x, destination_y);
 
-    agent_size_va = (sq_size - 5.0) / transition_timer;
+    agent_size_va = ((sq_size - 5.0) - pacman.agent_size) / transition_timer;
     quadratic_va = (0.00007 - quadratic_a) / transition_timer;
 }
 void CountdownState::exitState()

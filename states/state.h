@@ -4,6 +4,7 @@
 #define COUNTDOWNSTATE 4
 #define LOSESTATE 5
 #define GAMETOLOSESTATE 6
+#define WINSTATE 7
 
 #ifndef STATE_H
 #define STATE_H

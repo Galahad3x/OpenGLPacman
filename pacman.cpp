@@ -25,6 +25,7 @@
 #include "states/menustate.h"
 #include "states/countdownstate.h"
 #include "states/losestate.h"
+#include "states/winstate.h"
 
 //-------------------------
 // OpenGL functions
@@ -163,6 +164,9 @@ void display()
     case GAMETOLOSESTATE:
         GameToLoseState::displayFunc();
         break;
+    case WINSTATE:
+        WinState::displayFunc();
+        break;
     default:
         break;
     }
@@ -189,6 +193,9 @@ void idle()
         break;
     case GAMETOLOSESTATE:
         GameToLoseState::idleFunc();
+        break;
+    case WINSTATE:
+        WinState::idleFunc();
         break;
     default:
         break;
@@ -217,6 +224,9 @@ void special_input(int key, int x, int y)
     case GAMETOLOSESTATE:
         GameToLoseState::specialFunc(key, x, y);
         break;
+    case WINSTATE:
+        WinState::specialFunc(key, x, y);
+        break;
     default:
         break;
     }
@@ -244,6 +254,9 @@ void keyboard(unsigned char key, int x, int y)
     case GAMETOLOSESTATE:
         GameToLoseState::specialFunc(key, x, y);
         break;
+    case WINSTATE:
+        WinState::specialFunc(key, x, y);
+        break;
     default:
         break;
     }
@@ -255,6 +268,7 @@ void put_food()
     float food_size = sq_size / 4;
     food_size = ((int)food_size % 2 == 0) ? food_size + 1 : food_size;
     food_size = 0;
+    foodList.clear();
     for (int y = 0; y < map.n_rows; y++)
     {
         for (int x = 0; x < map.n_cols; x++)
