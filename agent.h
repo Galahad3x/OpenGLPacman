@@ -4,6 +4,7 @@
 #include <GL/glut.h>
 #endif
 #include "map.h"
+#include "lighting.h"
 
 #define STILL 0
 #define MOVING_BETWEEN 1
@@ -14,6 +15,9 @@
 #define CHASE 2
 
 using namespace std;
+
+#ifndef AGENT_GHOST
+#define AGENT_GHOST
 
 class Agent {
     public:
@@ -44,6 +48,8 @@ class Agent {
         bool is_out = true;
 
         bool is_autonomous = false;
+
+        Flashlight flashlight;
 
         // Constructor
         Agent();
@@ -82,4 +88,10 @@ class Ghost : public Agent{
         bool is_not_turn(int direction);
 
         void integrate_timer(long t);
+
+        void initialize_autonomous(int i);
 };
+
+int inverse_direction(int direction);
+
+#endif
