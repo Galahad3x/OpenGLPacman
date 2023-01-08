@@ -61,6 +61,13 @@ float ReflexAgent::getScore(int action)
         pair<float, float> food_coords = make_pair(food->x, food->y);
         score += (1.0 / pow(manhattanDistance(pacman_coords, food_coords), 2));
     }
+
+    std::list<Ghost>::iterator ghost;
+    for (ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost)
+    {
+        pair<float, float> obj2 = make_pair(ghost->x, ghost->y);
+        score -= (1.0 / pow(manhattanDistance(pacman_coords, obj2) - sq_size * sq_size, 2));
+    }
     return score;
 }
 
