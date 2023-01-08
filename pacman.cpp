@@ -83,14 +83,22 @@ void put_food();
 float observer_offset_x;
 float observer_offset_z;
 
+int autonomous_agent;
+
 int main(int argc, char *argv[])
 {
     if (argc < 3)
     {
-        printf("Usage: ./pacman <half_of_rows> <half_of_columns>\n");
+        printf("Usage: ./pacman <half_of_rows> <half_of_columns> [autonomous_agent]\n");
         exit(-1);
     }
 
+    if (argc > 3){
+        autonomous_agent = atoi(argv[3]);
+    } else {
+        autonomous_agent = 0;
+    }
+    printf("%i\n", autonomous_agent);
     srand(clock());
 
     // Calculate the number of rows and cols

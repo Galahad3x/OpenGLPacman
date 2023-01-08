@@ -33,3 +33,5 @@ extern int lives_left;
 
 extern float observer_offset_x;
 extern float observer_offset_z;
+
+extern int autonomous_agent;

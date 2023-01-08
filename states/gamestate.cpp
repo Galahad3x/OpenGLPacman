@@ -19,6 +19,8 @@
 #include "../map.h"
 #include "../ghost.h"
 
+#include "../agents/reflexagent.h"
+
 void draw_food();
 int adapt_to_cam(int key);
 
@@ -127,7 +129,10 @@ void GameState::specialFunc(int key, int x, int y)
         exit(0);
         break;
     default:
-        pacman.treat_input(adapt_to_cam(key));
+        if (autonomous_agent == 0)
+        {
+            pacman.treat_input(adapt_to_cam(key));
+        }
         break;
     }
     glutPostRedisplay();
@@ -196,6 +201,12 @@ void GameState::idleFunc()
         ghost->integrate_timer(t - last_t);
     }
     last_t = t;
+
+    if (autonomous_agent == 1)
+    {
+        pacman.treat_input(ReflexAgent::getBestAction());
+    }
+
     glutPostRedisplay();
 }
 
