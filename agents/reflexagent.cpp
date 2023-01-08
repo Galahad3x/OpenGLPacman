@@ -16,7 +16,7 @@ int ReflexAgent::getBestAction()
     for (int i = 0; i < 4; i++)
     {
         float score = ReflexAgent::getScore(actions[i]);
-        printf("KEY: %i SCORE: %.5f\t", actions[i], score);
+        // printf("KEY: %i SCORE: %.5f\t", actions[i], score);
         if (score > best_score)
         {
             best_score = score;
@@ -66,7 +66,7 @@ float ReflexAgent::getScore(int action)
     for (ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost)
     {
         pair<float, float> obj2 = make_pair(ghost->x, ghost->y);
-        score -= (1.0 / pow(manhattanDistance(pacman_coords, obj2) - sq_size * sq_size, 2));
+        score -= (1.0 / pow(manhattanDistance(pacman_coords, obj2) - sq_size, 2));
     }
     return score;
 }
