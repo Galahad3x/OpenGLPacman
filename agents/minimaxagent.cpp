@@ -1,4 +1,4 @@
-#include "reflexagent.h"
+#include "minimaxagent.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -8,14 +8,14 @@
 int adapt_to_cam(int key);
 float manhattanDistance(pair<float, float> obj1, pair<float, float> obj2);
 
-int ReflexAgent::getBestAction()
+int MinimaxAgent::getBestAction()
 {
     int actions[] = {GLUT_KEY_UP, GLUT_KEY_DOWN, GLUT_KEY_LEFT, GLUT_KEY_RIGHT};
     float best_score = -99999999.0;
     int best_action = 0;
     for (int i = 0; i < 4; i++)
     {
-        float score = ReflexAgent::getScore(actions[i]);
+        float score = MinimaxAgent::getScore(actions[i]);
         // printf("KEY: %i SCORE: %.5f\t", actions[i], score);
         if (score > best_score)
         {
@@ -27,7 +27,7 @@ int ReflexAgent::getBestAction()
     return best_action;
 }
 
-float ReflexAgent::getScore(int action)
+float MinimaxAgent::getScore(int action)
 {
     if (!pacman.next_move_valid(action))
     {
@@ -69,11 +69,4 @@ float ReflexAgent::getScore(int action)
         score -= (1.0 / pow(manhattanDistance(pacman_coords, obj2) - sq_size, 2));
     }
     return score;
-}
-
-float manhattanDistance(pair<float, float> obj1, pair<float, float> obj2)
-{
-    float dx = pow(obj1.first - obj2.first, 2);
-    float dy = pow(obj1.second - obj2.second, 2);
-    return sqrt(dx + dy);
 }

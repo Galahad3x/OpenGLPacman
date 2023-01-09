@@ -20,6 +20,7 @@
 #include "../ghost.h"
 
 #include "../agents/reflexagent.h"
+#include "../agents/minimaxagent.h"
 
 void draw_food();
 int adapt_to_cam(int key);
@@ -205,6 +206,10 @@ void GameState::idleFunc()
     if (autonomous_agent == 1)
     {
         pacman.treat_input(ReflexAgent::getBestAction());
+    }
+    else if (autonomous_agent == 2)
+    {
+        pacman.treat_input(MinimaxAgent::getBestAction());
     }
 
     glutPostRedisplay();
