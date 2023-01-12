@@ -93,9 +93,12 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
-    if (argc > 3){
+    if (argc > 3)
+    {
         autonomous_agent = atoi(argv[3]);
-    } else {
+    }
+    else
+    {
         autonomous_agent = 0;
     }
     printf("%i\n", autonomous_agent);
@@ -123,7 +126,6 @@ int main(int argc, char *argv[])
 
     WIDTH = sq_size * COLS;
     HEIGHT = sq_size * ROWS;
-    // TODO canviar aixo a 0 i moure el observer
     set_offset(0);
     set_light_offset(0);
 
