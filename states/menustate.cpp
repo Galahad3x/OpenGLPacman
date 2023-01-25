@@ -170,7 +170,7 @@ void MenuToGameState::enter()
     int n_ghosts = max(COLS, ROWS) / 5;
     // ficar llista de ghosts a 0
     ghosts.clear();
-    // int n_ghosts = 1;
+    n_ghosts = 1;
     for (int i = 0; i < n_ghosts; i++)
     {
         pair<int, int> start_positions = map.base_start_position();

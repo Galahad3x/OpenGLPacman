@@ -18,6 +18,7 @@ pair<int, int> getCoordsByAgentIndex(GameAgentState state_a, int agentIndex);
 
 int MinimaxAgent::getBestAction()
 {
+    printf("START\n");
     int actions[] = {GLUT_KEY_UP, GLUT_KEY_DOWN, GLUT_KEY_LEFT, GLUT_KEY_RIGHT};
     float best_score = -99999999.0;
     int best_action = 0;
@@ -32,39 +33,42 @@ int MinimaxAgent::getBestAction()
     for (ghost = ghosts.begin(); ghost != ghosts.end(); ++ghost)
     {
         pair<int, int> gCoords = make_pair(ghost->grid_x, ghost->grid_y);
-        printf("creant\n");
         current.ghosts_positions.push_back(gCoords);
     }
 
     std::list<Food>::iterator food;
     for (food = foodList.begin(); food != foodList.end(); ++food)
     {
-        pair<int, int> fCoords = make_pair(food->x, food->y);
-        printf("fud\n");
+        // TODO agafar les coordenades be
+        int foodx = (int)food->x + food->size / 2;
+        int foody = (int)food->y + food->size / 2;
+        pair<int, int> fCoords = make_pair(foodx / sq_size, foody / sq_size);
         current.foods_positions.push_back(fCoords);
     }
 
     for (int i = 0; i < 4; i++)
     {
+        printf("Trying action in main\n");
         if (!is_action_valid(make_pair(pacman.grid_x, pacman.grid_y), actions[i]))
         {
+            printf("Not valid\n");
             continue;
         }
         GameAgentState succ = getNextGameState(current, 0, actions[i]);
         float score = minimumScore(succ, 1, depth);
-        printf("Min\n");
         if (score > best_score)
         {
+            printf("best_score %.5f\n", score);
             best_score = score;
             best_action = actions[i];
         }
     }
-    // printf("\n");
     return best_action;
 }
 
 GameAgentState getNextGameState(GameAgentState current, int agentIndex, int action)
 {
+    printf("Current %i %i %i\n", current.pacman_gridx, current.pacman_gridy, current.foods_positions.size());
     GameAgentState next;
     if (agentIndex != 0)
     {
@@ -100,9 +104,25 @@ GameAgentState getNextGameState(GameAgentState current, int agentIndex, int acti
             }
             next.ghosts_positions.push_back(gCoords);
         }
+
+        std::list<pair<int, int>>::iterator foodIter;
+        for (foodIter = current.foods_positions.begin(); foodIter != current.foods_positions.end(); ++foodIter)
+        {
+            pair<int, int> fCoords;
+            fCoords = make_pair(foodIter->first, foodIter->second);
+            next.foods_positions.push_back(fCoords);
+        }
     }
     else
     {
+        std::list<pair<int, int>>::iterator ghostIter;
+        for (ghostIter = current.ghosts_positions.begin(); ghostIter != current.ghosts_positions.end(); ++ghostIter)
+        {
+            pair<int, int> gCoords;
+            gCoords = make_pair(ghostIter->first, ghostIter->second);
+            next.ghosts_positions.push_back(gCoords);
+        }
+
         switch (action)
         {
         case GLUT_KEY_UP:
@@ -123,15 +143,27 @@ GameAgentState getNextGameState(GameAgentState current, int agentIndex, int acti
             break;
         }
 
-        // TODO que el pacman mengi food
+        std::list<pair<int, int>>::iterator foodIter;
+        for (foodIter = current.foods_positions.begin(); foodIter != current.foods_positions.end(); ++foodIter)
+        {
+            pair<int, int> fCoords;
+            fCoords = make_pair(foodIter->first, foodIter->second);
+            printf("%i %i\n", fCoords.first, fCoords.second);
+            if (fCoords.first == next.pacman_gridx && fCoords.second == next.pacman_gridy)
+            {
+                continue;
+            }
+            next.foods_positions.push_back(fCoords);
+        }
     }
     // Ha de moure els agents i en el cas del pacman menjar el food també
+    printf("Next %i %i %i\n", next.pacman_gridx, next.pacman_gridy, next.foods_positions.size());
     return next;
 }
 
 float minimumScore(GameAgentState state_a, int agentIndex, int depth)
 {
-    printf("Minscore\n");
+    printf("Entering minimumScore\n");
     if (terminal_test(state_a, depth))
     {
         return evaluationFunction(state_a);
@@ -141,11 +173,13 @@ float minimumScore(GameAgentState state_a, int agentIndex, int depth)
     int actions[] = {GLUT_KEY_UP, GLUT_KEY_DOWN, GLUT_KEY_LEFT, GLUT_KEY_RIGHT};
 
     pair<int, int> current_coords = getCoordsByAgentIndex(state_a, agentIndex);
-    printf("%i %i %i\n", current_coords.first, current_coords.second, agentIndex);
     for (int i = 0; i < 4; i++)
     {
+        printf("Trying action in minimum state\n");
+        printf("%i\n", agentIndex);
         if (!is_action_valid(make_pair(current_coords.first, current_coords.second), actions[i]))
         {
+            printf("Not valid\n");
             continue;
         }
         GameAgentState succ = getNextGameState(state_a, agentIndex, actions[i]);
@@ -158,17 +192,20 @@ float minimumScore(GameAgentState state_a, int agentIndex, int depth)
         {
             score = minimumScore(succ, agentIndex + 1, depth);
         }
+        printf("Score %.5f", score);
         if (score < sc)
         {
+            printf("\tIs best");
             sc = score;
         }
+        printf("\n");
     }
-    // printf("\n");
     return sc;
 }
 
 float maximumScore(GameAgentState state_a, int agentIndex, int depth)
 {
+    printf("Entering maximum score\n");
     if (terminal_test(state_a, depth))
     {
         return evaluationFunction(state_a);
@@ -181,16 +218,20 @@ float maximumScore(GameAgentState state_a, int agentIndex, int depth)
 
     for (int i = 0; i < 4; i++)
     {
+        printf("Testing action in maximum\n");
         if (!is_action_valid(make_pair(current_coords.first, current_coords.second), actions[i]))
         {
             continue;
         }
         GameAgentState succ = getNextGameState(state_a, agentIndex, actions[i]);
         float score = minimumScore(succ, 1, depth);
-        if (score < sc)
+        printf("skore %.5f", score);
+        if (score > sc)
         {
+            printf("\tIs best");
             sc = score;
         }
+        printf("\n");
     }
     return sc;
 }
@@ -215,8 +256,37 @@ bool terminal_test(GameAgentState state_a, int depth)
 
 float evaluationFunction(GameAgentState state_a)
 {
-    // TODO implementar evaluation function
-    return 0.0;
+    int food_amount = 0;
+    float min_food_distance = 999999999.0;
+    float food_distance = 0;
+    std::list<pair<int, int>>::iterator food;
+    for (food = state_a.foods_positions.begin(); food != state_a.foods_positions.end(); ++food)
+    {
+        food_amount += 1;
+        pair<int, int> food_coords = make_pair(food->first, food->second);
+        float food_d = manhattanDistance(make_pair(state_a.pacman_gridx, state_a.pacman_gridy), food_coords);
+        if (food_d < min_food_distance)
+        {
+            min_food_distance = food_d;
+        }
+        food_distance += food_d;
+    }
+
+    int distance_ghosts = 0;
+    std::list<pair<int, int>>::iterator ghost;
+    for (ghost = state_a.ghosts_positions.begin(); ghost != state_a.ghosts_positions.end(); ++ghost)
+    {
+        pair<int, int> obj2 = make_pair(ghost->first, ghost->second);
+        distance_ghosts += manhattanDistance(make_pair(state_a.pacman_gridx, state_a.pacman_gridy), obj2);
+    }
+    float score = 0.0;
+    score += food_amount * -100;
+    score += food_distance * -1;
+    score += (1.0 / min_food_distance) * 200;
+    score += distance_ghosts * -10;
+    printf("Calculated %.5f\n", score);
+    return score;
+    // return 0.0;
 }
 
 GameAgentState::GameAgentState()
@@ -230,25 +300,25 @@ bool is_action_valid(pair<int, int> current_grid, int action)
     switch (action)
     {
     case GLUT_KEY_UP:
-        if (map.mesh[gridy - 1][gridx] == CELL_VISITED)
+        if (map.mesh[gridy - 1][gridx] == CELL_VISITED || map.mesh[gridy - 1][gridx] == BASE_CELL)
         {
             return true;
         }
         break;
     case GLUT_KEY_DOWN:
-        if (map.mesh[gridy + 1][gridx] == CELL_VISITED)
+        if (map.mesh[gridy + 1][gridx] == CELL_VISITED || map.mesh[gridy + 1][gridx] == BASE_CELL)
         {
             return true;
         }
         break;
     case GLUT_KEY_LEFT:
-        if (map.mesh[gridy][gridx - 1] == CELL_VISITED)
+        if (map.mesh[gridy][gridx - 1] == CELL_VISITED || map.mesh[gridy][gridx - 1] == BASE_CELL)
         {
             return true;
         }
         break;
     case GLUT_KEY_RIGHT:
-        if (map.mesh[gridy][gridx + 1] == CELL_VISITED)
+        if (map.mesh[gridy][gridx + 1] == CELL_VISITED || map.mesh[gridy][gridx + 1] == BASE_CELL)
         {
             return true;
         }
@@ -303,7 +373,6 @@ float MinimaxAgent::getScore(int action)
 
 pair<int, int> getCoordsByAgentIndex(GameAgentState state_a, int agentIndex)
 {
-    printf("%i\n", agentIndex);
     if (agentIndex == 0)
     {
         return make_pair(state_a.pacman_gridx, state_a.pacman_gridy);
@@ -311,11 +380,9 @@ pair<int, int> getCoordsByAgentIndex(GameAgentState state_a, int agentIndex)
     else
     {
         int ghostCount = 0;
-        printf("aa%i\n", state_a.ghosts_positions.size());
         std::list<pair<int, int>>::iterator ghostIter;
         for (ghostIter = state_a.ghosts_positions.begin(); ghostIter != state_a.ghosts_positions.end(); ++ghostIter)
         {
-            printf("%i %i\n", ghostIter->first, ghostIter->second);
             if (ghostCount == agentIndex - 1)
             {
                 return make_pair(ghostIter->first, ghostIter->second);
