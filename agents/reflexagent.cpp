@@ -16,14 +16,14 @@ int ReflexAgent::getBestAction()
     for (int i = 0; i < 4; i++)
     {
         float score = ReflexAgent::getScore(actions[i]);
-        // printf("KEY: %i SCORE: %.5f\t", actions[i], score);
+        // ("KEY: %i SCORE: %.5f\t", actions[i], score);
         if (score > best_score)
         {
             best_score = score;
             best_action = actions[i];
         }
     }
-    // printf("\n");
+    // ("\n");
     return best_action;
 }
 

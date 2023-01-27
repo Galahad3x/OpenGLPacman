@@ -18,11 +18,10 @@ pair<int, int> getCoordsByAgentIndex(GameAgentState state_a, int agentIndex);
 
 int MinimaxAgent::getBestAction()
 {
-    printf("START\n");
     int actions[] = {GLUT_KEY_UP, GLUT_KEY_DOWN, GLUT_KEY_LEFT, GLUT_KEY_RIGHT};
     float best_score = -99999999.0;
     int best_action = 0;
-    int depth = 3;
+    int depth = 4;
 
     GameAgentState current;
 
@@ -48,17 +47,17 @@ int MinimaxAgent::getBestAction()
 
     for (int i = 0; i < 4; i++)
     {
-        printf("Trying action in main\n");
+        ("Trying action in main\n");
         if (!is_action_valid(make_pair(pacman.grid_x, pacman.grid_y), actions[i]))
         {
-            printf("Not valid\n");
+            ("Not valid\n");
             continue;
         }
         GameAgentState succ = getNextGameState(current, 0, actions[i]);
         float score = minimumScore(succ, 1, depth);
         if (score > best_score)
         {
-            printf("best_score %.5f\n", score);
+            ("best_score %.5f\n", score);
             best_score = score;
             best_action = actions[i];
         }
@@ -68,7 +67,6 @@ int MinimaxAgent::getBestAction()
 
 GameAgentState getNextGameState(GameAgentState current, int agentIndex, int action)
 {
-    printf("Current %i %i %i\n", current.pacman_gridx, current.pacman_gridy, current.foods_positions.size());
     GameAgentState next;
     if (agentIndex != 0)
     {
@@ -148,7 +146,6 @@ GameAgentState getNextGameState(GameAgentState current, int agentIndex, int acti
         {
             pair<int, int> fCoords;
             fCoords = make_pair(foodIter->first, foodIter->second);
-            printf("%i %i\n", fCoords.first, fCoords.second);
             if (fCoords.first == next.pacman_gridx && fCoords.second == next.pacman_gridy)
             {
                 continue;
@@ -157,13 +154,12 @@ GameAgentState getNextGameState(GameAgentState current, int agentIndex, int acti
         }
     }
     // Ha de moure els agents i en el cas del pacman menjar el food també
-    printf("Next %i %i %i\n", next.pacman_gridx, next.pacman_gridy, next.foods_positions.size());
     return next;
 }
 
 float minimumScore(GameAgentState state_a, int agentIndex, int depth)
 {
-    printf("Entering minimumScore\n");
+    ("Entering minimumScore\n");
     if (terminal_test(state_a, depth))
     {
         return evaluationFunction(state_a);
@@ -175,11 +171,10 @@ float minimumScore(GameAgentState state_a, int agentIndex, int depth)
     pair<int, int> current_coords = getCoordsByAgentIndex(state_a, agentIndex);
     for (int i = 0; i < 4; i++)
     {
-        printf("Trying action in minimum state\n");
-        printf("%i\n", agentIndex);
+        ("Trying action in minimum state \t%i\n", agentIndex);
         if (!is_action_valid(make_pair(current_coords.first, current_coords.second), actions[i]))
         {
-            printf("Not valid\n");
+            ("Not valid\n");
             continue;
         }
         GameAgentState succ = getNextGameState(state_a, agentIndex, actions[i]);
@@ -192,20 +187,20 @@ float minimumScore(GameAgentState state_a, int agentIndex, int depth)
         {
             score = minimumScore(succ, agentIndex + 1, depth);
         }
-        printf("Score %.5f", score);
+        ("Score %.5f", score);
         if (score < sc)
         {
-            printf("\tIs best");
+            ("\tIs best");
             sc = score;
         }
-        printf("\n");
+        ("\n");
     }
     return sc;
 }
 
 float maximumScore(GameAgentState state_a, int agentIndex, int depth)
 {
-    printf("Entering maximum score\n");
+    ("Entering maximum score\n");
     if (terminal_test(state_a, depth))
     {
         return evaluationFunction(state_a);
@@ -218,20 +213,20 @@ float maximumScore(GameAgentState state_a, int agentIndex, int depth)
 
     for (int i = 0; i < 4; i++)
     {
-        printf("Testing action in maximum\n");
+        ("Testing action in maximum\n");
         if (!is_action_valid(make_pair(current_coords.first, current_coords.second), actions[i]))
         {
             continue;
         }
         GameAgentState succ = getNextGameState(state_a, agentIndex, actions[i]);
         float score = minimumScore(succ, 1, depth);
-        printf("skore %.5f", score);
+        ("skore %.5f", score);
         if (score > sc)
         {
-            printf("\tIs best");
+            ("\tIs best");
             sc = score;
         }
-        printf("\n");
+        ("\n");
     }
     return sc;
 }
@@ -239,6 +234,10 @@ float maximumScore(GameAgentState state_a, int agentIndex, int depth)
 bool terminal_test(GameAgentState state_a, int depth)
 {
     if (depth == 0)
+    {
+        return true;
+    }
+    if (state_a.foods_positions.size() == 0)
     {
         return true;
     }
@@ -259,32 +258,54 @@ float evaluationFunction(GameAgentState state_a)
     int food_amount = 0;
     float min_food_distance = 999999999.0;
     float food_distance = 0;
+    float food_closeness = 0.0;
     std::list<pair<int, int>>::iterator food;
+
+    if (state_a.foods_positions.size() == 0)
+    {
+        return 1000000000;
+    }
+
     for (food = state_a.foods_positions.begin(); food != state_a.foods_positions.end(); ++food)
     {
         food_amount += 1;
-        pair<int, int> food_coords = make_pair(food->first, food->second);
-        float food_d = manhattanDistance(make_pair(state_a.pacman_gridx, state_a.pacman_gridy), food_coords);
+        // pair<int, int> food_coords = make_pair(food->first, food->second);
+        float food_d = manhattanDistance(make_pair(state_a.pacman_gridx, state_a.pacman_gridy), *food);
         if (food_d < min_food_distance)
         {
             min_food_distance = food_d;
         }
         food_distance += food_d;
+        /*
+        std::list<pair<int, int>>::iterator food2;
+        food2 = state_a.foods_positions.begin();
+        for (int j = 0; j < food_amount; j++)
+        {
+            ++food2;
+        }
+        for (food2 = food2; food2 != state_a.foods_positions.end(); ++food2)
+        {
+            food_closeness += pow(manhattanDistance(*food, *food2), 2);
+        }
+        */
     }
 
     int distance_ghosts = 0;
     std::list<pair<int, int>>::iterator ghost;
     for (ghost = state_a.ghosts_positions.begin(); ghost != state_a.ghosts_positions.end(); ++ghost)
     {
-        pair<int, int> obj2 = make_pair(ghost->first, ghost->second);
-        distance_ghosts += manhattanDistance(make_pair(state_a.pacman_gridx, state_a.pacman_gridy), obj2);
+        // pair<int, int> obj2 = make_pair(ghost->first, ghost->second);
+        if (manhattanDistance(make_pair(state_a.pacman_gridx, state_a.pacman_gridy), *ghost) < 2)
+        {
+            distance_ghosts = 1;
+        }
     }
     float score = 0.0;
-    score += food_amount * -100;
-    score += food_distance * -1;
-    score += (1.0 / min_food_distance) * 200;
-    score += distance_ghosts * -10;
-    printf("Calculated %.5f\n", score);
+    score += food_amount * -200;
+    // score += food_distance * -0.8;
+    score += food_closeness * 0.03;
+    score += (1.0 / min_food_distance) * 250;
+    score += distance_ghosts * -1000;
     return score;
     // return 0.0;
 }

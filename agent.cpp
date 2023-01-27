@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "globals.h"
+
+#include "agents/reflexagent.h"
+#include "agents/minimaxagent.h"
+
 using namespace std;
 
 void Agent::initialize(int sq_size, int agent_size, int grid_x, int grid_y, Map map)
@@ -97,6 +102,18 @@ void Agent::integrate(long t)
             this->x = x + vx * time_remaining;
             this->y = y + vy * time_remaining;
 
+            if (is_autonomous == false)
+            {
+                if (autonomous_agent == 1)
+                {
+                    this->treat_input(ReflexAgent::getBestAction());
+                }
+                else if (autonomous_agent == 2)
+                {
+                    this->treat_input(MinimaxAgent::getBestAction());
+                }
+            }
+
             if (this->next_move_valid(this->key_flag))
             {
                 this->direction = this->key_flag;
@@ -111,6 +128,20 @@ void Agent::integrate(long t)
                 this->state = STILL;
                 this->direction = -1;
                 this->key_flag = -1;
+            }
+        }
+    }
+    else if (this->state == STILL)
+    {
+        if (is_autonomous == false)
+        {
+            if (autonomous_agent == 1)
+            {
+                this->treat_input(ReflexAgent::getBestAction());
+            }
+            else if (autonomous_agent == 2)
+            {
+                this->treat_input(MinimaxAgent::getBestAction());
             }
         }
     }

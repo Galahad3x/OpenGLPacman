@@ -203,6 +203,7 @@ void GameState::idleFunc()
     }
     last_t = t;
 
+    /*
     if (autonomous_agent == 1)
     {
         pacman.treat_input(ReflexAgent::getBestAction());
@@ -211,6 +212,7 @@ void GameState::idleFunc()
     {
         pacman.treat_input(MinimaxAgent::getBestAction());
     }
+    */
 
     glutPostRedisplay();
 }

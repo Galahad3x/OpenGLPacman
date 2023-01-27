@@ -168,7 +168,6 @@ void MenuToGameState::enter()
 
     // calculate number of ghosts
     int n_ghosts = max(COLS, ROWS) / 5;
-    // ficar llista de ghosts a 0
     ghosts.clear();
     n_ghosts = 1;
     for (int i = 0; i < n_ghosts; i++)
